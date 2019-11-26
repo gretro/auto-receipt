@@ -1,0 +1,32 @@
+{
+  "name": "auto-receipt-admin",
+  "version": "1.0.0",
+  "description": "Admin UI for AutoReceipt",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel src/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gretro/auto-receipt.git"
+  },
+  "author": "Gabriel Lemire",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gretro/auto-receipt/issues"
+  },
+  "homepage": "https://github.com/gretro/auto-receipt#readme",
+  "dependencies": {
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.13",
+    "@types/react-dom": "^16.9.4",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^1.19.1",
+    "sass": "^1.23.7",
+    "typescript": "^3.7.2"
+  }
+}
