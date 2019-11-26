@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "parcel src/index.html",
+    "prebuild": "rimraf dist",
+    "build": "parcel build src/index.html --no-source-maps",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,14 +20,20 @@
   },
   "homepage": "https://github.com/gretro/auto-receipt#readme",
   "dependencies": {
+    "bulma": "^0.8.0",
+    "classnames": "^2.2.6",
     "react": "^16.12.0",
     "react-dom": "^16.12.0"
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.9",
     "@types/react": "^16.9.13",
     "@types/react-dom": "^16.9.4",
+    "autoprefixer": "^9.7.2",
     "parcel-bundler": "^1.12.4",
+    "postcss-modules": "^1.4.1",
     "prettier": "^1.19.1",
+    "rimraf": "^3.0.0",
     "sass": "^1.23.7",
     "typescript": "^3.7.2"
   }

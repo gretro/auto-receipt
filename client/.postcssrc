@@ -1,0 +1,14 @@
+{
+  "modules": true,
+  plugins: {
+    "postcss-modules": {
+      "camelCase": true,
+      "globalModulePaths": [
+        "src/styles"
+      ]
+    },
+    "autoprefixer": {
+      "grid": true
+    }
+  }
+}

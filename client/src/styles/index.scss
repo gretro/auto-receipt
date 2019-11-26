@@ -1,0 +1,48 @@
+@charset "utf-8";
+@import '~/../node_modules/bulma/bulma';
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.6rem;
+  height: 100vh;
+  width: 100vw;
+}
+
+:root {
+  --color-primary: #{$primary};
+  --color-info: #{$info};
+  --color-success: #{$success};
+  --color-warning: #{$warning};
+  --color-danger: #{$danger};
+  --color-light: #{$light};
+  --color-dark: #{$dark};
+  --color-background: #{$background};
+  --color-border: #{$border};
+  --color-border-hover: #{$border-hover};
+  --color-border-light: #{$border-light};
+  --color-border-light-hover: #{$border-light-hover};
+  --color-text: #{$text};
+
+  --size-small: #{$size-small};
+  --size-normal: #{$size-normal};
+  --size-medium: #{$size-medium};
+  --size-large: #{$size-large};
+
+  --gap: 3.2rem;
+  --tablet: #{$tablet};
+  --desktop: #{$desktop};
+  --widescreen: #{$widescreen};
+
+  --radius-small: #{$radius-small};
+  --radius: #{$radius};
+  --radius-large: #{$radius-large};
+  --animation-speed: #{$speed};
+}
+
+.full-height {
+  height: 100vh;
+  width: 100vw;
+}

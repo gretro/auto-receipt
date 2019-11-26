@@ -1,0 +1,24 @@
+@import '~/styles/_base';
+
+.shell-grid {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  grid-template-areas: 'navbar main';
+
+  @media (max-width: #{$tablet}) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 6rem;
+    grid-template-areas:
+      'main'
+      'navbar';
+  }
+}
+
+.nav-bar {
+  grid-area: navbar;
+  background-color: var(--color-primary);
+}
+
+.content {
+  grid-area: 'main';
+}
