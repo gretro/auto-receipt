@@ -20,15 +20,17 @@
   },
   "homepage": "https://github.com/gretro/auto-receipt#readme",
   "dependencies": {
-    "bulma": "^0.8.0",
+    "antd": "^3.25.3",
     "classnames": "^2.2.6",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "react-router-dom": "^5.1.2"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.9",
     "@types/react": "^16.9.13",
     "@types/react-dom": "^16.9.4",
+    "@types/react-router-dom": "^5.1.3",
     "autoprefixer": "^9.7.2",
     "parcel-bundler": "^1.12.4",
     "postcss-modules": "^1.4.1",

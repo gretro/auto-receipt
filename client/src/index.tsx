@@ -1,5 +1,6 @@
+import React from 'react'
 import ReactDOM from 'react-dom'
-import { AppShell } from './shell/AppShell'
+import { App } from './shell/App'
 import './styles/index.scss'
 
 function getReactRoot() {
@@ -9,7 +10,7 @@ function getReactRoot() {
 function render() {
   const rootElement = getReactRoot()
 
-  ReactDOM.render(AppShell(), rootElement)
+  ReactDOM.render(<App />, rootElement)
 }
 
 render()
