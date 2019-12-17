@@ -1,0 +1,7 @@
+version: "3.7"
+
+services:
+  firestore:
+    build: ./emulators
+    ports:
+      - "1865:8080"
