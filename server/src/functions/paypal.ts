@@ -24,8 +24,8 @@ async function isValid(ipnData: PayPalIpn) {
 
 export const paypalIPN = functions.https.onRequest(async (request, reply) => {
   const ipnData = request.body as PayPalIpn
-  
-  if (isValid(ipnData)) {
+  const valid = await isValid(ipnData)
+  if (valid) {
     switch(ipnData.txn_type) {
       case 'recurring_payment': {
 
