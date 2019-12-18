@@ -6,11 +6,11 @@ import * as rp from 'request-promise'
  * Verify the payload recieved with PayPal to ensure that it is an authentic message
  * 
  * @param ipnData The payload received for PayPal IPN via the webhook
- * @returns {boolean} true if message is valid and can be processed, false if fake
+ * @returns {Promise<boolean>} true if message is valid and can be processed, false if fake
  *  
  * TODO: use the functions.config() to either point to sandbox.paypal.com for test purposes or ipnpb.paypal.com for live
  */
-async function isValid(ipnData: PayPalIpn) {
+async function isValid(ipnData: PayPalIpn): Promise<boolean> {
   const validationResponse = await rp({
     method: 'POST',
     uri: 'https://ipnpb.paypal.com/cgi-bin/webscr', // functions.config().paypal.ipn_url,

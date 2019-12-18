@@ -16,7 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "@google-cloud/firestore": "^3.0.0",
-    "firebase-admin": "^8.8.0",
+    "firebase-admin": "git+https://github.com/firebase/firebase-admin-node.git#firestore-30",
     "firebase-functions": "^3.3.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",

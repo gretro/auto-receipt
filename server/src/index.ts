@@ -1,11 +1,4 @@
-const { Firestore } = require("@google-cloud/firestore");
-
-const db = new Firestore({
-  host: "localhost",
-  port: 1865,
-  projectId: "gossage",
-  ssl: false
-});
+import { Firestore } from "@google-cloud/firestore"
 
 function getCities(db) {
   return db.collection("cities");
@@ -73,7 +66,14 @@ async function initDb(db) {
   await Promise.all(promises);
 }
 
-async function main() {
+async function main() {  
+  const db = new Firestore({
+    host: "localhost",
+    port: 1865,
+    projectId: "gossage",
+    ssl: false
+  });
+
   await initDb(db);
 
   const cities = getCities(db);
