@@ -1,0 +1,8 @@
+{
+  "firestore": {
+    "host": "localhost",
+    "port": 1865,
+    "projectId": "autoreceipt",
+    "ssl": false
+  }
+}
