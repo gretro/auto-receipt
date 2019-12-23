@@ -1,94 +1,94 @@
-import { Firestore } from "@google-cloud/firestore"
+import { Firestore } from '@google-cloud/firestore'
 
-function getCities(db) {
-  return db.collection("cities");
+function getCities(db: Firestore): FirebaseFirestore.CollectionReference {
+  return db.collection('cities')
 }
 
-async function initDb(db) {
-  const cities = getCities(db);
-  const promises = [];
+async function initDb(db: Firestore): Promise<void> {
+  const cities = getCities(db)
+  const promises = []
 
   promises.push(
-    cities.doc("SF").set({
-      name: "San Francisco",
-      state: "CA",
-      country: "USA",
+    cities.doc('SF').set({
+      name: 'San Francisco',
+      state: 'CA',
+      country: 'USA',
       capital: false,
       population: 860000,
-      regions: ["west_coast", "norcal"]
+      regions: ['west_coast', 'norcal'],
     })
-  );
+  )
 
   promises.push(
-    cities.doc("LA").set({
-      name: "Los Angeles",
-      state: "CA",
-      country: "USA",
+    cities.doc('LA').set({
+      name: 'Los Angeles',
+      state: 'CA',
+      country: 'USA',
       capital: false,
       population: 3900000,
-      regions: ["west_coast", "socal"]
+      regions: ['west_coast', 'socal'],
     })
-  );
+  )
 
   promises.push(
-    cities.doc("DC").set({
-      name: "Washington D.C.",
+    cities.doc('DC').set({
+      name: 'Washington D.C.',
       state: null,
-      country: "USA",
+      country: 'USA',
       capital: true,
       population: 680000,
-      regions: ["east_coast"]
+      regions: ['east_coast'],
     })
-  );
+  )
 
   promises.push(
-    cities.doc("TOK").set({
-      name: "Tokyo",
+    cities.doc('TOK').set({
+      name: 'Tokyo',
       state: null,
-      country: "Japan",
+      country: 'Japan',
       capital: true,
       population: 9000000,
-      regions: ["kanto", "honshu"]
+      regions: ['kanto', 'honshu'],
     })
-  );
+  )
 
   promises.push(
-    cities.doc("BJ").set({
-      name: "Beijing",
+    cities.doc('BJ').set({
+      name: 'Beijing',
       state: null,
-      country: "China",
+      country: 'China',
       capital: true,
       population: 21500000,
-      regions: ["jingjinji", "hebei"]
+      regions: ['jingjinji', 'hebei'],
     })
-  );
+  )
 
-  await Promise.all(promises);
+  await Promise.all(promises)
 }
 
-async function main() {  
+async function main(): Promise<void> {
   const db = new Firestore({
-    host: "localhost",
+    host: 'localhost',
     port: 1865,
-    projectId: "gossage",
-    ssl: false
-  });
+    projectId: 'gossage',
+    ssl: false,
+  })
 
-  await initDb(db);
+  await initDb(db)
 
-  const cities = getCities(db);
-  const query = await cities.where("state", "==", "CA").get();
+  const cities = getCities(db)
+  const query = await cities.where('state', '==', 'CA').get()
   if (query.empty) {
-    console.log("Empty results");
+    console.log('Empty results')
   }
 
-  console.log("query", query);
+  console.log('query', query)
   query.forEach(doc => {
-    console.log(doc.id, "=>", doc.data());
-  });
+    console.log(doc.id, '=>', doc.data())
+  })
 }
 
 main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+  console.error(err)
+  process.exit(1)
+})

@@ -2,13 +2,15 @@
   "compilerOptions": {
     "lib": ["es2017"],
     "module": "commonjs",
+    "strict": true,
+    "incremental": true,
     "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "alwaysStrict": true,
     "outDir": "lib",
     "sourceMap": true,
     "target": "es2017"
   },
   "compileOnSave": true,
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
