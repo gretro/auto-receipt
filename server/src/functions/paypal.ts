@@ -1,4 +1,4 @@
-import * as functions from 'firebase-functions'
+import { Request, Response } from 'express'
 import PayPalIpn from 'paypal-ipn-types'
 import * as rp from 'request-promise'
 
@@ -22,7 +22,11 @@ async function isValid(ipnData: PayPalIpn): Promise<boolean> {
   return validationResponse === 'VERIFIED' // other return is INVALID. If it is INVALID it is probably spoofed
 }
 
-export const paypalIPN = functions.https.onRequest(async (request, reply) => {
+// TODO: Check Method...
+export const paypalWebhook = async (
+  request: Request<{}>,
+  reply: Response
+): Promise<void> => {
   const ipnData = request.body as PayPalIpn
   const valid = await isValid(ipnData)
   if (valid) {
@@ -48,4 +52,4 @@ export const paypalIPN = functions.https.onRequest(async (request, reply) => {
     console.error('IPN verification failed')
     console.error(ipnData)
   }
-})
+}

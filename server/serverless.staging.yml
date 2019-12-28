@@ -1,0 +1,37 @@
+service: auto-receipt
+
+provider:
+  name: google
+  stage: staging
+  runtime: nodejs10
+  region: us-east1
+  project: auto-receipt-263320
+  credentials: ./.gcloud/keyfile.json
+  memorySize: 128
+  labels:
+    environment: ${self:provider.stage}
+  environment:
+    NODE_ENV: staging
+
+plugins:
+  - serverless-google-cloudfunctions
+
+package:
+  exclude:
+    - ./**
+  include:
+    - lib/**
+    - config/**
+    - package.json
+    - package-lock.json
+
+functions:
+  paypalWebhook:
+    handler: paypalWebhook
+    events:
+      - http: http
+
+  createCheque:
+    handler: createCheque
+    events:
+      - http: http

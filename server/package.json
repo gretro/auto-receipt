@@ -5,17 +5,30 @@
   "main": "lib/index.js",
   "scripts": {
     "lint": "eslint src/**/*.ts",
-    "build": "tsc",
-    "serve": "npm run build && firebase serve --only functions",
-    "shell": "npm run build && firebase experimental:functions:shell",
-    "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "clean": "rimraf lib",
+    "prebuild": "npm run clean",
+    "build": "tsc --sourceMap",
+    "build:watch": "tsc --watch --incremental --sourceMap",
+    "prebuild:prod": "npm run clean",
+    "build:prod": "tsc",
+    "serve": "node lib/index-local.js",
+    "serve:watch": "nodemon lib/index-local.js",
+    "package:staging": "npm run build:prod && serverless package --config serverless.staging.yml",
+    "deploy:staging": "npm run build:prod && serverless deploy --config serverless.staging.yml",
+    "start": "npm run build && run-p build:watch serve:watch"
   },
-  "author": "",
+  "author": {
+    "name": "Gabriel Lemire"
+  },
+  "contributors": [
+    {
+      "name": "Steven McKeown"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "@google-cloud/firestore": "^3.0.0",
+    "@hapi/joi": "^16.1.8",
     "firebase-admin": "^8.9.0",
     "firebase-functions": "^3.3.0",
     "node-config": "0.0.2",
@@ -25,16 +38,27 @@
   },
   "devDependencies": {
     "@types/config": "0.0.36",
+    "@types/express": "^4.17.2",
+    "@types/hapi__joi": "^16.0.5",
+    "@types/morgan": "^1.7.37",
     "@types/node": "^12.12.18",
     "@types/request-promise": "^4.1.45",
     "@types/uuid": "^3.4.6",
     "@typescript-eslint/eslint-plugin": "^2.13.0",
     "@typescript-eslint/parser": "^2.13.0",
+    "body-parser": "^1.19.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-prettier": "^3.1.2",
+    "express": "^4.17.1",
+    "morgan": "^1.9.1",
+    "nodemon": "^2.0.2",
+    "npm-run-all": "^4.1.5",
     "paypal-ipn-types": "^1.0.0",
     "prettier": "^1.19.1",
+    "rimraf": "^3.0.0",
+    "serverless": "^1.60.4",
+    "serverless-google-cloudfunctions": "^2.3.3",
     "typescript": "^3.7.3"
   },
   "engines": {

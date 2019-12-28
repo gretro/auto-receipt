@@ -202,3 +202,6 @@ $RECYCLE.BIN/
 # Parcel
 dist/
 lib/
+
+# Serverless
+.gcloud/**

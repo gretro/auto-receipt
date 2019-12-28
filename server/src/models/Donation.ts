@@ -9,4 +9,5 @@ export interface Donation {
   type: 'one-time' | 'recurrent'
   donor: Donor
   payments: Payment[]
+  emailReceipt: boolean
 }

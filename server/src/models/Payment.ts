@@ -6,6 +6,6 @@ export interface Payment {
   currency: string
   receiptAmount: number
   date: Date
-  source: 'check' | 'paypal' | 'square`'
+  source: 'cheque' | 'paypal' | 'square`'
   sourceDetails?: PaypalPaymentSource | SquarePaymentSource
 }
