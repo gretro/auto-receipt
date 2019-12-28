@@ -2,7 +2,7 @@ import * as Joi from '@hapi/joi'
 
 export interface Address {
   line1: string
-  line2?: string
+  line2: string | null
   city: string
   state: string
   postalCode: string
@@ -14,7 +14,8 @@ export const addressSchema = Joi.object<Address>({
     .required()
     .max(50),
   line2: Joi.string()
-    .optional()
+    .required()
+    .allow(null)
     .max(50),
   city: Joi.string()
     .required()

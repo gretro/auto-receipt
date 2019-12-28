@@ -1,1 +1,6 @@
-{}
+{
+  "firestore": null,
+  "api": {
+    "showError": false
+  }
+}

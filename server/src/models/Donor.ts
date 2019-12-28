@@ -4,7 +4,7 @@ import { Address, addressSchema } from './Address'
 export interface Donor {
   firstName: string
   lastName: string
-  email?: string
+  email: string | null
   address: Address
 }
 
@@ -16,7 +16,7 @@ export const donorSchema = Joi.object<Donor>({
     .required()
     .max(50),
   email: Joi.string()
-    .optional()
+    .required()
     .email(),
   address: addressSchema.required(),
 })

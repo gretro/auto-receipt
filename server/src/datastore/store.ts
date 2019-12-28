@@ -3,10 +3,21 @@ import { Firestore } from '@google-cloud/firestore'
 
 let firestore: Firestore
 
+function getConfiguration(): FirebaseFirestore.Settings | undefined {
+  const hasConfig = config.has('firestore')
+
+  if (!hasConfig) {
+    return undefined
+  }
+
+  const dbSettings = config.get<FirebaseFirestore.Settings | null>('firestore')
+  return dbSettings ?? undefined
+}
+
 export function getStore(): Firestore {
   if (!firestore) {
-    const dbSettings = config.get<FirebaseFirestore.Settings>('firestore')
-    firestore = new Firestore(dbSettings)
+    const config = getConfiguration()
+    firestore = new Firestore(config)
   }
 
   return firestore

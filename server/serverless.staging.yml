@@ -11,6 +11,7 @@ provider:
   labels:
     environment: ${self:provider.stage}
   environment:
+    API__APITOKEN: ${file(./.gcloud/secrets.yml):api.apiToken}
     NODE_ENV: staging
 
 plugins:
@@ -33,5 +34,10 @@ functions:
 
   createCheque:
     handler: createCheque
+    events:
+      - http: http
+
+  listDonations:
+    handler: listDonations
     events:
       - http: http

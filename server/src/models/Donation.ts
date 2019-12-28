@@ -1,13 +1,34 @@
-import { Donor } from './Donor'
-import { Payment } from './Payment'
+import * as Joi from '@hapi/joi'
+import { Donor, donorSchema } from './Donor'
+import { Payment, paymentSchema } from './Payment'
 
-// TODO: We may need an additional field to easily retrieve a Donation for recurring payments...
+export type DonationType = 'one-time' | 'recurrent'
+
 export interface Donation {
   id: string
+  externalId: string | null
   created: Date
   fiscalYear: number
-  type: 'one-time' | 'recurrent'
+  type: DonationType
   donor: Donor
   payments: Payment[]
   emailReceipt: boolean
 }
+
+export const donationTypeSchema = Joi.string().valid('one-time', 'recurrent')
+
+export const donationSchema = Joi.object<Donation>({
+  id: Joi.string().required(),
+  externalId: Joi.string()
+    .required()
+    .allow(null),
+  created: Joi.date().required(),
+  fiscalYear: Joi.number().required(),
+  type: donationTypeSchema.required(),
+  donor: donorSchema.required(),
+  payments: Joi.array()
+    .items(paymentSchema)
+    .min(1)
+    .required(),
+  emailReceipt: Joi.boolean().required(),
+})

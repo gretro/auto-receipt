@@ -1,9 +1,39 @@
 import { RequestHandler, Response, Request, NextFunction } from 'express'
 import { Schema } from '@hapi/joi'
+import * as config from 'config'
+import { ApiConfig } from '../models/ApiConfig'
+import { EntityNotFoundError } from '../errors/EntityNotFoundError'
+import { InvalidEntityError } from '../errors/InvalidEntityError'
 
 export type FunctionMiddleware = (
   requestHandler: RequestHandler<{}>
 ) => RequestHandler<{}>
+
+/**
+ * Validates the request is authorized.
+ *
+ * Note: Validating using an API Token is temporary. We should instead use OAuth / OIDC
+ */
+export const withApiToken = (): FunctionMiddleware => {
+  const apiConfig = config.get<ApiConfig>('api')
+
+  return (handler: RequestHandler<{}>): RequestHandler<{}> => {
+    return (
+      request: Request<{}>,
+      response: Response,
+      next: NextFunction
+    ): unknown => {
+      const reqToken = request.header('x-api-token')
+      if (reqToken === apiConfig.apiToken) {
+        return handler(request, response, next)
+      }
+
+      console.warn('Request unauthorized. Rejecting it')
+      response.status(401).send('Unauthorized')
+      return
+    }
+  }
+}
 
 /**
  * Higher order function accepting only allowed methods
@@ -59,6 +89,62 @@ export const validateBody = (schema: Schema): FunctionMiddleware => {
 
       return handler(request, response, next)
     }
+  }
+}
+
+export const handleErrors = (): FunctionMiddleware => {
+  return (handler: RequestHandler<{}>): RequestHandler<{}> => {
+    return async (request, response, next): Promise<void> => {
+      try {
+        await handler(request, response, next)
+      } catch (error) {
+        if (error instanceof EntityNotFoundError) {
+          sendError(response, 404, error, 'Not Found')
+          return
+        }
+        if (error instanceof InvalidEntityError) {
+          sendError(
+            response,
+            500,
+            {
+              message: error.message,
+              stack: error.stack,
+              validationResults: error.validationResults,
+            },
+            'Internal Server Error'
+          )
+          console.error(`Could not handle invalid entity`, error)
+          return
+        }
+
+        sendError(response, 500, error, 'Internal Server Error')
+        console.error('An unkown server error occurred', error)
+      }
+    }
+  }
+}
+
+function sendError(
+  response: Response,
+  statusCode: number,
+  descriptive: unknown,
+  restricted: unknown
+): void {
+  const apiConfig = config.get<ApiConfig>('api')
+  response.status(statusCode)
+
+  if (apiConfig.showError) {
+    let msg = descriptive
+    if (descriptive instanceof Error) {
+      msg = {
+        message: descriptive.message,
+        stack: descriptive.stack,
+      }
+    }
+
+    response.send(msg)
+  } else {
+    response.send(restricted)
   }
 }
 
