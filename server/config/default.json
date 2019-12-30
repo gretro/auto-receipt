@@ -1,0 +1,12 @@
+{
+  "firestore": {
+    "host": "localhost",
+    "port": 1865,
+    "projectId": "autoreceipt",
+    "ssl": false
+  },
+  "api": {
+    "apiToken": "VGhpcyBpcyBteSBBUEkgdG9rZW4uIElzIGl0IGF3ZXNvbWU=",
+    "showError": true
+  }
+}
