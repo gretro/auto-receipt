@@ -5,8 +5,6 @@ import { paypalIpn } from './functions/paypal-ipn'
 import { createCheque } from './functions/create-cheque-donation'
 import { listDonations } from './functions/donation-management'
 
-var my_name = 'gab2'
-
 const app = express()
 
 app.use(morgan('dev'))

@@ -17,3 +17,5 @@ export function getAppInfo(): AppInfo {
 
   return appInfo
 }
+
+var my_name = 'gab'
