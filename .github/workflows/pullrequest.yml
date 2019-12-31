@@ -1,0 +1,18 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Node 10.x
+      uses: actions/setup-node@v1.1.0
+      with:
+        version: 10.x
+      
+    - name: Build
+      run: npm run build:prod
