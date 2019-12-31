@@ -1,10 +1,13 @@
 {
   "folders": [
-	{
-		"path": "client"
-	},
-	{
-		"path": "server"
-	}
-]
+    {
+      "path": "client"
+    },
+    {
+      "path": "server"
+    },
+    {
+      "path": ".github\\workflows"
+    }
+  ]
 }
