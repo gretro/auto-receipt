@@ -15,8 +15,8 @@ jobs:
         version: 10.x
 
     - name: Install (server)
-      working-directory: server
+      working-directory: ./server
       run: npm install
     - name: Build (server)
-      working-directory: server
+      working-directory: ./server
       run: npm run build:prod
