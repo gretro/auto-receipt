@@ -4,6 +4,28 @@ import { Document } from '../models/Document'
 import { InvalidEntityError } from '../errors/InvalidEntityError'
 import { mapTimestampToDate } from '../utils/firestore'
 
+async function findDonationByExternalIdAndFiscalYear(
+  externalId: string,
+  fiscalYear: number
+): Promise<Donation | undefined> {
+  const db = getDonationsCollection()
+  const query = db
+    .where('value.externalId', '==', externalId)
+    .where('value.fiscalYear', '==', fiscalYear)
+
+  const results = await query.get()
+  if (results.empty) {
+    return undefined
+  }
+
+  if (results.docs.length > 1) {
+    console.warn(`Found more than one donation with externalId ${externalId}`)
+  }
+
+  const donation = results.docs[0].data() as Document<Donation>
+  return await extractDonationFromWrapper(donation)
+}
+
 async function getDonationsForFiscalYear(
   fiscalYear: number
 ): Promise<Donation[]> {
@@ -63,8 +85,30 @@ async function createDonation(donation: Donation): Promise<Donation> {
   return createdDonation
 }
 
+async function updateDonation(donation: Donation): Promise<Donation> {
+  const validationResult = donationSchema.validate(donation)
+  if (validationResult.error) {
+    throw new InvalidEntityError('Donation', validationResult)
+  }
+
+  const db = getDonationsCollection()
+  const docRef = db.doc(donation.id)
+
+  const wrappedDocument: Document<Donation> = {
+    version: 1,
+    value: donation,
+  }
+
+  await docRef.update(wrappedDocument)
+
+  const updatedDonation = (await getDonationById(donation.id)) as Donation
+  return updatedDonation
+}
+
 export const donationsRepository = {
   listDonations: getDonationsForFiscalYear,
   getDonationById,
+  findDonationByExternalIdAndFiscalYear,
   createDonation,
+  updateDonation,
 }

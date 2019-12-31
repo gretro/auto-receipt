@@ -5,7 +5,7 @@ export interface Donor {
   firstName: string
   lastName: string
   email: string | null
-  address: Address
+  address: Address | null
 }
 
 export const donorSchema = Joi.object<Donor>({
@@ -18,5 +18,5 @@ export const donorSchema = Joi.object<Donor>({
   email: Joi.string()
     .required()
     .email(),
-  address: addressSchema.required(),
+  address: addressSchema.required().allow(null),
 })

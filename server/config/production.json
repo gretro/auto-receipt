@@ -2,5 +2,10 @@
   "firestore": null,
   "api": {
     "showError": false
+  },
+  "paypal": {
+    "minFiscalYear": 2020,
+    "validateIpn": true,
+    "ipnUrl": "https://ipnpb.paypal.com/cgi-bin/webscr"
   }
 }

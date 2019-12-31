@@ -27,8 +27,8 @@ package:
     - package-lock.json
 
 functions:
-  paypalWebhook:
-    handler: paypalWebhook
+  paypalIpn:
+    handler: paypalIpn
     events:
       - http: http
 
