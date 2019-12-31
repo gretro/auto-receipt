@@ -2,17 +2,17 @@ service: auto-receipt
 
 provider:
   name: google
-  stage: staging
+  stage: production
   runtime: nodejs10
   region: us-east1
-  project: auto-receipt-263320
-  credentials: ./.gcloud/keyfile.staging.json
+  project: auto-receipt-prod
+  credentials: ./.gcloud/keyfile.production.json
   memorySize: 128
   labels:
     environment: ${self:provider.stage}
   environment:
-    API__APITOKEN: ${file(./.gcloud/secrets.staging.yml):api.apiToken}
-    NODE_ENV: staging
+    API__APITOKEN: ${file(./.gcloud/secrets.production.yml):api.apiToken}
+    NODE_ENV: production
 
 plugins:
   - serverless-google-cloudfunctions

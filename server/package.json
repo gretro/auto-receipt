@@ -15,6 +15,7 @@
     "serve:watch": "nodemon --inspect lib/index-local.js",
     "package:staging": "npm run build:prod && serverless package --config serverless.staging.yml",
     "deploy:staging": "npm run build:prod && serverless deploy --config serverless.staging.yml",
+    "deploy:production": "npm run build:prod && serverless deploy --config serverless.production.yml",
     "start": "npm run build && run-p build:watch serve:watch"
   },
   "author": {
