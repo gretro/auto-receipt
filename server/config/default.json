@@ -8,5 +8,9 @@
   "api": {
     "apiToken": "VGhpcyBpcyBteSBBUEkgdG9rZW4uIElzIGl0IGF3ZXNvbWU=",
     "showError": true
+  },
+  "paypal": {
+    "validateIpn": false,
+    "ipnUrl": "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr"
   }
 }

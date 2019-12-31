@@ -1,3 +1,7 @@
 {
-  "firestore": null
+  "firestore": null,
+  "paypal": {
+    "validateIpn": true,
+    "ipnUrl": "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr"
+  }
 }

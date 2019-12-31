@@ -23,39 +23,80 @@ async function createPayment(
 ): Promise<Donation> {
   switch (parameters.type) {
     case 'one-time':
-      return await handleOneTimeDonation(parameters)
+      return await createDonation(parameters)
+
+    case 'recurrent':
+      return await handleRecurringDonation(parameters)
 
     default:
       throw new Error(`Unhandled payment time ${parameters.type}`)
   }
 }
 
-async function handleOneTimeDonation(
+async function createDonation(
   parameters: CreatePaymentParams
 ): Promise<Donation> {
   const donationId = createUuid()
 
-  // We may want to account for timezone...
-  const now = new Date()
-
-  const newDonation = mapToDonation(donationId, now, parameters)
+  const newDonation = mapToDonation(donationId, parameters)
   const entity = await donationsRepository.createDonation(newDonation)
 
   return entity
 }
 
+async function handleRecurringDonation(
+  parameters: CreatePaymentParams
+): Promise<Donation> {
+  const externalId = parameters.externalId || ''
+  const paymentDate = getPaymentDate(parameters.paymentDate)
+
+  const donation = await donationsRepository.findDonationByExternalIdAndFiscalYear(
+    externalId,
+    paymentDate.getFullYear()
+  )
+
+  if (donation) {
+    return await addPaymentToDonation(donation, parameters)
+  } else {
+    return await createDonation(parameters)
+  }
+}
+
+async function addPaymentToDonation(
+  donation: Donation,
+  parameters: CreatePaymentParams
+): Promise<Donation> {
+  donation.donor = parameters.donor
+
+  const newPayment = mapToPayment(parameters)
+  donation.payments.push(newPayment)
+
+  const updatedDonation = await donationsRepository.updateDonation(donation)
+  return updatedDonation
+}
+
+function getPaymentDate(toParse: string): Date {
+  const paymentDate = new Date(toParse)
+  if (isNaN(paymentDate.getTime())) {
+    throw new Error(`Invalid payment date: ${toParse}`)
+  }
+
+  return paymentDate
+}
+
 function mapToDonation(
   donationId: string,
-  now: Date,
   parameters: CreatePaymentParams
 ): Donation {
+  const paymentDate = getPaymentDate(parameters.paymentDate)
+
   const donation: Donation = {
     id: donationId,
     externalId: parameters.externalId || null,
-    created: now,
+    created: paymentDate,
     donor: parameters.donor,
     emailReceipt: parameters.emailReceipt,
-    fiscalYear: now.getFullYear(),
+    fiscalYear: paymentDate.getFullYear(),
     type: parameters.type,
     payments: [mapToPayment(parameters)],
   }
@@ -68,7 +109,7 @@ function mapToPayment(parameters: CreatePaymentParams): Payment {
     amount: parameters.amount,
     receiptAmount: parameters.receiptAmount,
     currency: parameters.currency,
-    date: new Date(parameters.paymentDate),
+    date: getPaymentDate(parameters.paymentDate),
     source: parameters.source,
     sourceDetails: null,
   }

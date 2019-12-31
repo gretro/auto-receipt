@@ -1,15 +1,17 @@
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
 import * as morgan from 'morgan'
-import { paypalWebhook } from './functions/paypal'
+import { paypalIpn } from './functions/paypal-ipn'
 import { createCheque } from './functions/create-cheque-donation'
 import { listDonations } from './functions/donation-management'
 
 const app = express()
+
 app.use(morgan('dev'))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-app.all('/paypalWebhook', paypalWebhook)
+app.all('/paypalIpn', paypalIpn)
 app.all('/createCheque', createCheque)
 app.all('/listDonations', listDonations)
 
