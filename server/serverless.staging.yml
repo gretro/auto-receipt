@@ -13,6 +13,7 @@ provider:
   environment:
     API__APITOKEN: ${file(./.gcloud/secrets.staging.yml):api.apiToken}
     NODE_ENV: staging
+    FUNCTION_REGION: ${self:provider.region}
 
 plugins:
   - serverless-google-cloudfunctions

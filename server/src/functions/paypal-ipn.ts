@@ -11,6 +11,8 @@ import {
 } from '../services/payment-service'
 import { Address } from '../models/Address'
 import { DonationType } from '../models/Donation'
+import { PayPalIpnVerificationError } from '../errors/PayPalIPNVerificationError'
+import { logger } from '../utils/logging'
 
 const paypalConfig = config.get<PayPalConfig>('paypal')
 
@@ -23,7 +25,7 @@ const paypalConfig = config.get<PayPalConfig>('paypal')
  */
 async function isValid(ipnData: PayPalIpn): Promise<boolean> {
   if (!paypalConfig.validateIpn) {
-    console.warn('PAYPAL IPN NOT VALIDATED')
+    logger.warn('PAYPAL IPN NOT VALIDATED')
     return true
   }
 
@@ -64,20 +66,14 @@ export const paypalIpn = pipeMiddlewares(
     const ipnData = request.body as PayPalIpn
 
     if (ipnData.charset.toLowerCase() !== 'utf-8') {
-      console.warn(
+      logger.warn(
         `Received IPN notification in ${ipnData.charset} encoding. Make sure you change this to UTF-8. Otherwise, this could cause issues (http://jlchereau.blogspot.com/2006/10/paypal-ipn-with-utf8.html)`
       )
     }
 
     const valid = await isValid(ipnData)
     if (!valid) {
-      console.error('IPN verification failed', ipnData)
-      response
-        .status(400)
-        .send()
-        .end()
-
-      return
+      throw new PayPalIpnVerificationError(ipnData)
     }
 
     if (shouldProcessPayment(ipnData)) {
@@ -85,12 +81,12 @@ export const paypalIpn = pipeMiddlewares(
       if (handler) {
         await handler(ipnData)
       } else {
-        console.log(
+        logger.info(
           `Received transaction of type ${ipnData.txn_type} and did not have an action to take`
         )
       }
     } else {
-      console.log('Payment was ignored')
+      logger.info('Payment was ignored')
     }
 
     response
@@ -107,7 +103,7 @@ function shouldProcessPayment(ipnData: PayPalIpn): boolean {
 
   const paymentFiscalYear = new Date(ipnData.payment_date || '').getFullYear()
   if (isNaN(paymentFiscalYear)) {
-    console.error(
+    logger.error(
       `Unable to extract fiscal year from PayPal payment information`,
       ipnData.payment_date
     )

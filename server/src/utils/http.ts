@@ -4,6 +4,8 @@ import * as config from 'config'
 import { ApiConfig } from '../models/ApiConfig'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
 import { InvalidEntityError } from '../errors/InvalidEntityError'
+import { PayPalIpnVerificationError } from '../errors/PayPalIPNVerificationError'
+import { logger } from './logging'
 
 export type FunctionMiddleware = (
   requestHandler: RequestHandler<{}>
@@ -28,7 +30,10 @@ export const withApiToken = (): FunctionMiddleware => {
         return handler(request, response, next)
       }
 
-      console.warn('Request unauthorized. Rejecting it')
+      logger.warn('Request unauthorized. Rejecting it', {
+        ip: request.ip,
+        emptyAuth: !reqToken,
+      })
       response.status(401).send('Unauthorized')
       return
     }
@@ -51,7 +56,7 @@ export const allowMethods = (
     ): unknown => {
       const methods = allowedMethods.map(method => method.toUpperCase())
       if (!methods.includes(request.method.toUpperCase())) {
-        console.warn(
+        logger.warn(
           `Received request using verb ${request.method}, but this is not accepted for the current function`
         )
 
@@ -82,7 +87,7 @@ export const validateBody = (schema: Schema): FunctionMiddleware => {
       })
 
       if (validationResult.error) {
-        console.log('A validation error occurred', validationResult)
+        logger.info('A validation error occurred', validationResult)
         response.status(400).send(validationResult.error)
         return
       }
@@ -102,6 +107,11 @@ export const handleErrors = (): FunctionMiddleware => {
           sendError(response, 404, error, 'Not Found')
           return
         }
+        if (error instanceof PayPalIpnVerificationError) {
+          logger.error(error)
+          sendError(response, 400, '', '')
+          return
+        }
         if (error instanceof InvalidEntityError) {
           sendError(
             response,
@@ -113,12 +123,12 @@ export const handleErrors = (): FunctionMiddleware => {
             },
             'Internal Server Error'
           )
-          console.error(`Could not handle invalid entity`, error)
+          logger.error(`Could not handle invalid entity`, error)
           return
         }
 
         sendError(response, 500, error, 'Internal Server Error')
-        console.error('An unkown server error occurred', error)
+        logger.error('An unkown server error occurred', error)
       }
     }
   }

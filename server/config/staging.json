@@ -1,4 +1,8 @@
 {
+  "logging": {
+    "console": false,
+    "gcloud": true
+  },
   "firestore": null,
   "paypal": {
     "validateIpn": true,
