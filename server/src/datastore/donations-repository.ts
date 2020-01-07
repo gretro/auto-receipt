@@ -1,6 +1,6 @@
 import { getDonationsCollection } from './store'
+import { Document } from './models'
 import { Donation, donationSchema } from '../models/Donation'
-import { Document } from '../models/Document'
 import { InvalidEntityError } from '../errors/InvalidEntityError'
 import { mapTimestampToDate } from '../utils/firestore'
 

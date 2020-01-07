@@ -1,9 +1,9 @@
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
 import * as morgan from 'morgan'
-import { paypalIpn } from './functions/paypal-ipn'
-import { createCheque } from './functions/create-cheque-donation'
-import { listDonations } from './functions/donation-management'
+import { paypalIpn } from './functions/http/paypal-ipn'
+import { createCheque } from './functions/http/create-cheque-donation'
+import { listDonations } from './functions/http/donation-management'
 
 const app = express()
 

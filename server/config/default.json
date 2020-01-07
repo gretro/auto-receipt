@@ -5,6 +5,19 @@
     "projectId": "autoreceipt",
     "ssl": false
   },
+  "pubsub": {
+    "client": {},
+    "topics": {
+      "test": "test-topic"
+    },
+    "subscriptions": {
+      "test": {
+        "topic": "test-topic",
+        "name": "test-sub",
+        "retryOnFail": false
+      }
+    }
+  },
   "api": {
     "apiToken": "VGhpcyBpcyBteSBBUEkgdG9rZW4uIElzIGl0IGF3ZXNvbWU=",
     "showError": true

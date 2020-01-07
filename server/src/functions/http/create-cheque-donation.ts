@@ -1,4 +1,3 @@
-import { Donor, donorSchema } from '../models/Donor'
 import * as Joi from '@hapi/joi'
 import { RequestHandler, Request, Response } from 'express'
 import {
@@ -6,10 +5,11 @@ import {
   allowMethods,
   validateBody,
   withApiToken,
-} from '../utils/http'
-import { paymentService } from '../services/payment-service'
-import { DonationType, donationTypeSchema } from '../models/Donation'
-import { handleErrors } from '../utils/http'
+} from '../../utils/http'
+import { paymentService } from '../../services/payment-service'
+import { DonationType, donationTypeSchema } from '../../models/Donation'
+import { Donor, donorSchema } from '../../models/Donor'
+import { handleErrors } from '../../utils/http'
 
 interface CreateChequeViewModel {
   donationType: DonationType

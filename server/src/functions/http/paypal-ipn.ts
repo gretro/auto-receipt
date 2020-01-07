@@ -2,15 +2,15 @@ import { Request, Response } from 'express'
 import PayPalIpn from 'paypal-ipn-types'
 import * as rp from 'request-promise'
 import * as config from 'config'
-import { pipeMiddlewares, allowMethods, handleErrors } from '../utils/http'
-import { PayPalConfig } from '../models/PayPalConfig'
-import { getAppInfo } from '../utils/app'
+import { pipeMiddlewares, allowMethods, handleErrors } from '../../utils/http'
+import { PayPalConfig } from '../../models/PayPalConfig'
+import { getAppInfo } from '../../utils/app'
 import {
   CreatePaymentParams,
   paymentService,
-} from '../services/payment-service'
-import { Address } from '../models/Address'
-import { DonationType } from '../models/Donation'
+} from '../../services/payment-service'
+import { Address } from '../../models/Address'
+import { DonationType } from '../../models/Donation'
 
 const paypalConfig = config.get<PayPalConfig>('paypal')
 
