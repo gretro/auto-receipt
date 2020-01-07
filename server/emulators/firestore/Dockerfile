@@ -1,7 +1,7 @@
-FROM google/cloud-sdk:273.0.0-alpine
+FROM google/cloud-sdk:274.0.1-alpine
 
 RUN apk add openjdk8-jre && \
-    gcloud components install beta cloud-firestore-emulator
+  gcloud components install beta cloud-firestore-emulator
 
 EXPOSE 8080
 
