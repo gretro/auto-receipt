@@ -11,7 +11,7 @@ import {
 } from '../services/payment-service'
 import { Address } from '../models/Address'
 import { DonationType } from '../models/Donation'
-import { PayPalIpnVerificationError } from '../errors/PayPalIPNVerificationError'
+import { PayPalIpnVerificationError } from '../errors/PayPalIpnVerificationError'
 import { logger } from '../utils/logging'
 
 const paypalConfig = config.get<PayPalConfig>('paypal')

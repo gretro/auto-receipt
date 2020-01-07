@@ -4,7 +4,7 @@ import * as config from 'config'
 import { ApiConfig } from '../models/ApiConfig'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
 import { InvalidEntityError } from '../errors/InvalidEntityError'
-import { PayPalIpnVerificationError } from '../errors/PayPalIPNVerificationError'
+import { PayPalIpnVerificationError } from '../errors/PayPalIpnVerificationError'
 import { logger } from './logging'
 
 export type FunctionMiddleware = (
