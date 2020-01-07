@@ -13,5 +13,6 @@ module.exports = {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
     '@typescript-eslint/no-explicit-any': 'off',
+    'no-console': ['error'],
   },
 }

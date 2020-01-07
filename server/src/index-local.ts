@@ -4,6 +4,7 @@ import * as morgan from 'morgan'
 import { paypalIpn } from './functions/paypal-ipn'
 import { createCheque } from './functions/create-cheque-donation'
 import { listDonations } from './functions/donation-management'
+import { logger } from './utils/logging'
 
 const app = express()
 
@@ -16,5 +17,5 @@ app.all('/createCheque', createCheque)
 app.all('/listDonations', listDonations)
 
 app.listen(3000, () => {
-  console.log('Listening on port 3000')
+  logger.info('Listening on port 3000')
 })

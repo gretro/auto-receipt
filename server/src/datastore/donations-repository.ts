@@ -3,6 +3,7 @@ import { Donation, donationSchema } from '../models/Donation'
 import { Document } from '../models/Document'
 import { InvalidEntityError } from '../errors/InvalidEntityError'
 import { mapTimestampToDate } from '../utils/firestore'
+import { logger } from '../utils/logging'
 
 async function findDonationByExternalIdAndFiscalYear(
   externalId: string,
@@ -19,7 +20,7 @@ async function findDonationByExternalIdAndFiscalYear(
   }
 
   if (results.docs.length > 1) {
-    console.warn(`Found more than one donation with externalId ${externalId}`)
+    logger.warn(`Found more than one donation with externalId ${externalId}`)
   }
 
   const donation = results.docs[0].data() as Document<Donation>
