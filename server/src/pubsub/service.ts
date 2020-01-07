@@ -12,6 +12,7 @@ import { TopicNotFoundError } from '../errors/TopicNotFoundError'
 import { AppSubNotFoundError } from '../errors/AppSubNotFoundError'
 import { InvalidConfigurationError } from '../errors/InvalidConfigurationError'
 import { writeMessageAsJson } from '../utils/pubsub'
+import { logger } from '../utils/logging'
 
 export interface PubSubTopics {
   test: string
@@ -152,7 +153,7 @@ export async function subscribe(
             }
           })
           .catch(err => {
-            console.error(
+            logger.error(
               `Error executing subscription [${subName}] handler`,
               err
             )

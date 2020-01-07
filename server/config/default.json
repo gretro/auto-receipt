@@ -1,4 +1,9 @@
 {
+  "logging": {
+    "logLevel": "info",
+    "console": true,
+    "gcloud": false
+  },
   "firestore": {
     "host": "localhost",
     "port": 1865,
@@ -23,7 +28,7 @@
     "showError": true
   },
   "paypal": {
-    "validateIpn": false,
+    "validateIpn": true,
     "ipnUrl": "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr"
   }
 }
