@@ -4,6 +4,10 @@
     "gcloud": true
   },
   "firestore": null,
+  "pubsub": {
+    "client": null,
+    "subscriptions": {}
+  },
   "api": {
     "showError": false
   },

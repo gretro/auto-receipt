@@ -1,7 +1,6 @@
 import { PubSub, Topic, Message } from '@google-cloud/pubsub'
 import { ClientConfig } from '@google-cloud/pubsub/build/src/pubsub'
 import * as config from 'config'
-import * as uuid from 'uuid/v4'
 import { PubSubSubscription } from './models'
 import {
   PubSubHandler,
@@ -15,23 +14,21 @@ import { writeMessageAsJson } from '../utils/pubsub'
 import { logger } from '../utils/logging'
 
 export interface PubSubTopics {
-  test: string
+  pdf: string
 }
 
 interface AppSubscriptions {
-  test: PubSubSubscription
+  pdf: PubSubSubscription | null
 }
 
 export type AppSubHandlers = {
-  [K in keyof AppSubscriptions]: PubSubHandler | undefined
+  [K in keyof AppSubscriptions]?: PubSubHandler
 }
 
 let pubsubClient: PubSub
 let topics: PubSubTopics
 let appSubs: AppSubscriptions
 let subscribed = false
-
-const clientId = uuid().substr(0, 8)
 
 function getClient(): PubSub {
   if (!pubsubClient) {
@@ -88,7 +85,7 @@ async function getTopicByName(topicName: string): Promise<Topic> {
   const client = getClient()
   const topic = client.topic(topicName)
 
-  const topicExists = await topic.exists()
+  const [topicExists] = await topic.exists()
   if (!topicExists) {
     await topic.create()
   }
@@ -120,13 +117,14 @@ export async function subscribe(
     .map(async handlerkey => {
       const appSubInfo = getAppSub(handlerkey as any)
       const topic = await getTopicByName(appSubInfo.topic)
-      const subName = `${appSubInfo.name}-${clientId}`
 
       const handler = (handlers as Record<string, PubSubHandler>)[handlerkey]
 
-      const [subscription] = await topic.createSubscription(subName, {
-        flowControl: { maxMessages: 5 },
-      })
+      const subscription = topic.subscription(appSubInfo.name)
+      const [subExists] = await subscription.exists()
+      if (!subExists) {
+        await subscription.create({ flowControl: { maxMessages: 5 } })
+      }
 
       subscription.on('message', (message: Message) => {
         const ctx: PubSubContext = {
@@ -154,7 +152,7 @@ export async function subscribe(
           })
           .catch(err => {
             logger.error(
-              `Error executing subscription [${subName}] handler`,
+              `Error executing subscription [${appSubInfo.name}] handler`,
               err
             )
 

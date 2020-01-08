@@ -4,6 +4,10 @@
     "gcloud": true
   },
   "firestore": null,
+  "pubsub": {
+    "client": null,
+    "subscriptions": {}
+  },
   "paypal": {
     "validateIpn": true,
     "ipnUrl": "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr"

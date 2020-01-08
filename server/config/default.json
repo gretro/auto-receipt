@@ -11,14 +11,16 @@
     "ssl": false
   },
   "pubsub": {
-    "client": {},
+    "client": {
+      "apiEndpoint": "http://localhost:1866"
+    },
     "topics": {
-      "test": "test-topic"
+      "pdf": "pdf-generation"
     },
     "subscriptions": {
-      "test": {
-        "topic": "test-topic",
-        "name": "test-sub",
+      "pdf": {
+        "topic": "pdf-generation",
+        "name": "pdf-gen",
         "retryOnFail": false
       }
     }
