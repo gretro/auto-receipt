@@ -63,7 +63,11 @@ async function extractDonationFromWrapper(
 ): Promise<Donation> {
   // Any version upgrade should occur here
 
-  return mapTimestampToDate(wrapper.value)
+  const donation = mapTimestampToDate(wrapper.value)
+  donation.correspondences = donation.correspondences || []
+  donation.documents = donation.documents || []
+
+  return donation
 }
 
 async function createDonation(donation: Donation): Promise<Donation> {

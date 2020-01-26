@@ -10,6 +10,8 @@ import { paymentService } from '../../services/payment-service'
 import { DonationType, donationTypeSchema } from '../../models/Donation'
 import { Donor, donorSchema } from '../../models/Donor'
 import { handleErrors } from '../../utils/http'
+import { publishMessage } from '../../pubsub/service'
+import { GeneratePdfCommand } from '../pubsub/pdf-receipt'
 
 interface CreateChequeViewModel {
   donationType: DonationType
@@ -69,6 +71,12 @@ export const createCheque: RequestHandler<{}> = pipeMiddlewares(
       paymentDate: body.paymentDate,
     })
 
-    res.status(200).send(donation)
+    const generatePdfCommand: GeneratePdfCommand = {
+      donationId: donation.id,
+      queueEmailTransmission: body.emailReceipt,
+    }
+    await publishMessage(generatePdfCommand, 'pdf')
+
+    res.status(201).send(donation)
   }
 )

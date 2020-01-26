@@ -14,5 +14,6 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
     '@typescript-eslint/no-explicit-any': 'off',
     'no-console': ['error'],
+    '@typescript-eslint/no-non-null-assertion': 'off',
   },
 }

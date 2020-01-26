@@ -32,5 +32,19 @@
   "paypal": {
     "validateIpn": true,
     "ipnUrl": "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr"
+  },
+  "locales": [
+    { "locale": "fr-CA", "test": "janvier" },
+    { "locale": "en-CA", "test": "january" }
+  ],
+  "providers": {
+    "file": {
+      "provider": "file-system",
+      "fs": {
+        "translationsPath": "./translations",
+        "templatePath": "./templates",
+        "documentPath": "./temp"
+      }
+    }
   }
 }

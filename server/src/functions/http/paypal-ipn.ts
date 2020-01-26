@@ -64,6 +64,7 @@ export const paypalIpn = pipeMiddlewares(
 )(
   async (request: Request<{}>, response: Response): Promise<void> => {
     const ipnData = request.body as PayPalIpn
+    logger.info('Received PayPal IPN notification')
 
     if (ipnData.charset.toLowerCase() !== 'utf-8') {
       logger.warn(
@@ -77,6 +78,8 @@ export const paypalIpn = pipeMiddlewares(
     }
 
     if (shouldProcessPayment(ipnData)) {
+      logger.info('Payment will be processed')
+
       const handler = messageHandlers[ipnData.txn_type]
       if (handler) {
         await handler(ipnData)

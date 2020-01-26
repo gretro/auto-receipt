@@ -205,3 +205,6 @@ lib/
 
 # Serverless
 .gcloud/**
+
+# Temp files
+temp/

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Receipt / Reçu</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" />
+    <style>
+      html {
+        --primary-color: #c60000;
+        --text-color: #444;
+        --title-text-color: #222;
+        font-size: 62.5%;
+        font-family: "Open Sans";
+      }
+
+      body {
+        font-size: 1.4rem;
+        color: var(--text-color);
+      }
+
+      h1 {
+        margin: 0;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      p+p {
+        margin-top: 5px;
+      }
+
+      .align-center {
+        text-align: center;
+      }
+
+      .align-right {
+        text-align: right;
+      }
+
+      .strong {
+        font-weight: bold;
+      }
+
+      .small {
+        font-size: 1.2rem;
+      }
+
+      .special {
+        font-style: italic;
+      }
+
+      .block {
+        display: block;
+      }
+
+      .v-info>*:not(:first-child) {
+        margin-top: 10px;
+      }
+
+      a.silent {
+        color: var(--text-color);
+        text-decoration: none;
+      }
+
+      @media print {
+        .page-break:not(:last-of-type) {
+          break-before: page;
+        }
+      }
+
+      .receipt {
+        border: 2px solid var(--primary-color);
+        margin: 10px 0;
+      }
+
+      .receipt+.receipt {
+        margin-top: 15px;
+      }
+
+      .receipt-header {
+        display: grid;
+        grid-template-columns: 2fr 3fr 2fr;
+        gap: 10px;
+        padding: 5px;
+      }
+
+      .logo {
+        height: 68px;
+        display: block;
+      }
+
+      .org-info p:first-of-type {
+        margin-top: 0;
+      }
+
+      .table-info {
+        display: grid;
+        grid-auto-flow: column;
+        border: 2px solid var(--primary-color);
+        border-left: none;
+        border-right: none;
+      }
+
+      .cell {
+        padding: 5px;
+      }
+
+      .cell:not(:first-of-type) {
+        border-left: 2px solid var(--primary-color);
+      }
+
+      .info .title {
+        font-weight: bold;
+      }
+
+      .donation-info {
+        display: grid;
+        grid-template:
+          "donor info1 info2 signature"
+          "donor info3 info3 signature";
+        gap: 10px;
+        margin: 10px 0;
+        padding: 0 5px;
+      }
+
+      .donor-area {
+        grid-area: donor;
+      }
+
+      .info1-area {
+        grid-area: info1;
+      }
+
+      .info2-area {
+        grid-area: info2;
+      }
+
+      .info3-area {
+        grid-area: info3;
+      }
+
+      .signature-area {
+        align-self: end;
+        grid-area: signature;
+      }
+
+      .receipt-footer {
+        border-top: 2px solid var(--primary-color);
+        display: grid;
+        grid-auto-flow: column;
+        padding: 5px;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <header class="align-right small special">(English follows)</header>
+
+    {{#each cultures}}
+      {{#each ../receipts}}
+        <section class="receipt">
+          <header class="receipt-header">
+            <div>
+              <a href="{{translate "org_url" ../this}}">
+                <img class="logo" alt="{{translate "org_name" ../this}}" src="{{translate "logo_url" ../this}}" />
+              </a>
+            </div>
+            <div class="receipt-info align-center">
+              <div class="strong">{{translate "receipt_title" ../this}}&nbsp;-&nbsp;{{../../fiscalYear}}</div>
+              <div class="small special">{{translate this ../this}}</div>
+            </div>
+            <div class="org-info align-right small">
+              <p>
+                55 place de la Bienfaisance, Montréal,<br />
+                H7J 1Z1, QC, Canada
+              </p>
+              <p>
+                <a class="silent small block" href="{{translate "org_url" ../this}}">{{translate "org_url" ../this}}</a>
+                <a class="silent block" href="mailto:info@my-org.org">info@my-org.org</a>
+                <a class="silent block" href="tel:+15147771177">+1 (514) 777 1177</a>
+              </p>
+            </div>
+          </header>
+
+          <main>
+            <div class="table-info">
+              <div class="cell info">
+                <div class="title">{{translate "receipt_number" ../this}}</div>
+                {{../../receiptNumber}}
+              </div>
+
+              <div class="cell info">
+                <div class="title">{{translate "receipt_date" ../this}}</div>
+                {{date ../../receiptDate ../this}}
+              </div>
+
+              <div class="cell info">
+                <div class="title">{{translate "donation_date" ../this}}</div>
+                {{date ../../donationDate ../this}}
+              </div>
+            </div>
+
+            <div class="donation-info">
+              <div class="info donor-area">
+                <div class="title">{{translate "donor" ../this}}</div>
+                <p>
+                  {{../../donor.firstName}} {{../../donor.lastName}}<br />
+                  {{#if ../../donor.address}}
+                    {{../../donor.address.line1}}<br />
+                    {{#if ../../donor.address.line2}}
+                      {{../../donor.address.line2}}<br />
+                    {{/if}}
+                    {{../../donor.address.city}}, {{../../donor.address.state}}<br />
+                    {{../../donor.address.postalCode}}, {{../../donor.address.country}}
+                  {{/if}}
+                </p>
+              </div>
+
+              <div class="info info1-area">
+                <div class="title">{{translate "donation_amount" ../this}}</div>
+                {{currency ../../donationAmount ../this ../../donationCurrency}}
+              </div>
+              <div class="info info2-area">
+                <div class="title">{{translate "receipt_amount" ../this}}</div>
+                {{currency ../../receiptAmount ../this ../../donationCurrency}}
+              </div>
+              <div class="info info3-area">
+                <div class="title">{{translate "event_or_reason" ../this}}</div>
+                {{#if ../../isReasonDefined}}
+                  {{../../reason}}
+                {{else}}
+                  {{translate "default_reason" ../this}}&nbsp;-&nbsp;{{../../fiscalYear}}
+                {{/if}}
+              </div>
+
+              <div class="signature-area align-right">
+                <div class="small">{{translate "president_title" ../this}}</div>
+                <div class="strong small">{{translate "thank_you" ../this}}</div>
+              </div>
+            </div>
+          </main>
+
+          <footer class="receipt-footer small">
+            <div class="info">
+              <div class="title">{{translate "cra_website" ../this}}</div>
+              <a href="{{translate "cra_url" ../this}}" class="silent">{{translate "cra_url" ../this}}</a>
+            </div>
+
+            <div class="info align-right">
+              <div class="title">{{translate "registration_number" ../this}}</div>
+              80555 7743 RU0001
+            </div>
+          </footer>
+        </section>
+      {{/each}}
+
+      <div class="page-break"></div>
+    {{/each}}
+  </body>
+
+</html>

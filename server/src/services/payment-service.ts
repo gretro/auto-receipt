@@ -4,6 +4,7 @@ import { Donor } from '../models/Donor'
 import { Payment, PaymentSource } from '../models/Payment'
 import { PaypalPaymentSource } from '../models/PaypalPaymentSource'
 import { donationsRepository } from '../datastore/donations-repository'
+import { logger } from '../utils/logging'
 
 export interface CreatePaymentParams {
   externalId?: string
@@ -23,9 +24,11 @@ async function createPayment(
 ): Promise<Donation> {
   switch (parameters.type) {
     case 'one-time':
+      logger.info('Creating one-time donation')
       return await createDonation(parameters)
 
     case 'recurrent':
+      logger.info('Handling recurring donation')
       return await handleRecurringDonation(parameters)
 
     default:
@@ -40,6 +43,7 @@ async function createDonation(
 
   const newDonation = mapToDonation(donationId, parameters)
   const entity = await donationsRepository.createDonation(newDonation)
+  logger.info('Donation was created successfully', { donationId: entity.id })
 
   return entity
 }
@@ -56,9 +60,29 @@ async function handleRecurringDonation(
   )
 
   if (donation) {
-    return await addPaymentToDonation(donation, parameters)
+    logger.info(
+      'Recurring donation already existed. Adding payment to the existing donation',
+      { donationId: donation.id }
+    )
+    const updatedDonation = await addPaymentToDonation(donation, parameters)
+
+    logger.info('Recurring donation updated', {
+      donationId: updatedDonation.id,
+    })
+
+    return updatedDonation
   } else {
-    return await createDonation(parameters)
+    logger.info(
+      'Could not find any recurring donation for payment. Creating a new donation'
+    )
+
+    const createdDonation = await createDonation(parameters)
+
+    logger.info('Recurring donation created', {
+      donationId: createdDonation.id,
+    })
+
+    return createdDonation
   }
 }
 
@@ -99,6 +123,8 @@ function mapToDonation(
     fiscalYear: paymentDate.getFullYear(),
     type: parameters.type,
     payments: [mapToPayment(parameters)],
+    correspondences: [],
+    documents: [],
   }
 
   return donation

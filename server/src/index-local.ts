@@ -1,12 +1,14 @@
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
 import * as morgan from 'morgan'
+
 import { paypalIpn } from './functions/http/paypal-ipn'
 import { createCheque } from './functions/http/create-cheque-donation'
 import { listDonations } from './functions/http/donation-management'
 import { logger } from './utils/logging'
-import { subscribe, publishMessage } from './pubsub/service'
-import { pdf, GeneratePdfCommand } from './functions/pubsub/pdf'
+import { subscribe } from './pubsub/service'
+import { pdf } from './functions/pubsub/pdf-receipt'
+import { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
 
 const app = express()
 
@@ -17,6 +19,7 @@ app.use(bodyParser.json())
 app.all('/paypalIpn', paypalIpn)
 app.all('/createCheque', createCheque)
 app.all('/listDonations', listDonations)
+app.all('/generatePdfReceipt', generatePdfReceipt)
 
 async function main(): Promise<void> {
   app.listen(3000, () => {
@@ -26,16 +29,6 @@ async function main(): Promise<void> {
   await subscribe({
     pdf,
   })
-
-  // TODO: Remove
-  let i = 1
-  setInterval(() => {
-    const command: GeneratePdfCommand = {
-      message: `Hello! This is message #${i++}`,
-    }
-
-    publishMessage(command, 'pdf')
-  }, 2000)
 }
 
 main().catch(err => {

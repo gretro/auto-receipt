@@ -1,6 +1,8 @@
 import * as Joi from '@hapi/joi'
 import { Donor, donorSchema } from './Donor'
 import { Payment, paymentSchema } from './Payment'
+import { DocumentMetadata, documentMetadataSchema } from './DocumentMetadata'
+import { Correspondence, correspondenceSchema } from './Correspondence'
 
 export type DonationType = 'one-time' | 'recurrent'
 
@@ -13,6 +15,8 @@ export interface Donation {
   donor: Donor
   payments: Payment[]
   emailReceipt: boolean
+  documents: DocumentMetadata[]
+  correspondences: Correspondence[]
 }
 
 export const donationTypeSchema = Joi.string().valid('one-time', 'recurrent')
@@ -31,4 +35,12 @@ export const donationSchema = Joi.object<Donation>({
     .min(1)
     .required(),
   emailReceipt: Joi.boolean().required(),
+  documents: Joi.array()
+    .required()
+    .min(0)
+    .items(documentMetadataSchema),
+  correspondences: Joi.array()
+    .required()
+    .min(0)
+    .items(correspondenceSchema),
 })
