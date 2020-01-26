@@ -15,5 +15,18 @@
     "minFiscalYear": 2020,
     "validateIpn": true,
     "ipnUrl": "https://ipnpb.paypal.com/cgi-bin/webscr"
+  },
+  "providers": {
+    "file": {
+      "provider": "gcloud-storage",
+      "gcloud": {
+        "keyPath": null,
+        "projectId": null,
+        "translationsBucket": "auto-receipt-prod-refs",
+        "templatesBucket": "auto-receipt-prod-refs",
+        "documentsBucket": "auto-receipt-prod-documents",
+        "createBuckets": false
+      }
+    }
   }
 }

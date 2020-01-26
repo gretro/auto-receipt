@@ -39,19 +39,11 @@
   ],
   "providers": {
     "file": {
-      "provider": "gcloud-storage",
+      "provider": "file-system",
       "fs": {
         "translationsPath": "./translations",
         "templatePath": "./templates",
         "documentPath": "./temp"
-      },
-      "gcloud": {
-        "keyPath": ".gcloud/storage-keyfile.json",
-        "projectId": "auto-receipt-263320",
-        "translationsBucket": "auto-receipt-263320-dev-refs",
-        "templatesBucket": "auto-receipt-263320-dev-refs",
-        "documentsBucket": "auto-receipt-263320-dev-docs",
-        "createBuckets": false
       }
     }
   }

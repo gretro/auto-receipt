@@ -27,18 +27,4 @@ package:
     - package.json
     - package-lock.json
 
-functions:
-  paypalIpn:
-    handler: paypalIpn
-    events:
-      - http: http
-
-  createCheque:
-    handler: createCheque
-    events:
-      - http: http
-
-  listDonations:
-    handler: listDonations
-    events:
-      - http: http
+functions: ${file(./serverless/functions.yml):functions}

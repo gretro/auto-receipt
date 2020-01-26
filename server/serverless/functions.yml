@@ -1,0 +1,31 @@
+functions:
+  paypalIpn:
+    handler: paypalIpn
+    events:
+      - http: http
+
+  createCheque:
+    handler: createCheque
+    events:
+      - http: http
+
+  listDonations:
+    handler: listDonations
+    events:
+      - http: http
+
+  generatePdfReceipt:
+    handler: generatePdfReceipt
+    events:
+      - http: http
+
+  pdf:
+    handler: pdf
+    memorySize: 1024
+    environment:
+      NODE_ICU_DATA: 'node_modules/full-icu'
+    timeout: 120s
+    events:
+      - event:
+          eventType: providers/cloud.pubsub/eventTypes/topic.publish
+          resource: 'projects/${self:provider.project, ""}/topics/pdf-generation'

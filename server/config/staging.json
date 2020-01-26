@@ -11,5 +11,18 @@
   "paypal": {
     "validateIpn": true,
     "ipnUrl": "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr"
+  },
+  "providers": {
+    "file": {
+      "provider": "gcloud-storage",
+      "gcloud": {
+        "keyPath": null,
+        "projectId": null,
+        "translationsBucket": "auto-receipt-stg-refs",
+        "templatesBucket": "auto-receipt-stg-refs",
+        "documentsBucket": "auto-receipt-stg-documents",
+        "createBuckets": false
+      }
+    }
   }
 }
