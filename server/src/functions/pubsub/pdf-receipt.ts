@@ -12,13 +12,12 @@ import { pdfService } from '../../services/pdf-service'
 import { getFileProvider } from '../../providers/file'
 import { HandlebarsError } from '../../errors/HandlebarsError'
 import { donationActivityService } from '../../services/donation-activity-service'
+import { FileProvider } from '../../providers/file/model'
 
 export interface GeneratePdfCommand {
   donationId: string
   queueEmailTransmission: boolean
 }
-
-const fileProvider = getFileProvider()
 
 /**
  * Generates and saves a PDF based on a PubSubMessage
@@ -28,7 +27,8 @@ export const pdf: PubSubHandler = async message => {
   const command = readJsonMessage<GeneratePdfCommand>(message)
   logger.info('PDF Generation command received', command)
 
-  const receiptContent = await getReceiptHtml(command.donationId)
+  const fileProvider = await getFileProvider()
+  const receiptContent = await getReceiptHtml(command.donationId, fileProvider)
   const pdf = await pdfService.generatePdfFromHtml(receiptContent.html)
 
   const filename = `receipt_${command.donationId}_${receiptContent.receiptNumber}.pdf`
@@ -50,7 +50,10 @@ interface ReceiptContent {
   html: string
 }
 
-async function getReceiptHtml(donationId: string): Promise<ReceiptContent> {
+async function getReceiptHtml(
+  donationId: string,
+  fileProvider: FileProvider
+): Promise<ReceiptContent> {
   const [receiptInfo, translations, template] = await Promise.all([
     pdfService.getReceiptInfo(donationId),
     fileProvider.loadTranslations('pdf-translations'),

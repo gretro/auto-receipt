@@ -1,11 +1,12 @@
 import * as path from 'path'
 import * as fs from 'fs'
 import { promisify } from 'util'
+
 import { FileProvider } from './model'
 import { projectPath } from '../../project-path'
 import { logger } from '../../utils/logging'
-import { StringDecoder } from 'string_decoder'
 import { Translations } from '../../utils/handlebars'
+import { jsonBufferToObject, bufferToString } from '../../utils/buffer'
 
 const fsExists = promisify(fs.exists)
 const fsMkDir = promisify(fs.mkdir)
@@ -44,19 +45,6 @@ async function readFile<T>(
   return mapper(data)
 }
 
-function bufferToString(buffer: Buffer): string {
-  const decoder = new StringDecoder('utf8')
-  const stringValue = decoder.end(buffer)
-  return stringValue
-}
-
-function jsonBufferToObject<T>(buffer: Buffer): T {
-  const json = bufferToString(buffer)
-  const obj = JSON.parse(json)
-
-  return obj
-}
-
 async function saveFile(
   directory: string,
   fileName: string,
@@ -76,14 +64,14 @@ async function saveFile(
 
 export function fileSystemProviderFactory(
   options: FileSystemProviderOptions
-): FileProvider {
+): Promise<FileProvider> {
   const resolvedOptions: FileSystemProviderOptions = {
     ...options,
     templatePath: getAbsolutePath(options.templatePath),
     documentPath: getAbsolutePath(options.documentPath),
   }
 
-  return {
+  const provider: FileProvider = {
     loadTranslations: (name: string): Promise<Translations | undefined> =>
       readFile<Translations>(
         resolvedOptions.translationsPath,
@@ -103,4 +91,6 @@ export function fileSystemProviderFactory(
     loadDocument: (name: string): Promise<Buffer | undefined> =>
       readFile(resolvedOptions.documentPath, name, 'document', x => x),
   }
+
+  return Promise.resolve(provider)
 }

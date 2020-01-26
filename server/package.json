@@ -31,6 +31,7 @@
     "@google-cloud/firestore": "^3.0.0",
     "@google-cloud/logging-winston": "^3.0.2",
     "@google-cloud/pubsub": "^1.2.0",
+    "@google-cloud/storage": "^4.3.0",
     "@hapi/joi": "^16.1.8",
     "chrome-aws-lambda": "^2.0.2",
     "config": "^3.2.4",
