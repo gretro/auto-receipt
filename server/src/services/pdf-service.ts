@@ -9,10 +9,7 @@ import { logger } from '../utils/logging'
 import { localeService } from './locale-service'
 import { PdfGenerationError } from '../errors/PdfGenerationError'
 
-async function getReceiptInfo(
-  donationId: string,
-  receiptNumber: string
-): Promise<ReceiptInfo> {
+async function getReceiptInfo(donationId: string): Promise<ReceiptInfo> {
   logger.info('Retrieving donation', { donationId })
 
   const donation = await donationsRepository.getDonationById(donationId)
@@ -21,15 +18,6 @@ async function getReceiptInfo(
   }
 
   const receiptInfo = mapDonationToReceiptInfo(donation)
-
-  receiptInfo.cultures = localeService.getLocales()
-  receiptInfo.receiptNumber = receiptNumber
-  receiptInfo.receipts = [
-    'donor_receipt',
-    'federal_receipt',
-    'provincial_receipt',
-  ]
-
   return receiptInfo
 }
 
@@ -61,9 +49,9 @@ function mapDonationToReceiptInfo(donation: Donation): ReceiptInfo {
   )
 
   const receiptInfo: ReceiptInfo = {
-    cultures: [],
-    receipts: [],
-    receiptNumber: '',
+    cultures: localeService.getLocales(),
+    receipts: ['donor_receipt', 'federal_receipt', 'provincial_receipt'],
+    receiptNumber: buildReceiptNumber(donation),
     receiptDate: new Date(),
     donationDate: lastPayment.date,
     donationAmount,
@@ -82,6 +70,19 @@ function mapDonationToReceiptInfo(donation: Donation): ReceiptInfo {
   return receiptInfo
 }
 
+function buildReceiptNumber(donation: Donation): string {
+  // Fiscal year + 8 first chars of donationId + revision (if necessary)
+  const shortDonationId = donation.id.substr(0, 8).toUpperCase()
+  const draftReceiptNumber = `${donation.fiscalYear}-${shortDonationId}`
+
+  const similarDocs = donation.documents.filter(doc =>
+    doc.id.startsWith(draftReceiptNumber)
+  )
+  return similarDocs.length === 0
+    ? draftReceiptNumber
+    : `${draftReceiptNumber}-R${similarDocs.length + 1}`
+}
+
 async function generatePdfFromHtml(htmlContent: string): Promise<Buffer> {
   let browser: Browser | undefined = undefined
   let pdf: Buffer | undefined = undefined
@@ -95,7 +96,7 @@ async function generatePdfFromHtml(htmlContent: string): Promise<Buffer> {
 
     logger.info('Exporting as PDF')
 
-    // TODO: Make configurable
+    // TODO: Make configurable (maybe at some point...)
     pdf = await page.pdf({
       format: 'Letter',
       margin: {

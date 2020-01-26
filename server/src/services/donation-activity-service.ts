@@ -7,11 +7,13 @@ import { EntityNotFoundError } from '../errors/EntityNotFoundError'
 
 async function addDocument(
   donationId: string,
+  documentId: string,
   fileName: string,
   description?: string
 ): Promise<Donation> {
   logger.info('Adding document metadata to donation', {
     donationId,
+    documentId,
     fileName,
     description,
   })
@@ -22,6 +24,7 @@ async function addDocument(
   }
 
   const document: DocumentMetadata = {
+    id: documentId,
     created: new Date(),
     name: fileName,
     description: description || null,

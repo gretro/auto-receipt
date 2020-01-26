@@ -31,11 +31,12 @@ export const pdf: PubSubHandler = async message => {
   const receiptContent = await getReceiptHtml(command.donationId)
   const pdf = await pdfService.generatePdfFromHtml(receiptContent.html)
 
-  const filename = `receipt_${command.donationId}_${receiptContent.fiscalYear}_${receiptContent.receiptNumber}.pdf`
+  const filename = `receipt_${command.donationId}_${receiptContent.receiptNumber}.pdf`
   await fileProvider.saveDocument(filename, pdf)
 
   await donationActivityService.addDocument(
     command.donationId,
+    receiptContent.receiptNumber,
     filename,
     `Fiscal receipt for ${receiptContent.fiscalYear}`
   )
@@ -50,11 +51,8 @@ interface ReceiptContent {
 }
 
 async function getReceiptHtml(donationId: string): Promise<ReceiptContent> {
-  // TODO: Implement Receipt number generation logic
-  const receiptNumber = '5022'
-
   const [receiptInfo, translations, template] = await Promise.all([
-    pdfService.getReceiptInfo(donationId, receiptNumber),
+    pdfService.getReceiptInfo(donationId),
     fileProvider.loadTranslations('pdf-translations'),
     fileProvider.loadTemplate('receipt-pdf'),
   ])
@@ -72,7 +70,7 @@ async function getReceiptHtml(donationId: string): Promise<ReceiptContent> {
     return {
       html,
       fiscalYear: receiptInfo!.fiscalYear,
-      receiptNumber: receiptNumber,
+      receiptNumber: receiptInfo!.receiptNumber,
     }
   } catch (err) {
     throw new HandlebarsError(err)
