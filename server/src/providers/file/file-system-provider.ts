@@ -2,7 +2,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import { promisify } from 'util'
 
-import { FileProvider } from './model'
+import { FileProvider } from './FileProvider'
 import { projectPath } from '../../project-path'
 import { logger } from '../../utils/logging'
 import { Translations } from '../../utils/handlebars'

@@ -7,10 +7,14 @@
 
 ## Run locally
 
-1. Make sure the dependent services are up and running (see below)
-2. Open a Terminal and navigate to the `server` directory
-3. Run `npm install`
-4. Run `npm start`
+1. Set up your environment file (`.env`) with the following API keys
+
+- Twilio SendGrid API Key (`SENDGRID_API_KEY`)
+
+2. Make sure the dependent services are up and running (see below)
+3. Open a Terminal and navigate to the `server` directory
+4. Run `npm install`
+5. Run `npm start`
 
 ### Dependent services
 

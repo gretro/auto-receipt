@@ -1,6 +1,6 @@
 import * as config from 'config'
 
-import { FileProvider } from './model'
+import { FileProvider } from './FileProvider'
 import {
   FileSystemProviderOptions,
   fileSystemProviderFactory,

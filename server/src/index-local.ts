@@ -9,6 +9,7 @@ import { logger } from './utils/logging'
 import { subscribe } from './pubsub/service'
 import { pdf } from './functions/pubsub/pdf-receipt'
 import { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
+import { sendReceipt } from './functions/http/send-receipt'
 
 const app = express()
 
@@ -20,6 +21,7 @@ app.all('/paypalIpn', paypalIpn)
 app.all('/createCheque', createCheque)
 app.all('/listDonations', listDonations)
 app.all('/generatePdfReceipt', generatePdfReceipt)
+app.all('/sendReceipt', sendReceipt)
 
 async function main(): Promise<void> {
   app.listen(3000, () => {

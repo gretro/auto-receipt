@@ -1,7 +1,7 @@
 import { Bucket, Storage } from '@google-cloud/storage'
 import * as path from 'path'
 
-import { FileProvider } from './model'
+import { FileProvider } from './FileProvider'
 import { projectPath } from '../../project-path'
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError'
 import { logger } from '../../utils/logging'
@@ -23,12 +23,32 @@ interface BucketRefs {
   documents: Bucket
 }
 
+interface CacheEntry {
+  created: Date
+  expires: Date
+  name: string
+  data: unknown
+}
+
+const cache: Record<string, CacheEntry | undefined> = {}
+
 async function readFile<T>(
   bucketRef: Bucket,
   filename: string,
   objectType: string,
-  mapper: (input: Buffer) => T
+  mapper: (input: Buffer) => T,
+  useCache = false
 ): Promise<T | undefined> {
+  const cacheKey = `${bucketRef.name}.${filename}`
+
+  if (useCache) {
+    const cachedEntry = retrieveFromCache<T>(cacheKey)
+    if (cachedEntry) {
+      logger.info(`Retrieved ${objectType} ${filename} from cache`)
+      return cachedEntry
+    }
+  }
+
   const fileRef = bucketRef.file(filename)
   const readFilePromise = new Promise<Buffer>((resolve, reject) => {
     const readStream = fileRef.createReadStream({ decompress: true })
@@ -55,7 +75,45 @@ async function readFile<T>(
     `Read successfully ${objectType} ${filename} from bucket '${bucketRef.name}'`
   )
 
-  return mapper(buffer)
+  const result = mapper(buffer)
+  if (useCache) {
+    logger.info(`Storing ${objectType} ${filename} in cache for 15 minutes`)
+    storeInCache(cacheKey, result, 900)
+  }
+
+  return result
+}
+
+function retrieveFromCache<T>(cacheKey: string): T | undefined {
+  const now = new Date()
+
+  const cacheEntry = cache[cacheKey]
+  if (cacheEntry) {
+    if (cacheEntry.expires.getTime() - now.getTime() >= 0) {
+      return cacheEntry.data as T
+    } else {
+      cache[cacheKey] = undefined
+      return undefined
+    }
+  }
+
+  return undefined
+}
+
+function storeInCache<T>(
+  cacheKey: string,
+  data: T,
+  durationInSecs: number
+): void {
+  const expires = new Date()
+  expires.setSeconds(expires.getSeconds() + durationInSecs)
+
+  cache[cacheKey] = {
+    created: new Date(),
+    expires,
+    data: data,
+    name: cacheKey,
+  }
 }
 
 async function saveFile(

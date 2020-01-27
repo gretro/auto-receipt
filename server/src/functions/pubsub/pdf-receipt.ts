@@ -12,7 +12,7 @@ import { pdfService } from '../../services/pdf-service'
 import { getFileProvider } from '../../providers/file'
 import { HandlebarsError } from '../../errors/HandlebarsError'
 import { donationActivityService } from '../../services/donation-activity-service'
-import { FileProvider } from '../../providers/file/model'
+import { FileProvider } from '../../providers/file/FileProvider'
 
 export interface GeneratePdfCommand {
   donationId: string
