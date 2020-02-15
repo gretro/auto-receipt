@@ -66,6 +66,7 @@ async function extractDonationFromWrapper(
   const donation = mapTimestampToDate(wrapper.value)
   donation.correspondences = donation.correspondences || []
   donation.documents = donation.documents || []
+  donation.documentIds = donation.documentIds || []
 
   return donation
 }
@@ -84,7 +85,7 @@ async function createDonation(donation: Donation): Promise<Donation> {
     value: donation,
   }
 
-  await docRef.create(wrappedDocument)
+  await docRef.set(wrappedDocument)
 
   const createdDonation = (await getDonationById(donation.id)) as Donation
   return createdDonation
@@ -110,10 +111,21 @@ async function updateDonation(donation: Donation): Promise<Donation> {
   return updatedDonation
 }
 
+async function isReceiptNumberUnique(receiptNumber: string): Promise<boolean> {
+  const db = getDonationsCollection()
+  const query = db
+    .where('value.documentIds', 'array-contains', receiptNumber)
+    .select()
+
+  const results = await query.get()
+  return results.empty
+}
+
 export const donationsRepository = {
   listDonations: getDonationsForFiscalYear,
   getDonationById,
   findDonationByExternalIdAndFiscalYear,
   createDonation,
   updateDonation,
+  isReceiptNumberUnique,
 }

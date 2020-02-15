@@ -21,6 +21,7 @@
         "translationsBucket": "auto-receipt-stg-refs",
         "templatesBucket": "auto-receipt-stg-refs",
         "documentsBucket": "auto-receipt-stg-documents",
+        "tempBucket": "auto-receipt-stg-temp",
         "createBuckets": false
       }
     }

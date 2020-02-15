@@ -15,6 +15,7 @@ export interface Donation {
   donor: Donor
   payments: Payment[]
   emailReceipt: boolean
+  documentIds: string[]
   documents: DocumentMetadata[]
   correspondences: Correspondence[]
 }
@@ -35,6 +36,10 @@ export const donationSchema = Joi.object<Donation>({
     .min(1)
     .required(),
   emailReceipt: Joi.boolean().required(),
+  documentIds: Joi.array()
+    .required()
+    .min(0)
+    .items(Joi.string()),
   documents: Joi.array()
     .required()
     .min(0)

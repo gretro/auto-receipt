@@ -25,6 +25,7 @@
         "translationsBucket": "auto-receipt-prod-refs",
         "templatesBucket": "auto-receipt-prod-refs",
         "documentsBucket": "auto-receipt-prod-documents",
+        "tempBucket": "auto-receipt-prod-temp",
         "createBuckets": false
       }
     }

@@ -12,7 +12,8 @@
   },
   "pubsub": {
     "client": {
-      "apiEndpoint": "http://localhost:1866"
+      "apiEndpoint": "http://localhost:1866",
+      "projectId": "autoreceipt"
     },
     "topics": {
       "pdf": "pdf-generation"
@@ -43,7 +44,8 @@
       "fs": {
         "translationsPath": "./translations",
         "templatePath": "./templates",
-        "documentPath": "./temp"
+        "documentPath": "./temp-docs",
+        "tempPath": "./temp"
       }
     }
   }

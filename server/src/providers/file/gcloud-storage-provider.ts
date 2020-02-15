@@ -7,6 +7,7 @@ import { EntityNotFoundError } from '../../errors/EntityNotFoundError'
 import { logger } from '../../utils/logging'
 import { bufferToString, jsonBufferToObject } from '../../utils/buffer'
 import { Translations } from '../../utils/handlebars'
+import { Stream } from 'stream'
 
 export interface GCloudProviderOptions {
   keyPath: string | null
@@ -14,6 +15,7 @@ export interface GCloudProviderOptions {
   translationsBucket: string
   templatesBucket: string
   documentsBucket: string
+  tempBucket: string
   createBuckets: boolean
 }
 
@@ -21,6 +23,7 @@ interface BucketRefs {
   translations: Bucket
   templates: Bucket
   documents: Bucket
+  temp: Bucket
 }
 
 interface CacheEntry {
@@ -49,9 +52,8 @@ async function readFile<T>(
     }
   }
 
-  const fileRef = bucketRef.file(filename)
   const readFilePromise = new Promise<Buffer>((resolve, reject) => {
-    const readStream = fileRef.createReadStream({ decompress: true })
+    const readStream = readFileAsStream(bucketRef, filename)
     const chunks: Buffer[] = []
 
     readStream.on('data', (chunk: Buffer) => {
@@ -82,6 +84,13 @@ async function readFile<T>(
   }
 
   return result
+}
+
+function readFileAsStream(bucketRef: Bucket, filename: string): Stream {
+  const fileRef = bucketRef.file(filename)
+  const stream = fileRef.createReadStream({ decompress: true })
+
+  return stream
 }
 
 function retrieveFromCache<T>(cacheKey: string): T | undefined {
@@ -174,6 +183,7 @@ export async function gCloudProviderFactory(
         'translations',
         jsonBufferToObject
       ),
+    loadTemp: (filename): Stream => readFileAsStream(buckets.temp, filename),
   }
 }
 
@@ -204,6 +214,7 @@ async function getBuckets(
     options.documentsBucket,
     options.templatesBucket,
     options.translationsBucket,
+    options.tempBucket,
   ]
 
   const uniqueBuckets = allBuckets.reduce<Record<string, boolean>>(
@@ -237,6 +248,9 @@ async function getBuckets(
     )?.bucketRef,
     translations: bucketsRefInfo.find(
       bucketInfo => bucketInfo.bucketName === options.translationsBucket
+    )?.bucketRef,
+    temp: bucketsRefInfo.find(
+      bucketInfo => bucketInfo.bucketName === options.tempBucket
     )?.bucketRef,
   }
 

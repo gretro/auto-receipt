@@ -1,3 +1,4 @@
+import { Stream } from 'stream'
 import { Translations } from '../../utils/handlebars'
 
 /**
@@ -28,4 +29,10 @@ export interface FileProvider {
    * @param name Name of the file to load
    */
   loadDocument(name: string): Promise<Buffer | undefined>
+
+  /**
+   * Loads a temporary document
+   * @param name Name of the file to load (including extension)
+   */
+  loadTemp(name: string): Stream
 }

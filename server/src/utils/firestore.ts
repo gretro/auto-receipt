@@ -4,21 +4,26 @@ import { Timestamp } from '@google-cloud/firestore'
 export function mapTimestampToDate<T>(entity: T): T {
   const newObj = Object.keys(entity).reduce((acc, key) => {
     const value = (entity as any)[key]
+    const mappedValue = mapTimestampValue(value)
 
-    if (value == null) {
-      acc[key] = value
-    } else if (value instanceof Timestamp) {
-      acc[key] = value.toDate()
-    } else if (Array.isArray(value)) {
-      acc[key] = value.map(mapTimestampToDate)
-    } else if (typeof value === 'object') {
-      acc[key] = mapTimestampToDate(value)
-    } else {
-      acc[key] = value
-    }
+    acc[key] = mappedValue
 
     return acc
   }, {} as any)
 
   return newObj
+}
+
+function mapTimestampValue<T>(value: T): any {
+  if (value == null) {
+    return value
+  } else if (value instanceof Timestamp) {
+    return value.toDate()
+  } else if (Array.isArray(value)) {
+    return value.map(mapTimestampValue)
+  } else if (typeof value === 'object') {
+    return mapTimestampToDate(value)
+  }
+
+  return value
 }

@@ -125,6 +125,7 @@ function mapToDonation(
     payments: [mapToPayment(parameters)],
     correspondences: [],
     documents: [],
+    documentIds: [],
   }
 
   return donation

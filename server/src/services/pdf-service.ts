@@ -17,11 +17,16 @@ async function getReceiptInfo(donationId: string): Promise<ReceiptInfo> {
     throw new EntityNotFoundError('donation', donationId)
   }
 
-  const receiptInfo = mapDonationToReceiptInfo(donation)
+  const receiptNumber = await buildReceiptNumber(donation)
+
+  const receiptInfo = mapDonationToReceiptInfo(donation, receiptNumber)
   return receiptInfo
 }
 
-function mapDonationToReceiptInfo(donation: Donation): ReceiptInfo {
+function mapDonationToReceiptInfo(
+  donation: Donation,
+  receiptNumber: string
+): ReceiptInfo {
   const lastPayment = donation.payments[donation.payments.length - 1]
   const {
     donationAmount,
@@ -51,7 +56,7 @@ function mapDonationToReceiptInfo(donation: Donation): ReceiptInfo {
   const receiptInfo: ReceiptInfo = {
     cultures: localeService.getLocales(),
     receipts: ['donor_receipt', 'federal_receipt', 'provincial_receipt'],
-    receiptNumber: buildReceiptNumber(donation),
+    receiptNumber,
     receiptDate: new Date(),
     donationDate: lastPayment.date,
     donationAmount,
@@ -70,17 +75,51 @@ function mapDonationToReceiptInfo(donation: Donation): ReceiptInfo {
   return receiptInfo
 }
 
-function buildReceiptNumber(donation: Donation): string {
-  // Fiscal year + 8 first chars of donationId + revision (if necessary)
-  const shortDonationId = donation.id.substr(0, 8).toUpperCase()
-  const draftReceiptNumber = `${donation.fiscalYear}-${shortDonationId}`
+/**
+ * Builds a unique Receipt Number based on the name of the donor, with the fiscal year and a unique index number
+ * @param donation Donation for which to build a receipt number
+ */
+async function buildReceiptNumber(donation: Donation): Promise<string> {
+  const lastNamePart = donation.donor.lastName
+    .substr(0, 3)
+    .padEnd(3, 'X')
+    .toUpperCase()
 
-  const similarDocs = donation.documents.filter(doc =>
-    doc.id.startsWith(draftReceiptNumber)
-  )
-  return similarDocs.length === 0
-    ? draftReceiptNumber
-    : `${draftReceiptNumber}-R${similarDocs.length + 1}`
+  const firstNamePart = donation.donor.firstName
+    .substr(0, 2)
+    .padStart(2, 'X')
+    .toUpperCase()
+
+  const receiptNumberPrefix = `${lastNamePart}${firstNamePart}${donation.fiscalYear}-`
+
+  const indices = donation.documents
+    .filter(doc => doc.id.startsWith(receiptNumberPrefix))
+    .map(doc => {
+      const rawIndex = doc.id.replace(receiptNumberPrefix, '')
+      return parseInt(rawIndex)
+    })
+    .filter(index => !isNaN(index))
+    .sort((x, y) => y - x)
+
+  let isUnique = false
+  let receiptNumber = ''
+  let index = indices.length === 0 ? 0 : indices[0]
+
+  do {
+    index++
+    const indexPart = index.toString().padStart(3, '0')
+
+    receiptNumber = `${receiptNumberPrefix}${indexPart}`
+    isUnique = await donationsRepository.isReceiptNumberUnique(receiptNumber)
+
+    if (index > 999) {
+      throw new Error(
+        `Could not find any unique index for receipt number starting with '${receiptNumberPrefix}'`
+      )
+    }
+  } while (!isUnique)
+
+  return receiptNumber
 }
 
 async function generatePdfFromHtml(htmlContent: string): Promise<Buffer> {

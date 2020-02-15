@@ -30,6 +30,7 @@ async function addDocument(
     description: description || null,
   }
   donation.documents.push(document)
+  donation.documentIds.push(document.id)
   const updated = await donationsRepository.updateDonation(donation)
 
   logger.info('Successfully added document metadata to donation', {
