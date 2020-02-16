@@ -15,10 +15,12 @@ import { logger } from '../utils/logging'
 
 export interface PubSubTopics {
   pdf: string
+  bulkImport: string
 }
 
 interface AppSubscriptions {
   pdf: PubSubSubscription | null
+  bulkImport: PubSubSubscription | null
 }
 
 export type AppSubHandlers = {
@@ -123,10 +125,16 @@ export async function subscribe(
       const subscription = topic.subscription(appSubInfo.name)
       const [subExists] = await subscription.exists()
       if (!subExists) {
-        await subscription.create({ flowControl: { maxMessages: 5 } })
+        await subscription.create({
+          flowControl: { maxMessages: 5, allowExcessMessages: false },
+        })
       }
 
       subscription.on('message', (message: Message) => {
+        if (!appSubInfo.retryOnFail) {
+          message.ack()
+        }
+
         const ctx: PubSubContext = {
           eventId: message.id,
           eventType: 'publish',
@@ -139,14 +147,11 @@ export async function subscribe(
           data: message.data.toString('base64'),
         }
 
-        if (!appSubInfo.retryOnFail) {
-          message.ack()
-        }
-
         Promise.resolve()
           .then(() => handler(data, ctx))
           .then(() => {
             if (appSubInfo.retryOnFail) {
+              // No need to retry, we succeeded
               message.ack()
             }
           })

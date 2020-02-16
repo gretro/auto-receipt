@@ -18,6 +18,7 @@ export interface Donation {
   documentIds: string[]
   documents: DocumentMetadata[]
   correspondences: Correspondence[]
+  reason: string | null
 }
 
 export const donationTypeSchema = Joi.string().valid('one-time', 'recurrent')
@@ -48,4 +49,7 @@ export const donationSchema = Joi.object<Donation>({
     .required()
     .min(0)
     .items(correspondenceSchema),
+  reason: Joi.string()
+    .required()
+    .allow(null),
 })

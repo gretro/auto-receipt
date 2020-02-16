@@ -1,4 +1,5 @@
 import * as chromium from 'chrome-aws-lambda'
+import * as config from 'config'
 import { Browser } from 'puppeteer-core'
 
 import { donationsRepository } from '../datastore/donations-repository'
@@ -62,8 +63,8 @@ function mapDonationToReceiptInfo(
     donationAmount,
     receiptAmount,
     donationCurrency,
-    isReasonDefined: false,
-    reason: null,
+    isReasonDefined: !!donation.reason,
+    reason: donation.reason,
     fiscalYear: donation.fiscalYear,
     donor: {
       firstName: donation.donor.firstName,
@@ -81,16 +82,27 @@ function mapDonationToReceiptInfo(
  */
 async function buildReceiptNumber(donation: Donation): Promise<string> {
   const lastNamePart = donation.donor.lastName
+    .replace(/\s/g, '')
     .substr(0, 3)
     .padEnd(3, 'X')
     .toUpperCase()
 
-  const firstNamePart = donation.donor.firstName
+  // Some donations are made by companies. This means they have do not have a first name.
+  // In this case, we use the continuation of the last name field
+  const firstName =
+    donation.donor.firstName || donation.donor.lastName.substr(3)
+
+  const firstNamePart = firstName
+    .replace(/\s/g, '')
     .substr(0, 2)
     .padStart(2, 'X')
     .toUpperCase()
 
-  const receiptNumberPrefix = `${lastNamePart}${firstNamePart}${donation.fiscalYear}-`
+  const randomChars = `${getRandomChar()}${getRandomChar()}${getRandomChar()}`
+
+  const receiptNumberPrefix = `${lastNamePart}${firstNamePart}${donation.fiscalYear}-${randomChars}`
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
 
   const indices = donation.documents
     .filter(doc => doc.id.startsWith(receiptNumberPrefix))
@@ -122,13 +134,28 @@ async function buildReceiptNumber(donation: Donation): Promise<string> {
   return receiptNumber
 }
 
+function getRandomChar(): string {
+  const index = Math.floor(Math.random() * 100) % 36
+  const delta = index < 10 ? 48 : 65 - 10
+
+  const char = String.fromCharCode(index + delta)
+  return char
+}
+
+const MAX_BROWSERS = config.get<number>('chromium.maxInstances')
+let BROWSER_SLOTS: number[] = []
+let slotId = 1
+
 async function generatePdfFromHtml(htmlContent: string): Promise<Buffer> {
   let browser: Browser | undefined = undefined
+  let browserId: number | undefined = undefined
   let pdf: Buffer | undefined = undefined
 
   try {
     logger.info('Launching Puppeteer and Chromium')
-    browser = await launchBrowser()
+    const browserInfo = await launchBrowser()
+    browserId = browserInfo.browserId
+    browser = browserInfo.browser
 
     const page = await browser.newPage()
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' })
@@ -153,18 +180,45 @@ async function generatePdfFromHtml(htmlContent: string): Promise<Buffer> {
     if (browser) {
       await browser.close()
     }
+
+    if (browserId) {
+      BROWSER_SLOTS = BROWSER_SLOTS.filter(slot => slot !== browserId)
+    }
   }
 
   return pdf
 }
 
-async function launchBrowser(): Promise<Browser> {
-  return chromium.puppeteer.launch({
+async function randomDelay(minSecs: number, maxSecs: number): Promise<void> {
+  const duration =
+    (((Math.random() * 100) % (maxSecs - minSecs)) + minSecs) * 1000
+  return new Promise(resolve => setTimeout(resolve, duration))
+}
+
+async function waitForRoom(): Promise<void> {
+  while (BROWSER_SLOTS.length >= MAX_BROWSERS) {
+    logger.debug('Waiting for a browser slot to become available...')
+    await randomDelay(1, 5)
+  }
+}
+
+async function launchBrowser(): Promise<{
+  browserId: number
+  browser: Browser
+}> {
+  await waitForRoom()
+
+  const browserId = slotId++
+  BROWSER_SLOTS.push(browserId)
+
+  const browser = await chromium.puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
     executablePath: await chromium.executablePath,
     headless: true,
   })
+
+  return { browserId, browser }
 }
 
 export const pdfService = {

@@ -16,6 +16,9 @@
     "validateIpn": true,
     "ipnUrl": "https://ipnpb.paypal.com/cgi-bin/webscr"
   },
+  "chromium": {
+    "maxInstances": 5
+  },
   "providers": {
     "file": {
       "provider": "gcloud-storage",

@@ -10,6 +10,7 @@ import { Donation } from '../../models/Donation'
 
 interface DonationListingViewModel {
   fiscalYear: number
+  count: number
   donations: Donation[]
 }
 
@@ -19,18 +20,22 @@ export const listDonations = pipeMiddlewares(
   allowMethods('GET')
 )(
   async (req: Request<{}>, res: Response): Promise<void> => {
-    const { year } = req.query
+    const { year, externalId } = req.query
 
     let fiscalYear = parseInt(year, 10)
     if (isNaN(fiscalYear)) {
       fiscalYear = new Date().getFullYear()
     }
 
-    const donations = await donationsRepository.listDonations(fiscalYear)
+    const donations = await donationsRepository.searchDonations({
+      fiscalYear,
+      externalId,
+    })
 
     const viewModel: DonationListingViewModel = {
       fiscalYear,
       donations,
+      count: donations.length,
     }
     res.status(200).send(viewModel)
   }

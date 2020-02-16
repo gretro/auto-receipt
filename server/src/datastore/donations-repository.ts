@@ -46,6 +46,37 @@ async function getDonationsForFiscalYear(
   return await Promise.all(extractionPromises)
 }
 
+export interface SearchDonationsParams {
+  fiscalYear?: number
+  externalId?: string
+}
+
+async function searchDonations(
+  params: SearchDonationsParams
+): Promise<Donation[]> {
+  const db = getDonationsCollection()
+  let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> = db
+
+  if (params.fiscalYear) {
+    query = query.where('value.fiscalYear', '==', params.fiscalYear)
+  }
+  if (params.externalId) {
+    query = query.where('value.externalId', '==', params.externalId)
+  }
+
+  query = query.orderBy('value.created', 'desc')
+
+  const results = await query.get()
+  if (results.empty) {
+    return []
+  }
+
+  const wrappers = results.docs.map(doc => doc.data() as Document<Donation>)
+  const extractionPromises = wrappers.map(extractDonationFromWrapper)
+
+  return await Promise.all(extractionPromises)
+}
+
 async function getDonationById(id: string): Promise<Donation | undefined> {
   const db = getDonationsCollection()
   const docRef = db.doc(id)
@@ -67,14 +98,22 @@ async function extractDonationFromWrapper(
   donation.correspondences = donation.correspondences || []
   donation.documents = donation.documents || []
   donation.documentIds = donation.documentIds || []
+  donation.reason = donation.reason || null
 
   return donation
 }
 
-async function createDonation(donation: Donation): Promise<Donation> {
+async function createDonation(
+  donation: Donation,
+  simulate = false
+): Promise<Donation> {
   const validationResult = donationSchema.validate(donation)
   if (validationResult.error) {
     throw new InvalidEntityError('Donation', validationResult)
+  }
+
+  if (simulate) {
+    return donation
   }
 
   const db = getDonationsCollection()
@@ -91,10 +130,17 @@ async function createDonation(donation: Donation): Promise<Donation> {
   return createdDonation
 }
 
-async function updateDonation(donation: Donation): Promise<Donation> {
+async function updateDonation(
+  donation: Donation,
+  simulate = false
+): Promise<Donation> {
   const validationResult = donationSchema.validate(donation)
   if (validationResult.error) {
     throw new InvalidEntityError('Donation', validationResult)
+  }
+
+  if (simulate) {
+    return donation
   }
 
   const db = getDonationsCollection()
@@ -123,6 +169,7 @@ async function isReceiptNumberUnique(receiptNumber: string): Promise<boolean> {
 
 export const donationsRepository = {
   listDonations: getDonationsForFiscalYear,
+  searchDonations,
   getDonationById,
   findDonationByExternalIdAndFiscalYear,
   createDonation,

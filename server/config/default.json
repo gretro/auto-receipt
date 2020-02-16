@@ -16,12 +16,18 @@
       "projectId": "autoreceipt"
     },
     "topics": {
-      "pdf": "pdf-generation"
+      "pdf": "pdf-generation",
+      "bulkImport": "bulk-import"
     },
     "subscriptions": {
       "pdf": {
         "topic": "pdf-generation",
         "name": "pdf-gen",
+        "retryOnFail": false
+      },
+      "bulkImport": {
+        "topic": "bulk-import",
+        "name": "bulk-import",
         "retryOnFail": false
       }
     }
@@ -38,6 +44,9 @@
     { "locale": "fr-CA", "test": "janvier" },
     { "locale": "en-CA", "test": "january" }
   ],
+  "chromium": {
+    "maxInstances": 15
+  },
   "providers": {
     "file": {
       "provider": "file-system",
