@@ -11,7 +11,7 @@ import { DonationType, donationTypeSchema } from '../../models/Donation'
 import { Donor, donorSchema } from '../../models/Donor'
 import { handleErrors } from '../../utils/http'
 import { publishMessage } from '../../pubsub/service'
-import { GeneratePdfCommand } from '../pubsub/pdf-receipt'
+import { GeneratePdfCommand } from '../../models/commands/GeneratePdfCommand'
 
 interface CreateChequeViewModel {
   donationType: DonationType

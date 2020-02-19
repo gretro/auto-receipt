@@ -14,12 +14,8 @@ import { getFileProvider } from '../../providers/file'
 import { HandlebarsError } from '../../errors/HandlebarsError'
 import { donationActivityService } from '../../services/donation-activity-service'
 import { FileProvider } from '../../providers/file/FileProvider'
-import { sendEmail } from '../../providers/email/SendGridEmailProvider'
-
-export interface GeneratePdfCommand {
-  donationId: string
-  queueEmailTransmission: boolean
-}
+import { GeneratePdfCommand } from '../../models/commands/GeneratePdfCommand'
+import { getEmailProvider } from '../../providers/email'
 
 /**
  * Generates and saves a PDF based on a PubSubMessage
@@ -59,10 +55,10 @@ export const pdf: PubSubHandler = async message => {
 
   // TODO: Queue email transmission in its own job
   logger.info('Sending receipt by email')
-  await sendEmail({
+  const emailProvider = getEmailProvider()
+  await emailProvider.sendEmail({
     to: donation.donor.email || '',
-    content,
-    contentType: 'text',
+    text: content,
     subject: 'Thank you for your donation',
     attachments: [
       { name: 'receipt.pdf', contentType: 'application/pdf', data: pdf },

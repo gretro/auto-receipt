@@ -52,8 +52,7 @@ export const sendReceipt = pipeMiddlewares(
   // TODO: Use the abstraction instead
   await sendEmail({
     to: donation.donor.email || '',
-    content: `Thank you for you donation to our organization. This is much appreciated.${EOL}${EOL}You will find attached to this email your fiscal receipt for the year ${donation.fiscalYear}. ${EOL}${EOL}Thank you again for your donation.`,
-    contentType: 'text',
+    text: `Thank you for you donation to our organization. This is much appreciated.${EOL}${EOL}You will find attached to this email your fiscal receipt for the year ${donation.fiscalYear}. ${EOL}${EOL}Thank you again for your donation.`,
     subject: 'Thank you for your donation',
     attachments: [
       { name: 'receipt.pdf', contentType: 'application/pdf', data: receipt },

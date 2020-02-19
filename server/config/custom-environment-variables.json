@@ -1,5 +1,12 @@
 {
   "api": {
     "apiToken": "API__APITOKEN"
+  },
+  "providers": {
+    "email": {
+      "sendGrid": {
+        "apiKey": "SENDGRID_API_KEY"
+      }
+    }
   }
 }

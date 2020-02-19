@@ -8,8 +8,8 @@ import {
   allowMethods,
   validateBody,
 } from '../../utils/http'
-import { GeneratePdfCommand } from '../pubsub/pdf-receipt'
 import { publishMessage } from '../../pubsub/service'
+import { GeneratePdfCommand } from '../../models/commands/GeneratePdfCommand'
 
 interface QueuePdfGenerationViewModel {
   donationId: string

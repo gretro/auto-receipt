@@ -45,6 +45,26 @@
         "templatePath": "./templates",
         "documentPath": "./temp"
       }
+    },
+    "email": {
+      "provider": "sendGrid",
+      "sendGrid": {
+        "apiKey": "",
+        "from": "do-not-reply@autoreceipt.app",
+        "replyTo": "no-reply@autoreceipt.app"
+      }
+    }
+  },
+  "correspondences": {
+    "receipt": {
+      "subject": {
+        "value": "Thank you for your donation",
+        "source": "static"
+      },
+      "text": {
+        "value": "Thank you for you donation to our organization. This is much appreciated.\r\n\r\nYou will find attached to this email your fiscal receipt for the year {{fiscalYear}}.\r\n\r\nThank you again for your donation",
+        "source": "inline-template"
+      }
     }
   }
 }

@@ -1,30 +1,46 @@
 import * as SendGrid from '@sendgrid/mail'
 import { AttachmentData } from '@sendgrid/helpers/classes/attachment'
-import { SendEmailParams } from './EmailProvider'
+import { SendEmailParams, EmailProvider } from './EmailProvider'
+import { InvalidConfigurationError } from '../../errors/InvalidConfigurationError'
 
-export async function sendEmail(parameters: SendEmailParams): Promise<void> {
-  const apiKey = process.env.SENDGRID_API_KEY
-  if (!apiKey) {
-    throw new Error(
-      'Twilio SendGrid API Key is not set. Make sure you include an environment variable named SENDGRID_API_KEY'
+export interface SendGridOptions {
+  apiKey: string
+  from: string
+  replyTo?: string
+}
+
+function getSendEmail(options: SendGridOptions) {
+  return async (parameters: SendEmailParams): Promise<void> => {
+    const attachments: AttachmentData[] = (parameters.attachments || []).map(
+      (att): AttachmentData => ({
+        filename: att.name,
+        content: att.data.toString('base64'),
+        type: att.contentType,
+      })
     )
+
+    await SendGrid.send({
+      from: options.from,
+      replyTo: options.replyTo,
+      to: parameters.to,
+      subject: parameters.subject,
+      text: parameters.text,
+      html: parameters.html,
+      attachments,
+    })
+  }
+}
+
+export function sendGridEmailProviderFactory(
+  options: SendGridOptions
+): EmailProvider {
+  if (!options.apiKey) {
+    throw new InvalidConfigurationError('Invalid SendGrid API Key')
   }
 
-  const attachments: AttachmentData[] = (parameters.attachments || []).map(
-    (att): AttachmentData => ({
-      filename: att.name,
-      content: att.data.toString('base64'),
-      type: att.contentType,
-    })
-  )
+  SendGrid.setApiKey(options.apiKey)
 
-  SendGrid.setApiKey(apiKey)
-  await SendGrid.send({
-    from: 'do-not-reply@autoreceipt.app',
-    to: parameters.to,
-    subject: parameters.subject,
-    text: parameters.contentType === 'text' ? parameters.content : undefined,
-    html: parameters.contentType === 'html' ? parameters.content : undefined,
-    attachments,
-  })
+  return {
+    sendEmail: getSendEmail(options),
+  }
 }
