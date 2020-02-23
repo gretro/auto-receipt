@@ -32,6 +32,15 @@ if (loggingConfig.gcloud) {
   transports.push(new gcloudLog.LoggingWinston())
 }
 
+if (loggingConfig.file) {
+  transports.push(
+    new winston.transports.File({
+      format: winston.format.padLevels(),
+      filename: `logs/${new Date().toISOString()}.log`,
+    })
+  )
+}
+
 export const logger = winston.createLogger({
   level: loggingConfig.logLevel,
   transports,

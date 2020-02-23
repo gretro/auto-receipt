@@ -128,7 +128,7 @@ function mapCsvDataToCreatePaymentParams(
     paymentDate: parseDate(paymentData.Date_Inscription).toISOString(),
     source: 'import',
     type: isRecurrent ? 'recurrent' : 'one-time',
-    externalId: `${paymentData.NO_DONAD.trim()}-${isRecurrent ? 'REC' : ''}`,
+    externalId: `${paymentData.NO_DONAD.trim()}${isRecurrent ? '-REC' : ''}`,
     reason:
       paymentData.SuperEve.trim().toLowerCase() ===
       DEFAULT_SUPER_EVE.toLowerCase()

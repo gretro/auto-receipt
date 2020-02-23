@@ -2,7 +2,8 @@
   "logging": {
     "logLevel": "info",
     "console": true,
-    "gcloud": false
+    "gcloud": false,
+    "file": true
   },
   "firestore": {
     "host": "localhost",

@@ -1,7 +1,8 @@
 {
   "logging": {
     "console": false,
-    "gcloud": true
+    "gcloud": true,
+    "file": false
   },
   "firestore": null,
   "pubsub": {
