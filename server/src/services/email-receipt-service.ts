@@ -1,19 +1,14 @@
-import * as config from 'config'
-import { Donation } from '../models/Donation'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
 import { DocumentMetadata } from '../models/DocumentMetadata'
-import { getEmailProvider } from '../providers/email'
+import { Donation } from '../models/Donation'
 
 async function sendReceipt(
   donation: Donation,
   documentId?: string
-): Promise<Donation> {
-  const docToAttach = getDocument(donation, documentId)
-  const correspondenceConfig = config.get
-  
-  const emailProvider = getEmailProvider()
-  emailProvider.sendEmail({
-    
+): Promise<void> {
+  // const docToAttach = getDocument(donation, documentId)
+  // const correspondenceConfig = config.get
+  // const emailProvider = getEmailProvider()
 }
 
 function getDocument(
