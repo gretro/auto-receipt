@@ -16,7 +16,7 @@ export interface ReceiptInfo {
 }
 
 export interface DonorInfo {
-  firstName: string
+  firstName: string | null
   lastName: string
   address: Address | null
 }

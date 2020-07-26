@@ -22,6 +22,7 @@ interface CreateChequeViewModel {
   amount: number
   receiptAmount: number
   paymentDate: string
+  reason?: string
 }
 
 const schema = Joi.object<CreateChequeViewModel>({
@@ -48,6 +49,7 @@ const schema = Joi.object<CreateChequeViewModel>({
   paymentDate: Joi.string()
     .isoDate()
     .required(),
+  reason: Joi.string().allow(null),
 })
 
 export const createCheque: RequestHandler<{}> = pipeMiddlewares(
@@ -69,6 +71,7 @@ export const createCheque: RequestHandler<{}> = pipeMiddlewares(
       amount: body.amount,
       receiptAmount: body.receiptAmount,
       paymentDate: body.paymentDate,
+      reason: body.reason || undefined,
     })
 
     const generatePdfCommand: GeneratePdfCommand = {

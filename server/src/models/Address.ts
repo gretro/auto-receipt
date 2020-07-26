@@ -4,8 +4,8 @@ export interface Address {
   line1: string
   line2: string | null
   city: string
-  state: string
-  postalCode: string
+  state: string | null
+  postalCode: string | null
   country: string
 }
 
@@ -22,10 +22,12 @@ export const addressSchema = Joi.object<Address>({
     .max(50),
   state: Joi.string()
     .required()
-    .max(50),
+    .max(50)
+    .allow(null),
   postalCode: Joi.string()
     .required()
-    .max(20),
+    .max(20)
+    .allow(null),
   country: Joi.string()
     .required()
     .max(50),

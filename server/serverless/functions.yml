@@ -19,6 +19,11 @@ functions:
     events:
       - http: http
 
+  launchBulkImport:
+    handler: launchBulkImport
+    events:
+      - http: http
+
   pdf:
     handler: pdf
     memorySize: 1024
@@ -31,3 +36,11 @@ functions:
       - event:
           eventType: providers/cloud.pubsub/eventTypes/topic.publish
           resource: 'projects/${self:provider.project, ""}/topics/pdf-generation'
+
+  bulkImport:
+    handler: bulkImport
+    memorySize: 1024,
+    events:
+      - event:
+          eventType: providers/cloud.pubsub/eventTypes/topic.publish
+          resource: 'projects/${self:provider.project, ""}/topics/bulk-import'

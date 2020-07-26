@@ -1,6 +1,7 @@
 import * as path from 'path'
 import * as fs from 'fs'
 import { promisify } from 'util'
+import { Stream } from 'stream'
 
 import { FileProvider } from './FileProvider'
 import { projectPath } from '../../project-path'
@@ -17,6 +18,7 @@ export interface FileSystemProviderOptions {
   translationsPath: string
   templatePath: string
   documentPath: string
+  tempPath: string
 }
 
 function getAbsolutePath(pathToEvaluate: string): string {
@@ -45,6 +47,13 @@ async function readFile<T>(
   return mapper(data)
 }
 
+function readFileAsStream(directory: string, fileName: string): Stream {
+  const filePath = path.resolve(directory, fileName)
+
+  const stream = fs.createReadStream(filePath, { encoding: 'utf8' })
+  return stream
+}
+
 async function saveFile(
   directory: string,
   fileName: string,
@@ -69,6 +78,7 @@ export function fileSystemProviderFactory(
     ...options,
     templatePath: getAbsolutePath(options.templatePath),
     documentPath: getAbsolutePath(options.documentPath),
+    tempPath: getAbsolutePath(options.tempPath),
   }
 
   const provider: FileProvider = {
@@ -90,6 +100,8 @@ export function fileSystemProviderFactory(
       saveFile(resolvedOptions.documentPath, name, 'document', data),
     loadDocument: (name: string): Promise<Buffer | undefined> =>
       readFile(resolvedOptions.documentPath, name, 'document', x => x),
+    loadTemp: (name: string): Stream =>
+      readFileAsStream(resolvedOptions.tempPath, name),
   }
 
   return Promise.resolve(provider)

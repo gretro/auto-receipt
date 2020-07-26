@@ -15,8 +15,10 @@ export interface Donation {
   donor: Donor
   payments: Payment[]
   emailReceipt: boolean
+  documentIds: string[]
   documents: DocumentMetadata[]
   correspondences: Correspondence[]
+  reason: string | null
 }
 
 export const donationTypeSchema = Joi.string().valid('one-time', 'recurrent')
@@ -35,6 +37,10 @@ export const donationSchema = Joi.object<Donation>({
     .min(1)
     .required(),
   emailReceipt: Joi.boolean().required(),
+  documentIds: Joi.array()
+    .required()
+    .min(0)
+    .items(Joi.string()),
   documents: Joi.array()
     .required()
     .min(0)
@@ -43,4 +49,7 @@ export const donationSchema = Joi.object<Donation>({
     .required()
     .min(0)
     .items(correspondenceSchema),
+  reason: Joi.string()
+    .required()
+    .allow(null),
 })

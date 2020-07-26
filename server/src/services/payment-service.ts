@@ -17,6 +17,9 @@ export interface CreatePaymentParams {
   receiptAmount: number
   paymentDate: string
   source: PaymentSource
+  reason?: string
+  simulate?: boolean
+  overrideFiscalYear?: number
 }
 
 async function createPayment(
@@ -42,7 +45,10 @@ async function createDonation(
   const donationId = createUuid()
 
   const newDonation = mapToDonation(donationId, parameters)
-  const entity = await donationsRepository.createDonation(newDonation)
+  const entity = await donationsRepository.createDonation(
+    newDonation,
+    parameters.simulate || false
+  )
   logger.info('Donation was created successfully', { donationId: entity.id })
 
   return entity
@@ -56,7 +62,9 @@ async function handleRecurringDonation(
 
   const donation = await donationsRepository.findDonationByExternalIdAndFiscalYear(
     externalId,
-    paymentDate.getFullYear()
+    parameters.overrideFiscalYear
+      ? parameters.overrideFiscalYear
+      : paymentDate.getFullYear()
   )
 
   if (donation) {
@@ -95,7 +103,10 @@ async function addPaymentToDonation(
   const newPayment = mapToPayment(parameters)
   donation.payments.push(newPayment)
 
-  const updatedDonation = await donationsRepository.updateDonation(donation)
+  const updatedDonation = await donationsRepository.updateDonation(
+    donation,
+    parameters.simulate
+  )
   return updatedDonation
 }
 
@@ -120,11 +131,15 @@ function mapToDonation(
     created: paymentDate,
     donor: parameters.donor,
     emailReceipt: parameters.emailReceipt,
-    fiscalYear: paymentDate.getFullYear(),
+    fiscalYear: parameters.overrideFiscalYear
+      ? parameters.overrideFiscalYear
+      : paymentDate.getFullYear(),
     type: parameters.type,
     payments: [mapToPayment(parameters)],
     correspondences: [],
     documents: [],
+    documentIds: [],
+    reason: parameters.reason || null,
   }
 
   return donation

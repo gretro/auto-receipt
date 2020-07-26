@@ -1,7 +1,8 @@
 {
   "logging": {
     "console": false,
-    "gcloud": true
+    "gcloud": true,
+    "file": false
   },
   "firestore": null,
   "pubsub": {
@@ -12,6 +13,9 @@
     "validateIpn": true,
     "ipnUrl": "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr"
   },
+  "chromium": {
+    "maxInstances": 5
+  },
   "providers": {
     "file": {
       "provider": "gcloud-storage",
@@ -21,6 +25,7 @@
         "translationsBucket": "auto-receipt-stg-refs",
         "templatesBucket": "auto-receipt-stg-refs",
         "documentsBucket": "auto-receipt-stg-documents",
+        "tempBucket": "auto-receipt-stg-temp",
         "createBuckets": false
       }
     }
