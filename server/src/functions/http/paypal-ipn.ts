@@ -2,17 +2,17 @@ import { Request, Response } from 'express'
 import PayPalIpn from 'paypal-ipn-types'
 import * as rp from 'request-promise'
 import * as config from 'config'
-import { pipeMiddlewares, allowMethods, handleErrors } from '../utils/http'
-import { PayPalConfig } from '../models/PayPalConfig'
-import { getAppInfo } from '../utils/app'
+import { pipeMiddlewares, allowMethods, handleErrors } from '../../utils/http'
+import { PayPalConfig } from '../../models/PayPalConfig'
+import { getAppInfo } from '../../utils/app'
 import {
   CreatePaymentParams,
   paymentService,
-} from '../services/payment-service'
-import { Address } from '../models/Address'
-import { DonationType } from '../models/Donation'
-import { PayPalIpnVerificationError } from '../errors/PayPalIpnVerificationError'
-import { logger } from '../utils/logging'
+} from '../../services/payment-service'
+import { Address } from '../../models/Address'
+import { DonationType } from '../../models/Donation'
+import { PayPalIpnVerificationError } from '../../errors/PayPalIpnVerificationError'
+import { logger } from '../../utils/logging'
 
 const paypalConfig = config.get<PayPalConfig>('paypal')
 
@@ -64,6 +64,7 @@ export const paypalIpn = pipeMiddlewares(
 )(
   async (request: Request<{}>, response: Response): Promise<void> => {
     const ipnData = request.body as PayPalIpn
+    logger.info('Received PayPal IPN notification')
 
     if (ipnData.charset.toLowerCase() !== 'utf-8') {
       logger.warn(
@@ -77,6 +78,8 @@ export const paypalIpn = pipeMiddlewares(
     }
 
     if (shouldProcessPayment(ipnData)) {
+      logger.info('Payment will be processed')
+
       const handler = messageHandlers[ipnData.txn_type]
       if (handler) {
         await handler(ipnData)

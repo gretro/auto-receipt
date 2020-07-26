@@ -1,9 +1,14 @@
 {
   "logging": {
     "console": false,
-    "gcloud": true
+    "gcloud": true,
+    "file": false
   },
   "firestore": null,
+  "pubsub": {
+    "client": null,
+    "subscriptions": {}
+  },
   "api": {
     "showError": false
   },
@@ -11,5 +16,22 @@
     "minFiscalYear": 2020,
     "validateIpn": true,
     "ipnUrl": "https://ipnpb.paypal.com/cgi-bin/webscr"
+  },
+  "chromium": {
+    "maxInstances": 5
+  },
+  "providers": {
+    "file": {
+      "provider": "gcloud-storage",
+      "gcloud": {
+        "keyPath": null,
+        "projectId": null,
+        "translationsBucket": "auto-receipt-prod-refs",
+        "templatesBucket": "auto-receipt-prod-refs",
+        "documentsBucket": "auto-receipt-prod-documents",
+        "tempBucket": "auto-receipt-prod-temp",
+        "createBuckets": false
+      }
+    }
   }
 }

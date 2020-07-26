@@ -1,0 +1,130 @@
+{
+	"info": {
+		"_postman_id": "48f8e038-1563-4fbf-8d02-8521f0b44e0a",
+		"name": "AutoReceipt",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create a one-time donation",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"donationType\": \"one-time\",\n\t\"emailReceipt\": true,\n\t\"currency\": \"CAD\",\n\t\"amount\": 150,\n\t\"receiptAmount\": 125,\n\t\"paymentDate\": \"2020-01-25T15:28:37Z\",\n\t\"donor\": {\n\t\t\"firstName\": \"René\",\n\t\t\"lastName\": \"Carignan\",\n\t\t\"email\": \"bolid95387@eroyal.net\",\n\t\t\"address\": {\n\t\t\t\"line1\": \"55 rue de la Vigne\",\n\t\t\t\"line2\": null,\n\t\t\t\"city\": \"Saint-Jean-sur-Richelieu\",\n\t\t\t\"state\": \"QC\",\n\t\t\t\"postalCode\": \"J7J 7K5\",\n\t\t\t\"country\": \"Canada\"\n\t\t}\n\t}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}/createCheque",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"createCheque"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Queue PDF Generation",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"donationId\": \"44383d28-f3b3-44c5-8799-42f248c4fdc2\",\n\t\"sendEmail\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}/generatePdfReceipt",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"generatePdfReceipt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all donations",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/listDonations",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"listDonations"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "{{apiToken}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "x-api-token",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "a2fbc491-ddcb-4eb4-b64d-43c60a90f3c9",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "e1457c10-fdf2-4720-afc6-a43fdc5a2fde",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

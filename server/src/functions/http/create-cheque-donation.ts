@@ -1,4 +1,3 @@
-import { Donor, donorSchema } from '../models/Donor'
 import * as Joi from '@hapi/joi'
 import { RequestHandler, Request, Response } from 'express'
 import {
@@ -6,10 +5,13 @@ import {
   allowMethods,
   validateBody,
   withApiToken,
-} from '../utils/http'
-import { paymentService } from '../services/payment-service'
-import { DonationType, donationTypeSchema } from '../models/Donation'
-import { handleErrors } from '../utils/http'
+} from '../../utils/http'
+import { paymentService } from '../../services/payment-service'
+import { DonationType, donationTypeSchema } from '../../models/Donation'
+import { Donor, donorSchema } from '../../models/Donor'
+import { handleErrors } from '../../utils/http'
+import { publishMessage } from '../../pubsub/service'
+import { GeneratePdfCommand } from '../pubsub/pdf-receipt'
 
 interface CreateChequeViewModel {
   donationType: DonationType
@@ -20,6 +22,7 @@ interface CreateChequeViewModel {
   amount: number
   receiptAmount: number
   paymentDate: string
+  reason?: string
 }
 
 const schema = Joi.object<CreateChequeViewModel>({
@@ -46,6 +49,7 @@ const schema = Joi.object<CreateChequeViewModel>({
   paymentDate: Joi.string()
     .isoDate()
     .required(),
+  reason: Joi.string().allow(null),
 })
 
 export const createCheque: RequestHandler<{}> = pipeMiddlewares(
@@ -67,8 +71,15 @@ export const createCheque: RequestHandler<{}> = pipeMiddlewares(
       amount: body.amount,
       receiptAmount: body.receiptAmount,
       paymentDate: body.paymentDate,
+      reason: body.reason || undefined,
     })
 
-    res.status(200).send(donation)
+    const generatePdfCommand: GeneratePdfCommand = {
+      donationId: donation.id,
+      queueEmailTransmission: body.emailReceipt,
+    }
+    await publishMessage(generatePdfCommand, 'pdf')
+
+    res.status(201).send(donation)
   }
 )

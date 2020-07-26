@@ -2,13 +2,36 @@
   "logging": {
     "logLevel": "info",
     "console": true,
-    "gcloud": false
+    "gcloud": false,
+    "file": true
   },
   "firestore": {
     "host": "localhost",
     "port": 1865,
     "projectId": "autoreceipt",
     "ssl": false
+  },
+  "pubsub": {
+    "client": {
+      "apiEndpoint": "http://localhost:1866",
+      "projectId": "autoreceipt"
+    },
+    "topics": {
+      "pdf": "pdf-generation",
+      "bulkImport": "bulk-import"
+    },
+    "subscriptions": {
+      "pdf": {
+        "topic": "pdf-generation",
+        "name": "pdf-gen",
+        "retryOnFail": false
+      },
+      "bulkImport": {
+        "topic": "bulk-import",
+        "name": "bulk-import",
+        "retryOnFail": false
+      }
+    }
   },
   "api": {
     "apiToken": "VGhpcyBpcyBteSBBUEkgdG9rZW4uIElzIGl0IGF3ZXNvbWU=",
@@ -17,5 +40,23 @@
   "paypal": {
     "validateIpn": true,
     "ipnUrl": "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr"
+  },
+  "locales": [
+    { "locale": "fr-CA", "test": "janvier" },
+    { "locale": "en-CA", "test": "january" }
+  ],
+  "chromium": {
+    "maxInstances": 15
+  },
+  "providers": {
+    "file": {
+      "provider": "file-system",
+      "fs": {
+        "translationsPath": "./translations",
+        "templatePath": "./templates",
+        "documentPath": "./temp-docs",
+        "tempPath": "./temp"
+      }
+    }
   }
 }
