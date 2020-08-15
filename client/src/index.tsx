@@ -1,16 +1,10 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { App } from './shell/App'
-import './styles/index.scss'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
 
-function getReactRoot() {
-  return document.querySelector('[react-root]')
-}
-
-function render() {
-  const rootElement = getReactRoot()
-
-  ReactDOM.render(<App />, rootElement)
-}
-
-render()
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root'),
+);

@@ -1,43 +1,51 @@
 {
-  "name": "auto-receipt-admin",
-  "version": "1.0.0",
-  "description": "Admin UI for AutoReceipt",
-  "main": "index.js",
-  "scripts": {
-    "start": "parcel src/index.html",
-    "prebuild": "rimraf dist",
-    "build": "parcel build src/index.html --no-source-maps",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gretro/auto-receipt.git"
-  },
-  "author": "Gabriel Lemire",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/gretro/auto-receipt/issues"
-  },
-  "homepage": "https://github.com/gretro/auto-receipt#readme",
+  "name": "auto-receipt-client",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "antd": "^3.25.3",
-    "classnames": "^2.2.6",
-    "node-config": "0.0.2",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "react-router-dom": "^5.1.2"
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/jest": "^24.0.0",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "@typescript-eslint/eslint-plugin": "^3.9.0",
+    "@typescript-eslint/parser": "^3.9.0",
+    "cross-env": "^7.0.2",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.2.5",
+    "prettier": "^2.0.5",
+    "pretty-quick": "^2.0.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "3.4.3",
+    "typescript": "~3.7.2"
   },
-  "devDependencies": {
-    "@types/classnames": "^2.2.9",
-    "@types/react": "^16.9.13",
-    "@types/react-dom": "^16.9.4",
-    "@types/react-router-dom": "^5.1.3",
-    "autoprefixer": "^9.7.2",
-    "parcel-bundler": "^1.12.4",
-    "postcss-modules": "^1.4.1",
-    "prettier": "^1.19.1",
-    "rimraf": "^3.0.0",
-    "sass": "^1.23.7",
-    "typescript": "^3.7.2"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "npm run lint && react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint src/**"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }
