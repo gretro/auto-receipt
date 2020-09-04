@@ -67,7 +67,7 @@ export function handlebarsFactory(
 ): typeof Handlebars {
   const instance = Handlebars.create()
 
-  helpers.forEach(helper => {
+  helpers.forEach((helper) => {
     instance.registerHelper(helper.name, helper.delegate)
   })
 

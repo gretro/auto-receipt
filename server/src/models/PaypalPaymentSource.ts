@@ -6,7 +6,5 @@ export interface PaypalPaymentSource {
 }
 
 export const paypalPaymentSourceSchema = Joi.object<PaypalPaymentSource>({
-  id: Joi.string()
-    .required()
-    .allow(null),
+  id: Joi.string().required().allow(null),
 })

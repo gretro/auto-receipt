@@ -3,7 +3,7 @@ service: auto-receipt
 provider:
   name: google
   stage: staging
-  runtime: nodejs10
+  runtime: nodejs12
   region: us-east1
   project: auto-receipt-263320
   credentials: ./.gcloud/keyfile.staging.json

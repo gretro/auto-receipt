@@ -1,17 +1,17 @@
-import { PubSub, Topic, Message } from '@google-cloud/pubsub'
+import { Message, PubSub, Topic } from '@google-cloud/pubsub'
 import { ClientConfig } from '@google-cloud/pubsub/build/src/pubsub'
 import * as config from 'config'
-import { PubSubSubscription } from './models'
-import {
-  PubSubHandler,
-  PubSubContext,
-  PubSubMessage,
-} from '../utils/pubsub-function'
-import { TopicNotFoundError } from '../errors/TopicNotFoundError'
 import { AppSubNotFoundError } from '../errors/AppSubNotFoundError'
 import { InvalidConfigurationError } from '../errors/InvalidConfigurationError'
-import { writeMessageAsJson } from '../utils/pubsub'
+import { TopicNotFoundError } from '../errors/TopicNotFoundError'
 import { logger } from '../utils/logging'
+import { writeMessageAsJson } from '../utils/pubsub'
+import {
+  PubSubContext,
+  PubSubHandler,
+  PubSubMessage,
+} from '../utils/pubsub-function'
+import { PubSubSubscription } from './models'
 
 export interface PubSubTopics {
   pdf: string
@@ -115,8 +115,8 @@ export async function subscribe(
   subscribed = true
 
   const subscriptionPromises = Object.keys(handlers)
-    .filter(handleyKey => (handlers as any)[handleyKey])
-    .map(async handlerkey => {
+    .filter((handleyKey) => (handlers as any)[handleyKey])
+    .map(async (handlerkey) => {
       const appSubInfo = getAppSub(handlerkey as any)
       const topic = await getTopicByName(appSubInfo.topic)
 
@@ -155,7 +155,7 @@ export async function subscribe(
               message.ack()
             }
           })
-          .catch(err => {
+          .catch((err) => {
             logger.error(
               `Error executing subscription [${appSubInfo.name}] handler`,
               err
@@ -172,7 +172,7 @@ export async function subscribe(
 
   const allSubs = await Promise.all(subscriptionPromises)
   return async (): Promise<void> => {
-    const unsubPromises = allSubs.map(async sub => {
+    const unsubPromises = allSubs.map(async (sub) => {
       await sub.close()
       sub.removeAllListeners()
       await sub.delete()

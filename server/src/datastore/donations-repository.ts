@@ -1,9 +1,9 @@
-import { getDonationsCollection } from './store'
-import { Document } from './models'
-import { Donation, donationSchema } from '../models/Donation'
 import { InvalidEntityError } from '../errors/InvalidEntityError'
+import { Donation, donationSchema } from '../models/Donation'
 import { mapTimestampToDate } from '../utils/firestore'
 import { logger } from '../utils/logging'
+import { Document } from './models'
+import { getDonationsCollection } from './store'
 
 async function findDonationByExternalIdAndFiscalYear(
   externalId: string,
@@ -40,7 +40,7 @@ async function getDonationsForFiscalYear(
     return []
   }
 
-  const wrappers = results.docs.map(doc => doc.data() as Document<Donation>)
+  const wrappers = results.docs.map((doc) => doc.data() as Document<Donation>)
   const extractionPromises = wrappers.map(extractDonationFromWrapper)
 
   return await Promise.all(extractionPromises)
@@ -71,7 +71,7 @@ async function searchDonations(
     return []
   }
 
-  const wrappers = results.docs.map(doc => doc.data() as Document<Donation>)
+  const wrappers = results.docs.map((doc) => doc.data() as Document<Donation>)
   const extractionPromises = wrappers.map(extractDonationFromWrapper)
 
   return await Promise.all(extractionPromises)
