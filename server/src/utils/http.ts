@@ -1,10 +1,10 @@
-import { RequestHandler, Response, Request, NextFunction } from 'express'
-import { Schema } from '@hapi/joi'
 import * as config from 'config'
-import { ApiConfig } from '../models/ApiConfig'
+import { NextFunction, Request, RequestHandler, Response } from 'express'
+import { Schema } from 'joi'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
 import { InvalidEntityError } from '../errors/InvalidEntityError'
 import { PayPalIpnVerificationError } from '../errors/PayPalIpnVerificationError'
+import { ApiConfig } from '../models/ApiConfig'
 import { logger } from './logging'
 
 export type FunctionMiddleware = (

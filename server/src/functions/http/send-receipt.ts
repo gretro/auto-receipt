@@ -1,16 +1,16 @@
-import * as Joi from '@hapi/joi'
-import {
-  pipeMiddlewares,
-  allowMethods,
-  handleErrors,
-  withApiToken,
-  validateBody,
-} from '../../utils/http'
+import * as Joi from 'joi'
+import { EOL } from 'os'
 import { donationsRepository } from '../../datastore/donations-repository'
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError'
-import { getFileProvider } from '../../providers/file'
 import { sendEmail } from '../../providers/email/SendGridEmailProvider'
-import { EOL } from 'os'
+import { getFileProvider } from '../../providers/file'
+import {
+  allowMethods,
+  handleErrors,
+  pipeMiddlewares,
+  validateBody,
+  withApiToken,
+} from '../../utils/http'
 
 interface SendReceiptViewModel {
   donationId: string

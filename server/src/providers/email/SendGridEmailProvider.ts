@@ -1,5 +1,6 @@
-import * as SendGrid from '@sendgrid/mail'
 import { AttachmentData } from '@sendgrid/helpers/classes/attachment'
+import * as SendGrid from '@sendgrid/mail'
+import { MailDataRequired } from '@sendgrid/mail'
 import { SendEmailParams } from './EmailProvider'
 
 export async function sendEmail(parameters: SendEmailParams): Promise<void> {
@@ -19,12 +20,14 @@ export async function sendEmail(parameters: SendEmailParams): Promise<void> {
   )
 
   SendGrid.setApiKey(apiKey)
-  await SendGrid.send({
+  
+  const mailParams: MailDataRequired = {
     from: 'do-not-reply@autoreceipt.app',
     to: parameters.to,
     subject: parameters.subject,
-    text: parameters.contentType === 'text' ? parameters.content : undefined,
-    html: parameters.contentType === 'html' ? parameters.content : undefined,
     attachments,
-  })
+    content: [{ type: parameters.contentType, value: parameters.content }]
+  }
+
+  await SendGrid.send(mailParams);
 }

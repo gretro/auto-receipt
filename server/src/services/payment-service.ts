@@ -1,9 +1,9 @@
-import * as createUuid from 'uuid/v4'
+import { v4 as createUuid } from 'uuid'
+import { donationsRepository } from '../datastore/donations-repository'
 import { Donation, DonationType } from '../models/Donation'
 import { Donor } from '../models/Donor'
 import { Payment, PaymentSource } from '../models/Payment'
 import { PaypalPaymentSource } from '../models/PaypalPaymentSource'
-import { donationsRepository } from '../datastore/donations-repository'
 import { logger } from '../utils/logging'
 
 export interface CreatePaymentParams {

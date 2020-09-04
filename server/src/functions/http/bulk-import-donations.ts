@@ -1,19 +1,18 @@
 import { RequestHandler } from 'express'
-import * as Joi from '@hapi/joi'
-
-import {
-  pipeMiddlewares,
-  handleErrors,
-  withApiToken,
-  allowMethods,
-  validateBody,
-} from '../../utils/http'
+import * as Joi from 'joi'
 import {
   BulkImportCommand,
-  BulkImportFormat,
   bulkImportDonationFormatSchema,
+  BulkImportFormat,
 } from '../../models/commands/BulkImportCommand'
 import { publishMessage } from '../../pubsub/service'
+import {
+  allowMethods,
+  handleErrors,
+  pipeMiddlewares,
+  validateBody,
+  withApiToken,
+} from '../../utils/http'
 
 interface LaunchBulkImportViewModel {
   filename: string

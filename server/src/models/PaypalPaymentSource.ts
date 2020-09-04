@@ -1,4 +1,4 @@
-import * as Joi from '@hapi/joi'
+import * as Joi from 'joi'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface PaypalPaymentSource {

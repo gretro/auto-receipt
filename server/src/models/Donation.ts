@@ -1,8 +1,8 @@
-import * as Joi from '@hapi/joi'
+import * as Joi from 'joi'
+import { Correspondence, correspondenceSchema } from './Correspondence'
+import { DocumentMetadata, documentMetadataSchema } from './DocumentMetadata'
 import { Donor, donorSchema } from './Donor'
 import { Payment, paymentSchema } from './Payment'
-import { DocumentMetadata, documentMetadataSchema } from './DocumentMetadata'
-import { Correspondence, correspondenceSchema } from './Correspondence'
 
 export type DonationType = 'one-time' | 'recurrent'
 

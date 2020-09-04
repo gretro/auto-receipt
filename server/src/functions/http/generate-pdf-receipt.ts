@@ -1,15 +1,14 @@
 import { Request, Response } from 'express'
-import * as Joi from '@hapi/joi'
-
+import * as Joi from 'joi'
+import { publishMessage } from '../../pubsub/service'
 import {
-  pipeMiddlewares,
-  handleErrors,
-  withApiToken,
   allowMethods,
+  handleErrors,
+  pipeMiddlewares,
   validateBody,
+  withApiToken,
 } from '../../utils/http'
 import { GeneratePdfCommand } from '../pubsub/pdf-receipt'
-import { publishMessage } from '../../pubsub/service'
 
 interface QueuePdfGenerationViewModel {
   donationId: string
