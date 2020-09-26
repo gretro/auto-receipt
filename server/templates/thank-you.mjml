@@ -1,0 +1,111 @@
+<mjml>
+  <mj-head>
+    <mj-preview>Merci de votre don. / Thank you for your donation</mj-preview>
+    <mj-attributes>
+      <mj-text font-size="16px" color="#fff"></mj-text>
+    </mj-attributes>
+    <mj-style inline="inline">
+      .link, .link:visited, .link:active { color: inherit; }
+    </mj-style>
+  </mj-head>
+  <mj-body background-color="#fff">
+    <mj-section>
+      <mj-column>
+        <mj-image
+          width="250px"
+          href="https://my-org.org/"
+          rel="noreferrer noopener"
+          src="https://1000logos.net/wp-content/uploads/2016/10/ACME-logo.png"
+        >
+        </mj-image>
+        <mj-text align="center" font-size="14px" color="#000">
+          55 place de la Bienfaisance,<br />
+          Montréal, QC<br />
+          H7J 1Z1
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#333">
+      <mj-column>
+        <mj-text font-size="12px">(English follows)</mj-text>
+        <mj-text>
+          Nous vous remercions de votre généreux don. Votre générosité nous
+          aidera à atteindre notre objectif annuel.
+        </mj-text>
+
+        <mj-text>
+          Ce n’est qu’avec votre aide et le soutien de donatrices et de
+          donateurs tels que vous que <strong>My organization</strong> peut
+          faire la différence, un projet à la fois.
+        </mj-text>
+        <mj-text>Vous trouverez votre reçu en pièce jointe. </mj-text>
+
+        <mj-text> Bien cordialement, </mj-text>
+        <mj-text>
+          Josée Lavigne,<br />
+          Présidente,<br />
+          <strong>My organization</strong>
+        </mj-text>
+        <mj-text>
+          <a class="link" rel="noreferrer noopener" href="https://my-org.org/"
+            >www.my-org.org</a
+          >
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-divider border-color="#333" border-width="2px"></mj-divider>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#333">
+      <mj-column>
+        <mj-text>
+          Thank you for your generous donation. Your generosity helps reach our
+          annual goal.
+        </mj-text>
+
+        <mj-text>
+          It is only with the help of donors such as yourself that
+          <strong>My organization</strong> can make a difference, one project at
+          a time.
+        </mj-text>
+
+        <mj-text>
+          You will find your receipt as an attachment to this email.
+        </mj-text>
+
+        <mj-text> Sincerely, </mj-text>
+        <mj-text>
+          Josée Lavigne,<br />
+          President,<br />
+          <strong>My organization</strong>
+        </mj-text>
+        <mj-text>
+          <a class="link" rel="noreferrer noopener" href="https://my-org.org/"
+            >www.my-org.org</a
+          >
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-divider border-color="#c60000" border-width="2px"></mj-divider>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding-top="0">
+      <mj-column>
+        <mj-text color="#000" font-size="14px" align="center">
+          Charitable registration number / Numéro d’enregistrement d’organisme
+          de bienfaisance<br />
+          80555 7743 RU0001
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
