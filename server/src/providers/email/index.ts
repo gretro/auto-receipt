@@ -1,11 +1,10 @@
 import * as config from 'config'
-
+import { InvalidConfigurationError } from '../../errors/InvalidConfigurationError'
 import { EmailProvider } from './EmailProvider'
 import {
-  SendGridOptions,
   sendGridEmailProviderFactory,
+  SendGridOptions,
 } from './SendGridEmailProvider'
-import { InvalidConfigurationError } from '../../errors/InvalidConfigurationError'
 
 interface EmailProviderConfig {
   provider: 'sendGrid'

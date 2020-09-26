@@ -1,14 +1,13 @@
 import { Request, Response } from 'express'
-import * as Joi from '@hapi/joi'
-
-import {
-  pipeMiddlewares,
-  handleErrors,
-  withApiToken,
-  allowMethods,
-  validateBody,
-} from '../../utils/http'
+import * as Joi from 'joi'
 import { publishMessage } from '../../pubsub/service'
+import {
+  allowMethods,
+  handleErrors,
+  pipeMiddlewares,
+  validateBody,
+  withApiToken,
+} from '../../utils/http'
 import { GeneratePdfCommand } from '../../models/commands/GeneratePdfCommand'
 
 interface QueuePdfGenerationViewModel {

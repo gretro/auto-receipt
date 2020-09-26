@@ -1,15 +1,15 @@
-import { RequestHandler, Response, Request, NextFunction } from 'express'
-import { Schema } from '@hapi/joi'
 import * as config from 'config'
-import { ApiConfig } from '../models/ApiConfig'
+import { NextFunction, Request, RequestHandler, Response } from 'express'
+import { Schema } from 'joi'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
 import { InvalidEntityError } from '../errors/InvalidEntityError'
 import { PayPalIpnVerificationError } from '../errors/PayPalIpnVerificationError'
+import { ApiConfig } from '../models/ApiConfig'
 import { logger } from './logging'
 
 export type FunctionMiddleware = (
-  requestHandler: RequestHandler<{}>
-) => RequestHandler<{}>
+  requestHandler: RequestHandler
+) => RequestHandler
 
 /**
  * Validates the request is authorized.
@@ -19,9 +19,9 @@ export type FunctionMiddleware = (
 export const withApiToken = (): FunctionMiddleware => {
   const apiConfig = config.get<ApiConfig>('api')
 
-  return (handler: RequestHandler<{}>): RequestHandler<{}> => {
+  return (handler: RequestHandler): RequestHandler => {
     return (
-      request: Request<{}>,
+      request: Request,
       response: Response,
       next: NextFunction
     ): unknown => {
@@ -48,13 +48,13 @@ export const withApiToken = (): FunctionMiddleware => {
 export const allowMethods = (
   ...allowedMethods: string[]
 ): FunctionMiddleware => {
-  return (handler: RequestHandler<{}>): RequestHandler<{}> => {
+  return (handler: RequestHandler): RequestHandler => {
     return (
-      request: Request<{}>,
+      request: Request,
       response: Response,
       next: NextFunction
     ): unknown => {
-      const methods = allowedMethods.map(method => method.toUpperCase())
+      const methods = allowedMethods.map((method) => method.toUpperCase())
       if (!methods.includes(request.method.toUpperCase())) {
         logger.warn(
           `Received request using verb ${request.method}, but this is not accepted for the current function`
@@ -74,9 +74,9 @@ export const allowMethods = (
  * @param schema Schema to use for validation
  */
 export const validateBody = (schema: Schema): FunctionMiddleware => {
-  return (handler: RequestHandler<{}>): RequestHandler<{}> => {
+  return (handler: RequestHandler): RequestHandler => {
     return (
-      request: Request<{}>,
+      request: Request,
       response: Response,
       next: NextFunction
     ): unknown => {
@@ -98,7 +98,7 @@ export const validateBody = (schema: Schema): FunctionMiddleware => {
 }
 
 export const handleErrors = (): FunctionMiddleware => {
-  return (handler: RequestHandler<{}>): RequestHandler<{}> => {
+  return (handler: RequestHandler): RequestHandler => {
     return async (request, response, next): Promise<void> => {
       try {
         await handler(request, response, next)
@@ -165,7 +165,7 @@ function sendError(
 export const pipeMiddlewares = (
   ...middlewares: FunctionMiddleware[]
 ): FunctionMiddleware => {
-  return (handler: RequestHandler<{}>): RequestHandler<{}> => {
+  return (handler: RequestHandler): RequestHandler => {
     return middlewares.reduceRight((acc, current) => {
       return current(acc)
     }, handler)

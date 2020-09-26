@@ -1,17 +1,14 @@
+import * as config from 'config'
 import { Request, Response } from 'express'
 import PayPalIpn from 'paypal-ipn-types'
 import * as rp from 'request-promise'
-import * as config from 'config'
-import { pipeMiddlewares, allowMethods, handleErrors } from '../../utils/http'
-import { PayPalConfig } from '../../models/PayPalConfig'
-import { getAppInfo } from '../../utils/app'
-import {
-  CreatePaymentParams,
-  paymentService,
-} from '../../services/payment-service'
+import { PayPalIpnVerificationError } from '../../errors/PayPalIpnVerificationError'
 import { Address } from '../../models/Address'
 import { DonationType } from '../../models/Donation'
-import { PayPalIpnVerificationError } from '../../errors/PayPalIpnVerificationError'
+import { PayPalConfig } from '../../models/PayPalConfig'
+import { CreatePaymentParams, paymentService } from '../../services/payment-service'
+import { getAppInfo } from '../../utils/app'
+import { allowMethods, handleErrors, pipeMiddlewares } from '../../utils/http'
 import { logger } from '../../utils/logging'
 
 const paypalConfig = config.get<PayPalConfig>('paypal')
@@ -39,8 +36,8 @@ async function isValid(ipnData: PayPalIpn): Promise<boolean> {
       'User-Agent': userAgent,
     },
     formData: {
-      cmd: '_notify-validate',
       ...ipnData,
+      cmd: '_notify-validate',
     },
   })
   return validationResponse === 'VERIFIED' // other return is INVALID. If it is INVALID it is probably spoofed

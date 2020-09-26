@@ -1,26 +1,26 @@
-import { PubSubHandler } from '../../utils/pubsub-function'
-import { readJsonMessage } from '../../utils/pubsub'
-import { logger } from '../../utils/logging'
+import { HandlebarsError } from '../../errors/HandlebarsError'
+import { GeneratePdfCommand } from '../../models/commands/GeneratePdfCommand'
+import { getFileProvider } from '../../providers/file'
+import { FileProvider } from '../../providers/file/FileProvider'
+import { donationActivityService } from '../../services/donation-activity-service'
+import { pdfService } from '../../services/pdf-service'
 import {
-  handlebarsFactory,
   getCurrencyHelper,
   getDateHelper,
   getTranslateHelper,
+  handlebarsFactory,
   Translations,
 } from '../../utils/handlebars'
-import { pdfService } from '../../services/pdf-service'
-import { getFileProvider } from '../../providers/file'
-import { HandlebarsError } from '../../errors/HandlebarsError'
-import { donationActivityService } from '../../services/donation-activity-service'
-import { FileProvider } from '../../providers/file/FileProvider'
-import { GeneratePdfCommand } from '../../models/commands/GeneratePdfCommand'
+import { logger } from '../../utils/logging'
+import { readJsonMessage } from '../../utils/pubsub'
+import { PubSubHandler } from '../../utils/pubsub-function'
 
 /**
  * Generates and saves a PDF based on a PubSubMessage
  * @param message PubSubMessage triggering the PDF generation
  * @todo Implement a soft retry
  */
-export const pdf: PubSubHandler = async message => {
+export const pdf: PubSubHandler = async (message) => {
   const command = readJsonMessage<GeneratePdfCommand>(message)
   logger.info('PDF Generation command received', command)
 

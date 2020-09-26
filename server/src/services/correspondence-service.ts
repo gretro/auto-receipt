@@ -1,7 +1,6 @@
 import * as config from 'config'
-import { CorrespondenceSubject } from '../models/Correspondence'
 import { InvalidConfigurationError } from '../errors/InvalidConfigurationError'
-import { Donation } from '../models/Donation'
+import { CorrespondenceSubject } from '../models/Correspondence'
 
 interface Field {
   value: string
@@ -19,11 +18,6 @@ export interface CorrespondenceContent {
   text?: string
   html?: string
 }
-
-function getContent(
-  type: CorrespondenceSubject,
-  donation: Donation
-): CorrespondenceSubject {}
 
 function getConfig(type: CorrespondenceSubject): CorrespondenceConfig {
   const configName = `correspondences.${type}`

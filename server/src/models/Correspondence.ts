@@ -1,4 +1,4 @@
-import * as Joi from '@hapi/joi'
+import * as Joi from 'joi'
 
 export type CorrespondenceSubject = 'receipt'
 
@@ -13,12 +13,7 @@ const correspondenceSubjectSchema = Joi.string().valid('receipt')
 
 export const correspondenceSchema = Joi.object<Correspondence>({
   date: Joi.date().required(),
-  email: Joi.string()
-    .email()
-    .required(),
+  email: Joi.string().email().required(),
   subject: correspondenceSubjectSchema,
-  attachments: Joi.array()
-    .required()
-    .min(0)
-    .items(Joi.string().required()),
+  attachments: Joi.array().required().min(0).items(Joi.string().required()),
 })

@@ -1,16 +1,16 @@
-import * as Joi from '@hapi/joi'
-import { RequestHandler, Request, Response } from 'express'
+import { Request, RequestHandler, Response } from 'express'
+import * as Joi from 'joi'
+import { DonationType, donationTypeSchema } from '../../models/Donation'
+import { Donor, donorSchema } from '../../models/Donor'
+import { publishMessage } from '../../pubsub/service'
+import { paymentService } from '../../services/payment-service'
 import {
-  pipeMiddlewares,
   allowMethods,
+  handleErrors,
+  pipeMiddlewares,
   validateBody,
   withApiToken,
 } from '../../utils/http'
-import { paymentService } from '../../services/payment-service'
-import { DonationType, donationTypeSchema } from '../../models/Donation'
-import { Donor, donorSchema } from '../../models/Donor'
-import { handleErrors } from '../../utils/http'
-import { publishMessage } from '../../pubsub/service'
 import { GeneratePdfCommand } from '../../models/commands/GeneratePdfCommand'
 
 interface CreateChequeViewModel {

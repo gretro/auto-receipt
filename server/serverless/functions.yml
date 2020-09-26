@@ -39,7 +39,7 @@ functions:
 
   bulkImport:
     handler: bulkImport
-    memorySize: 1024,
+    memorySize: 1024
     events:
       - event:
           eventType: providers/cloud.pubsub/eventTypes/topic.publish
