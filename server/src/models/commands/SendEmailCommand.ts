@@ -1,7 +1,6 @@
-import { CorrespondenceSubject } from '../Correspondence'
+import { CorrespondenceType } from '../Correspondence'
 
 export interface SendEmailCommand {
   donationId: string
-  type: CorrespondenceSubject
-  documentId?: string
+  type: CorrespondenceType
 }

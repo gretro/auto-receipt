@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import * as Joi from 'joi'
+import { GeneratePdfCommand } from '../../models/commands/GeneratePdfCommand'
 import { publishMessage } from '../../pubsub/service'
 import {
   allowMethods,
@@ -8,7 +9,6 @@ import {
   validateBody,
   withApiToken,
 } from '../../utils/http'
-import { GeneratePdfCommand } from '../../models/commands/GeneratePdfCommand'
 
 interface QueuePdfGenerationViewModel {
   donationId: string
@@ -26,7 +26,7 @@ export const generatePdfReceipt = pipeMiddlewares(
   allowMethods('POST'),
   validateBody(queuePdfGenerationSchema)
 )(
-  async (req: Request<{}>, res: Response): Promise<void> => {
+  async (req: Request<any>, res: Response): Promise<void> => {
     const viewModel: QueuePdfGenerationViewModel = req.body
 
     const command: GeneratePdfCommand = {

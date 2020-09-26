@@ -31,6 +31,7 @@ export function sendGridEmailProviderFactory(
           filename: att.name,
           content: att.data.toString('base64'),
           type: att.contentType,
+          disposition: 'attachment',
         })
       )
 

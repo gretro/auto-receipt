@@ -16,11 +16,13 @@ import { PubSubSubscription } from './models'
 export interface PubSubTopics {
   pdf: string
   bulkImport: string
+  email: string
 }
 
 interface AppSubscriptions {
   pdf: PubSubSubscription | null
   bulkImport: PubSubSubscription | null
+  email: PubSubSubscription | null
 }
 
 export type AppSubHandlers = {

@@ -1,9 +1,12 @@
 import { v4 as createUuid } from 'uuid'
 import { donationsRepository } from '../datastore/donations-repository'
+import { GeneratePdfCommand } from '../models/commands/GeneratePdfCommand'
+import { SendEmailCommand } from '../models/commands/SendEmailCommand'
 import { Donation, DonationType } from '../models/Donation'
 import { Donor } from '../models/Donor'
 import { Payment, PaymentSource } from '../models/Payment'
 import { PaypalPaymentSource } from '../models/PaypalPaymentSource'
+import { publishMessage } from '../pubsub/service'
 import { logger } from '../utils/logging'
 
 export interface CreatePaymentParams {
@@ -45,13 +48,20 @@ async function createDonation(
   const donationId = createUuid()
 
   const newDonation = mapToDonation(donationId, parameters)
-  const entity = await donationsRepository.createDonation(
+  const createdDonation = await donationsRepository.createDonation(
     newDonation,
     parameters.simulate || false
   )
-  logger.info('Donation was created successfully', { donationId: entity.id })
+  logger.info('Donation was created successfully', {
+    donationId: createdDonation.id,
+  })
 
-  return entity
+  await triggerReceiptGenerationNextStep(
+    createdDonation,
+    parameters.type === 'recurrent'
+  )
+
+  return createdDonation
 }
 
 async function handleRecurringDonation(
@@ -107,6 +117,7 @@ async function addPaymentToDonation(
     donation,
     parameters.simulate
   )
+
   return updatedDonation
 }
 
@@ -164,6 +175,46 @@ function mapToPayment(parameters: CreatePaymentParams): Payment {
   }
 
   return payment
+}
+
+/**
+ * Depending on the state of the donation, triggers the next step for the PDF generation.
+ *
+ * If no mailing address is present on the donation, will trigger the email submission. Otherwise and
+ * if the preventReceiptGeneration flag is set to false, will trigger the PDF receipt generation.
+ * @param donation Donation for which to trigger the next receipt generation step
+ * @param preventReceiptGeneration Flag to prevent the receipt from being generated (useful when payment is recurring and end of fiscal year has not been reached yet)
+ */
+async function triggerReceiptGenerationNextStep(
+  donation: Donation,
+  preventReceiptGeneration: boolean
+): Promise<void> {
+  if (!donation.donor.address) {
+    logger.info(
+      'No mailing address found on the donation. Will send an email requesting the information',
+      {
+        donationId: donation.id,
+      }
+    )
+
+    const command: SendEmailCommand = {
+      donationId: donation.id,
+      type: 'no-mailing-addr',
+    }
+
+    await publishMessage(command, 'email')
+  } else if (!preventReceiptGeneration) {
+    logger.info('Queuing PDF receipt generation', {
+      donationId: donation.id,
+    })
+
+    const command: GeneratePdfCommand = {
+      donationId: donation.id,
+      queueEmailTransmission: donation.emailReceipt && !!donation.donor.email,
+    }
+
+    await publishMessage(command, 'pdf')
+  }
 }
 
 export const paymentService = {
