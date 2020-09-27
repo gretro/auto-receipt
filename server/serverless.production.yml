@@ -7,7 +7,7 @@ provider:
   region: us-east1
   project: auto-receipt-prod
   credentials: ./.gcloud/keyfile.production.json
-  memorySize: 128
+  memorySize: 256
   labels:
     environment: ${self:provider.stage}
   environment:
