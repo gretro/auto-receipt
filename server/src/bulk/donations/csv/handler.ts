@@ -1,14 +1,13 @@
 import * as csvParse from 'csv-parse'
-
-import { BulkImportFormatHandler } from '../BulkImportFormatHandler'
-import { logger } from '../../../utils/logging'
+import { GeneratePdfCommand } from '../../../models/commands/GeneratePdfCommand'
 import { getFileProvider } from '../../../providers/file'
-import {
-  paymentService,
-  CreatePaymentParams,
-} from '../../../services/payment-service'
 import { publishMessage } from '../../../pubsub/service'
-import { GeneratePdfCommand } from '../../../functions/pubsub/pdf-receipt'
+import {
+  CreatePaymentParams,
+  paymentService,
+} from '../../../services/payment-service'
+import { logger } from '../../../utils/logging'
+import { BulkImportFormatHandler } from '../BulkImportFormatHandler'
 
 const DEFAULT_SUPER_EVE = 'DONS 2019'
 const RECURRING_PAYMENT_TYPE = 'Paypal recurring'
@@ -53,14 +52,13 @@ async function parseCsvData(filename: string): Promise<any[]> {
     cast: false,
     columns: true,
     trim: true,
-    // eslint-disable-next-line @typescript-eslint/camelcase
     skip_empty_lines: true,
   })
 
   return new Promise((resolve, reject) => {
     const data: CsvData[] = []
 
-    parserStream.on('error', err => {
+    parserStream.on('error', (err) => {
       logger.error('Error parsing the CSV', err)
       reject(err)
     })
@@ -85,7 +83,7 @@ async function parseCsvData(filename: string): Promise<any[]> {
 async function processData(csvData: CsvData[]): Promise<void> {
   const createPaymentParams = csvData.map(mapCsvDataToCreatePaymentParams)
 
-  const validatePromises = createPaymentParams.map(params =>
+  const validatePromises = createPaymentParams.map((params) =>
     paymentService.createPayment({ ...params, simulate: true })
   )
 
@@ -101,7 +99,7 @@ async function processData(csvData: CsvData[]): Promise<void> {
 
   logger.info(`Imported ${Object.keys(donationIds).length} donations`)
 
-  const jobQueue = Object.keys(donationIds).map(donationId => {
+  const jobQueue = Object.keys(donationIds).map((donationId) => {
     const message: GeneratePdfCommand = {
       donationId,
       queueEmailTransmission: false,

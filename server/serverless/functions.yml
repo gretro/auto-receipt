@@ -29,6 +29,8 @@ functions:
     memorySize: 1024
     environment:
       NODE_ICU_DATA: 'node_modules/full-icu'
+      # We need to load the secret file dynamically
+      SENDGRID_API_KEY: ${file(./.gcloud/secrets.staging.yml):sendGrid.apiKey}
     timeout: 120s
     events:
       - event:

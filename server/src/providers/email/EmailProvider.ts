@@ -7,8 +7,8 @@ export interface EmailAttachment {
 export interface SendEmailParams {
   to: string
   subject: string
-  content: string
-  contentType: 'html' | 'text'
+  html?: string
+  text?: string
   attachments?: EmailAttachment[]
 }
 

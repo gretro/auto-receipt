@@ -1,13 +1,12 @@
-import * as path from 'path'
 import * as fs from 'fs'
-import { promisify } from 'util'
+import * as path from 'path'
 import { Stream } from 'stream'
-
-import { FileProvider } from './FileProvider'
+import { promisify } from 'util'
 import { projectPath } from '../../project-path'
-import { logger } from '../../utils/logging'
+import { bufferToString, jsonBufferToObject } from '../../utils/buffer'
 import { Translations } from '../../utils/handlebars'
-import { jsonBufferToObject, bufferToString } from '../../utils/buffer'
+import { logger } from '../../utils/logging'
+import { FileProvider } from './FileProvider'
 
 const fsExists = promisify(fs.exists)
 const fsMkDir = promisify(fs.mkdir)
@@ -92,14 +91,14 @@ export function fileSystemProviderFactory(
     loadTemplate: (name: string): Promise<string | undefined> =>
       readFile(
         resolvedOptions.templatePath,
-        `${name}.hbs`,
+        `${name}`,
         'template',
         bufferToString
       ),
     saveDocument: (name: string, data: Buffer): Promise<void> =>
       saveFile(resolvedOptions.documentPath, name, 'document', data),
     loadDocument: (name: string): Promise<Buffer | undefined> =>
-      readFile(resolvedOptions.documentPath, name, 'document', x => x),
+      readFile(resolvedOptions.documentPath, name, 'document', (x) => x),
     loadTemp: (name: string): Stream =>
       readFileAsStream(resolvedOptions.tempPath, name),
   }

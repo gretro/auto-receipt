@@ -1,0 +1,142 @@
+<mjml>
+  <mj-head>
+    <mj-preview>Merci de votre don. Thank you for your donation</mj-preview>
+    <mj-attributes>
+      <mj-text font-size="16px" color="#fff"></mj-text>
+    </mj-attributes>
+    <mj-style inline="inline">
+      .link, .link:visited, .link:active { color: inherit; }
+    </mj-style>
+  </mj-head>
+  <mj-body background-color="#fff">
+    <mj-section>
+      <mj-column>
+        <mj-image
+          width="250px"
+          href="https://my-org.org/"
+          rel="noreferrer noopener"
+          src="https://1000logos.net/wp-content/uploads/2016/10/ACME-logo.png"
+        >
+        </mj-image>
+        <mj-text align="center" font-size="14px" color="#000">
+          55 place de la Bienfaisance,<br />
+          Montréal, QC<br />
+          H7J 1Z1
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#333">
+      <mj-column>
+        <mj-text font-size="12px">(English follows)</mj-text>
+        <mj-text>
+          Nous vous remercions de votre généreux don de {{currency
+          donationAmount "fr-CA" donationCurrency}}.
+        </mj-text>
+
+        <mj-text>
+          Nous aimerions votre émettre un reçu pour don, mais malheureusement,
+          il semble que nous n'ayons pas reçu votre adresse postale.
+        </mj-text>
+        <mj-text
+          >Afin de nous
+          <strong
+            >transmettre votre adresse postale complète (incluant le code
+            postal)</strong
+          >, veuillez simplement répondre à ce courriel ou nous envoyer un
+          courriel au
+          <a
+            class="link"
+            rel="noreferrer noopener"
+            href=" mailto:no-reply@autoreceipt.app?subject=Adresse%20postale%20suite%20au%20don "
+            >no-reply@autoreceipt.app</a
+          >.
+        </mj-text>
+        <mj-text>
+          Nous vous ferons parvenir le reçu par courriel dès que possible suite
+          à la réception de cette information.
+        </mj-text>
+
+        <mj-text> Bien cordialement, </mj-text>
+        <mj-text>
+          Josée Lavigne,<br />
+          Présidente,<br />
+          <strong>My organization</strong>
+        </mj-text>
+        <mj-text>
+          <a class="link" rel="noreferrer noopener" href="https://my-org.org/"
+            >www.my-org.org</a
+          >
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-divider border-color="#333" border-width="2px"></mj-divider>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#333">
+      <mj-column>
+        <mj-text>
+          Thank you for your generous donation of {{currency donationAmount
+          "en-CA" donationCurrency}}.
+        </mj-text>
+
+        <mj-text>
+          We would like to send you a receipt for your donation, but it appears
+          we did not receive your mailing address.
+        </mj-text>
+
+        <mj-text>
+          Please
+          <strong
+            >send us your full mailing address (including your postal
+            code)</strong
+          >
+          by replying to this email or by sending us an email at
+          <a
+            class="link"
+            rel="noreferrer noopener"
+            href=" mailto:no-reply@autoreceipt.app?subject=Mailing%20address%20following%20my%20donation "
+            >no-reply@autoreceipt.app</a
+          >.
+        </mj-text>
+
+        <mj-text
+          >Following receipt of this information, we will send you the receipt
+          by email.</mj-text
+        >
+
+        <mj-text> Sincerely, </mj-text>
+        <mj-text>
+          Josée Lavigne,<br />
+          President,<br />
+          <strong>My organization</strong>
+        </mj-text>
+        <mj-text>
+          <a class="link" rel="noreferrer noopener" href="https://my-org.org/"
+            >www.my-org.org</a
+          >
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-divider border-color="#c60000" border-width="2px"></mj-divider>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding-top="0">
+      <mj-column>
+        <mj-text color="#000" font-size="14px" align="center">
+          Charitable registration number / Numéro d’enregistrement d’organisme
+          de bienfaisance<br />
+          80555 7743 RU0001
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

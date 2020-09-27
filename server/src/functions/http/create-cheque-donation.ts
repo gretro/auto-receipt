@@ -2,7 +2,6 @@ import { Request, RequestHandler, Response } from 'express'
 import * as Joi from 'joi'
 import { DonationType, donationTypeSchema } from '../../models/Donation'
 import { Donor, donorSchema } from '../../models/Donor'
-import { publishMessage } from '../../pubsub/service'
 import { paymentService } from '../../services/payment-service'
 import {
   allowMethods,
@@ -11,7 +10,6 @@ import {
   validateBody,
   withApiToken,
 } from '../../utils/http'
-import { GeneratePdfCommand } from '../pubsub/pdf-receipt'
 
 interface CreateChequeViewModel {
   donationType: DonationType
@@ -33,32 +31,21 @@ const schema = Joi.object<CreateChequeViewModel>({
     otherwise: Joi.string().required(),
   }),
   donor: donorSchema.required(),
-  emailReceipt: Joi.boolean()
-    .strict()
-    .required(),
-  currency: Joi.string()
-    .required()
-    .max(3)
-    .uppercase(),
-  amount: Joi.number()
-    .precision(2)
-    .required(),
-  receiptAmount: Joi.number()
-    .precision(2)
-    .required(),
-  paymentDate: Joi.string()
-    .isoDate()
-    .required(),
+  emailReceipt: Joi.boolean().strict().required(),
+  currency: Joi.string().required().max(3).uppercase(),
+  amount: Joi.number().precision(2).required(),
+  receiptAmount: Joi.number().precision(2).required(),
+  paymentDate: Joi.string().isoDate().required(),
   reason: Joi.string().allow(null),
 })
 
-export const createCheque: RequestHandler<{}> = pipeMiddlewares(
+export const createCheque: RequestHandler<any> = pipeMiddlewares(
   handleErrors(),
   withApiToken(),
   allowMethods('POST'),
   validateBody(schema)
 )(
-  async (req: Request<{}>, res: Response): Promise<void> => {
+  async (req: Request<any>, res: Response): Promise<void> => {
     const body: CreateChequeViewModel = req.body
 
     const donation = await paymentService.createPayment({
@@ -73,12 +60,6 @@ export const createCheque: RequestHandler<{}> = pipeMiddlewares(
       paymentDate: body.paymentDate,
       reason: body.reason || undefined,
     })
-
-    const generatePdfCommand: GeneratePdfCommand = {
-      donationId: donation.id,
-      queueEmailTransmission: body.emailReceipt,
-    }
-    await publishMessage(generatePdfCommand, 'pdf')
 
     res.status(201).send(donation)
   }

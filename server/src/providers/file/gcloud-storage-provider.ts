@@ -1,13 +1,12 @@
 import { Bucket, Storage } from '@google-cloud/storage'
 import * as path from 'path'
-
-import { FileProvider } from './FileProvider'
-import { projectPath } from '../../project-path'
+import { Stream } from 'stream'
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError'
-import { logger } from '../../utils/logging'
+import { projectPath } from '../../project-path'
 import { bufferToString, jsonBufferToObject } from '../../utils/buffer'
 import { Translations } from '../../utils/handlebars'
-import { Stream } from 'stream'
+import { logger } from '../../utils/logging'
+import { FileProvider } from './FileProvider'
 
 export interface GCloudProviderOptions {
   keyPath: string | null
@@ -64,7 +63,7 @@ async function readFile<T>(
       resolve(Buffer.concat(chunks))
     })
 
-    readStream.on('error', err => {
+    readStream.on('error', (err) => {
       logger.error(
         `Error reading ${objectType} ${filename} from bucket '${bucketRef.name}'`
       )
@@ -138,7 +137,7 @@ async function saveFile(
       gzip: true,
     })
 
-    streamWriter.on('error', err => {
+    streamWriter.on('error', (err) => {
       logger.error(
         `Error saving ${objectType} ${filename} in bucket '${bucketRef.name}'`
       )
@@ -166,14 +165,9 @@ export async function gCloudProviderFactory(
 
   return {
     loadTemplate: (filename): Promise<string | undefined> =>
-      readFile(
-        buckets.templates,
-        `${filename}.hbs`,
-        'template',
-        bufferToString
-      ),
+      readFile(buckets.templates, `${filename}`, 'template', bufferToString),
     loadDocument: (filename): Promise<Buffer | undefined> =>
-      readFile(buckets.documents, filename, 'document', x => x),
+      readFile(buckets.documents, filename, 'document', (x) => x),
     saveDocument: (filename, data): Promise<void> =>
       saveFile(buckets.documents, filename, 'document', data),
     loadTranslations: (filename): Promise<Translations | undefined> =>
@@ -228,7 +222,7 @@ async function getBuckets(
     {}
   )
 
-  const bucketPromises = Object.keys(uniqueBuckets).map(async bucketName => {
+  const bucketPromises = Object.keys(uniqueBuckets).map(async (bucketName) => {
     const bucketRef = await getBucketRef(
       storage,
       bucketName,
@@ -241,16 +235,16 @@ async function getBuckets(
 
   const bucketRefs: Partial<BucketRefs> = {
     documents: bucketsRefInfo.find(
-      bucketInfo => bucketInfo.bucketName === options.documentsBucket
+      (bucketInfo) => bucketInfo.bucketName === options.documentsBucket
     )?.bucketRef,
     templates: bucketsRefInfo.find(
-      bucketInfo => bucketInfo.bucketName === options.templatesBucket
+      (bucketInfo) => bucketInfo.bucketName === options.templatesBucket
     )?.bucketRef,
     translations: bucketsRefInfo.find(
-      bucketInfo => bucketInfo.bucketName === options.translationsBucket
+      (bucketInfo) => bucketInfo.bucketName === options.translationsBucket
     )?.bucketRef,
     temp: bucketsRefInfo.find(
-      bucketInfo => bucketInfo.bucketName === options.tempBucket
+      (bucketInfo) => bucketInfo.bucketName === options.tempBucket
     )?.bucketRef,
   }
 
