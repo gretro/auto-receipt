@@ -1,4 +1,4 @@
-import config from 'config'
+import * as config from 'config'
 import { NextFunction, Request, RequestHandler, Response } from 'express'
 import { Schema } from 'joi'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'

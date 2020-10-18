@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import * as Joi from 'joi'
 
 export const CorrespondenceTypes = {
   'no-mailing-addr': 'no-mailing-addr',

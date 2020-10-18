@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import Joi from 'joi'
+import * as Joi from 'joi'
 import {
   BulkImportCommand,
   bulkImportDonationFormatSchema,
@@ -24,7 +24,7 @@ const schema = Joi.object<LaunchBulkImportViewModel>({
   format: bulkImportDonationFormatSchema.required(),
 })
 
-export const launchBulkImport: RequestHandler<any> = pipeMiddlewares(
+export const launchBulkImport: RequestHandler<{}> = pipeMiddlewares(
   handleErrors(),
   withApiToken(),
   allowMethods('POST'),

@@ -1,6 +1,6 @@
 import { Message, PubSub, Topic } from '@google-cloud/pubsub'
 import { ClientConfig } from '@google-cloud/pubsub/build/src/pubsub'
-import config from 'config'
+import * as config from 'config'
 import { AppSubNotFoundError } from '../errors/AppSubNotFoundError'
 import { InvalidConfigurationError } from '../errors/InvalidConfigurationError'
 import { TopicNotFoundError } from '../errors/TopicNotFoundError'

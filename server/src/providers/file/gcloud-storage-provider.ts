@@ -1,5 +1,5 @@
 import { Bucket, Storage } from '@google-cloud/storage'
-import path from 'path'
+import * as path from 'path'
 import { Stream } from 'stream'
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError'
 import { projectPath } from '../../project-path'

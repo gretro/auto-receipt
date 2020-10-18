@@ -1,4 +1,4 @@
-import path from 'path'
+import * as path from 'path'
 
 const packageJsonPath = path.resolve(__dirname, '..', '..', 'package.json')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
