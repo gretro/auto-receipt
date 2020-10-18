@@ -1,4 +1,4 @@
-import config from 'config'
+import * as config from 'config'
 import { InvalidConfigurationError } from '../../errors/InvalidConfigurationError'
 import { EmailProvider } from './EmailProvider'
 import {

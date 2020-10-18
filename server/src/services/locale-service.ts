@@ -1,4 +1,4 @@
-import config from 'config'
+import * as config from 'config'
 import { UnsupportedLocaleError } from '../errors/UnsupportedLocaleError'
 import { logger } from '../utils/logging'
 

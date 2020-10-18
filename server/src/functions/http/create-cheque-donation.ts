@@ -1,5 +1,5 @@
 import { Request, RequestHandler, Response } from 'express'
-import Joi from 'joi'
+import * as Joi from 'joi'
 import { DonationType, donationTypeSchema } from '../../models/Donation'
 import { Donor, donorSchema } from '../../models/Donor'
 import { paymentService } from '../../services/payment-service'

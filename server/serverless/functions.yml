@@ -24,11 +24,6 @@ functions:
     events:
       - http: http
 
-  patchDonation:
-    handler: patchDonation
-    events:
-      - http: http
-
   pdf:
     handler: pdf
     memorySize: 1024
