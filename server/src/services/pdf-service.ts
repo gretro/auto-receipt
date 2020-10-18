@@ -1,5 +1,5 @@
-import * as chromium from 'chrome-aws-lambda'
-import * as config from 'config'
+import chromium from 'chrome-aws-lambda'
+import config from 'config'
 import { Browser } from 'puppeteer-core'
 import { donationsRepository } from '../datastore/donations-repository'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'

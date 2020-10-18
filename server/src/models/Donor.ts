@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import Joi from 'joi'
 import { Address, addressSchema } from './Address'
 
 export interface Donor {

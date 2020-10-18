@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import Joi from 'joi'
 import { donationsRepository } from '../../datastore/donations-repository'
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError'
 import { getFileProvider } from '../../providers/file'

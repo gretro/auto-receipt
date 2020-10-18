@@ -1,13 +1,12 @@
-import * as config from 'config'
-
+import config from 'config'
+import {
+  fileSystemProviderFactory,
+  FileSystemProviderOptions,
+} from './file-system-provider'
 import { FileProvider } from './FileProvider'
 import {
-  FileSystemProviderOptions,
-  fileSystemProviderFactory,
-} from './file-system-provider'
-import {
-  GCloudProviderOptions,
   gCloudProviderFactory,
+  GCloudProviderOptions,
 } from './gcloud-storage-provider'
 
 interface FileProviderConfig {

@@ -1,4 +1,4 @@
-import * as csvParse from 'csv-parse'
+import csvParse from 'csv-parse'
 import { GeneratePdfCommand } from '../../../models/commands/GeneratePdfCommand'
 import { getFileProvider } from '../../../providers/file'
 import { publishMessage } from '../../../pubsub/service'

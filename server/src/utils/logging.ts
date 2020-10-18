@@ -1,6 +1,6 @@
-import * as winston from 'winston'
-import * as config from 'config'
-import * as gcloudLog from '@google-cloud/logging-winston'
+import gcloudLog from '@google-cloud/logging-winston'
+import config from 'config'
+import winston from 'winston'
 import { consoleFormat } from 'winston-console-format'
 import { LoggingConfig } from '../models/LoggingConfig'
 
