@@ -1,6 +1,5 @@
 import { AttachmentData } from '@sendgrid/helpers/classes/attachment'
-import * as SendGrid from '@sendgrid/mail'
-import { MailDataRequired } from '@sendgrid/mail'
+import SendGrid, { MailDataRequired } from '@sendgrid/mail'
 import { EmailProvider, SendEmailParams } from './EmailProvider'
 
 export interface SendGridOptions {

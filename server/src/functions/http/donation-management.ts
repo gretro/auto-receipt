@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
-import {
-  pipeMiddlewares,
-  handleErrors,
-  withApiToken,
-  allowMethods,
-} from '../../utils/http'
 import { donationsRepository } from '../../datastore/donations-repository'
 import { Donation } from '../../models/Donation'
+import {
+  allowMethods,
+  handleErrors,
+  pipeMiddlewares,
+  withApiToken,
+} from '../../utils/http'
 
 interface DonationListingViewModel {
   fiscalYear: number
@@ -19,7 +19,7 @@ export const listDonations = pipeMiddlewares(
   withApiToken(),
   allowMethods('GET')
 )(
-  async (req: Request<{}>, res: Response): Promise<void> => {
+  async (req: Request<any>, res: Response): Promise<void> => {
     const { year, externalId } = req.query
 
     let fiscalYear = parseInt(year, 10)

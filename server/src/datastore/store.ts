@@ -1,5 +1,5 @@
-import * as config from 'config'
 import { Firestore } from '@google-cloud/firestore'
+import config from 'config'
 
 let firestore: Firestore
 
