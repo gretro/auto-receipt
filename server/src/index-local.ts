@@ -5,6 +5,7 @@ import { launchBulkImport } from './functions/http/bulk-import-donations'
 import { createCheque } from './functions/http/create-cheque-donation'
 import { listDonations } from './functions/http/donation-management'
 import { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
+import { patchDonation } from './functions/http/patch-donation'
 import { paypalIpn } from './functions/http/paypal-ipn'
 import { sendReceipt } from './functions/http/send-receipt'
 import { bulkImport } from './functions/pubsub/bulk-import'
@@ -25,6 +26,7 @@ app.all('/listDonations', listDonations)
 app.all('/generatePdfReceipt', generatePdfReceipt)
 app.all('/sendReceipt', sendReceipt)
 app.all('/launchBulkImport', launchBulkImport)
+app.all('/patchDonation', patchDonation)
 
 async function main(): Promise<void> {
   app.listen(3000, () => {
