@@ -8,7 +8,7 @@ import {
   handleErrors,
   pipeMiddlewares,
   validateBody,
-  withApiToken,
+  withAuth,
 } from '../../utils/http'
 
 interface CreateChequeViewModel {
@@ -41,7 +41,7 @@ const schema = Joi.object<CreateChequeViewModel>({
 
 export const createCheque: RequestHandler<any> = pipeMiddlewares(
   handleErrors(),
-  withApiToken(),
+  withAuth(),
   allowMethods('POST'),
   validateBody(schema)
 )(

@@ -5,6 +5,10 @@ import { EntityNotFoundError } from '../errors/EntityNotFoundError'
 import { InvalidEntityError } from '../errors/InvalidEntityError'
 import { PayPalIpnVerificationError } from '../errors/PayPalIpnVerificationError'
 import { ApiConfig } from '../models/ApiConfig'
+import {
+  getAuthConfig,
+  getAuthenticationProvider,
+} from '../providers/authentication'
 import { logger } from './logging'
 
 export type FunctionMiddleware = (
@@ -12,29 +16,37 @@ export type FunctionMiddleware = (
 ) => RequestHandler
 
 /**
- * Validates the request is authorized.
- *
- * Note: Validating using an API Token is temporary. We should instead use OAuth / OIDC
+ * Authenticates the request using the configured AuthenticationProvider
  */
-export const withApiToken = (): FunctionMiddleware => {
-  const apiConfig = config.get<ApiConfig>('api')
-
+export const withAuth = (): FunctionMiddleware => {
   return (handler: RequestHandler): RequestHandler => {
-    return (
-      request: Request,
-      response: Response,
-      next: NextFunction
-    ): unknown => {
-      const reqToken = request.header('x-api-token')
-      if (reqToken === apiConfig.apiToken) {
-        return handler(request, response, next)
+    return async (request, response, next): Promise<unknown> => {
+      const authConfig = getAuthConfig()
+      const authProvider = getAuthenticationProvider()
+
+      try {
+        const user = await authProvider.authenticateRequest(request)
+
+        if (user) {
+          ;(request as any).user = user
+          return handler(request, response, next)
+        } else {
+          logger.warn('No authentication provided. Unauthorized access.', {
+            ip: request.ip,
+          })
+
+          response.sendStatus(authConfig.unauthorizedStatusCode)
+        }
+      } catch (err) {
+        logger.warn('Token validation failed. Unauthorized access.', {
+          ip: request.ip,
+          error: err,
+          bearer: request.header('authentication'),
+        })
+
+        response.sendStatus(authConfig.unauthorizedStatusCode)
       }
 
-      logger.warn('Request unauthorized. Rejecting it', {
-        ip: request.ip,
-        emptyAuth: !reqToken,
-      })
-      response.status(401).send('Unauthorized')
       return
     }
   }

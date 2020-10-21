@@ -7,7 +7,7 @@ import {
   handleErrors,
   pipeMiddlewares,
   validateBody,
-  withApiToken,
+  withAuth,
 } from '../../utils/http'
 
 interface QueuePdfGenerationViewModel {
@@ -22,11 +22,11 @@ const queuePdfGenerationSchema = Joi.object<QueuePdfGenerationViewModel>({
 
 export const generatePdfReceipt = pipeMiddlewares(
   handleErrors(),
-  withApiToken(),
+  withAuth(),
   allowMethods('POST'),
   validateBody(queuePdfGenerationSchema)
 )(
-  async (req: Request<any>, res: Response): Promise<void> => {
+  async (req: Request, res: Response): Promise<void> => {
     const viewModel: QueuePdfGenerationViewModel = req.body
 
     const command: GeneratePdfCommand = {

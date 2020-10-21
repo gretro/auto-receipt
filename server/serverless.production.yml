@@ -11,7 +11,9 @@ provider:
   labels:
     environment: ${self:provider.stage}
   environment:
-    API__APITOKEN: ${file(./.gcloud/secrets.production.yml):api.apiToken}
+    AUTH_JWT_JWKS_URL: ${file(./.gcloud/secrets.prod.yml):auth.jwt.jwksUrl}
+    AUTH_JWT_AUDIENCE: ${file(./.gcloud/secrets.prod.yml):auth.jwt.audience}
+    AUTH_JWT_ISSUER: ${file(./.gcloud/secrets.prod.yml):auth.jwt.issuer}
     NODE_ENV: production
     FUNCTION_REGION: ${self:provider.region}
 
