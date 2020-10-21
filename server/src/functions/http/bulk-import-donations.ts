@@ -11,7 +11,7 @@ import {
   handleErrors,
   pipeMiddlewares,
   validateBody,
-  withApiToken,
+  withAuth,
 } from '../../utils/http'
 
 interface LaunchBulkImportViewModel {
@@ -24,9 +24,9 @@ const schema = Joi.object<LaunchBulkImportViewModel>({
   format: bulkImportDonationFormatSchema.required(),
 })
 
-export const launchBulkImport: RequestHandler<{}> = pipeMiddlewares(
+export const launchBulkImport: RequestHandler = pipeMiddlewares(
   handleErrors(),
-  withApiToken(),
+  withAuth(),
   allowMethods('POST'),
   validateBody(schema)
 )(async (req, res) => {

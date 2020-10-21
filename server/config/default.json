@@ -71,6 +71,10 @@
         "from": "do-not-reply@autoreceipt.app",
         "replyTo": "no-reply@autoreceipt.app"
       }
+    },
+    "authentication": {
+      "provider": "no-auth",
+      "unauthorizedStatusCode": 401
     }
   }
 }
