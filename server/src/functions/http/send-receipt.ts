@@ -7,7 +7,7 @@ import {
   handleErrors,
   pipeMiddlewares,
   validateBody,
-  withApiToken,
+  withAuth,
 } from '../../utils/http'
 
 interface SendReceiptViewModel {
@@ -22,7 +22,7 @@ const vmSchema = Joi.object<SendReceiptViewModel>({
 
 export const sendReceipt = pipeMiddlewares(
   handleErrors(),
-  withApiToken(),
+  withAuth(),
   allowMethods('POST'),
   validateBody(vmSchema)
 )(async (req, res) => {

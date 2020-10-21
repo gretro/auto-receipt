@@ -9,7 +9,7 @@ import {
   handleErrors,
   pipeMiddlewares,
   validateBody,
-  withApiToken,
+  withAuth,
 } from '../../utils/http'
 
 const patchDonationSchema = Joi.object<Donation>({
@@ -34,7 +34,7 @@ const patchDonationSchema = Joi.object<Donation>({
 
 export const patchDonation = pipeMiddlewares(
   handleErrors(),
-  withApiToken(),
+  withAuth(),
   allowMethods('PATCH'),
   validateBody(patchDonationSchema)
 )(

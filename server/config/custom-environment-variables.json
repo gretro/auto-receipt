@@ -1,13 +1,17 @@
 {
-  "api": {
-    "apiToken": "API__APITOKEN"
-  },
   "providers": {
     "email": {
       "sendGrid": {
         "apiKey": "SENDGRID_API_KEY",
         "from": "EMAIL_FROM",
         "replyTo": "EMAIL_REPLY_TO"
+      }
+    },
+    "authentication": {
+      "jwt": {
+        "jwksUrl": "AUTH_JWT_JWKS_URL",
+        "audience": "AUTH_JWT_AUDIENCE",
+        "issuer": "AUTH_JWT_ISSUER"
       }
     }
   }
