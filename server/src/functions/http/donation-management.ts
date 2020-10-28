@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { donationsRepository } from '../../datastore/donations-repository'
+import { EntityNotFoundError } from '../../errors/EntityNotFoundError'
 import { Donation } from '../../models/Donation'
 import {
   allowMethods,
@@ -13,6 +14,28 @@ interface DonationListingViewModel {
   count: number
   donations: Donation[]
 }
+
+export const getDonation = pipeMiddlewares(
+  handleErrors(),
+  withAuth(),
+  allowMethods('GET')
+)(
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.query
+
+    if (!id) {
+      res.sendStatus(400)
+      return
+    }
+
+    const donation = await donationsRepository.getDonationById(id)
+    if (!donation) {
+      throw new EntityNotFoundError('Donation', id)
+    }
+
+    res.status(200).send(donation)
+  }
+)
 
 export const listDonations = pipeMiddlewares(
   handleErrors(),

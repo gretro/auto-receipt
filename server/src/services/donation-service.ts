@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
 import { donationsRepository } from '../datastore/donations-repository'
+import { EntityNotFoundError } from '../errors/EntityNotFoundError'
 import { GeneratePdfCommand } from '../models/commands/GeneratePdfCommand'
 import { DeepPartial } from '../models/DeepPartial'
 import { Donation } from '../models/Donation'
@@ -8,11 +9,13 @@ import { logger } from '../utils/logging'
 
 async function patchDonation(
   donationId: string,
-  patchDonation: DeepPartial<Donation>
+  patchDonation: DeepPartial<Donation>,
+  generateReceipt: boolean
 ): Promise<Donation> {
   const donation = await donationsRepository.getDonationById(donationId)
-  const mustEmitReceipt =
-    donation?.donor.address == null && patchDonation.donor?.address != null
+  if (!donation) {
+    throw new EntityNotFoundError('Donation', donationId)
+  }
 
   const mergedDonation = _.merge(donation, patchDonation)
 
@@ -20,7 +23,7 @@ async function patchDonation(
     mergedDonation
   )
 
-  if (mustEmitReceipt) {
+  if (generateReceipt) {
     logger.info(
       'Patching address in a donation. Will emit the receipt with new donation information.'
     )

@@ -3,7 +3,10 @@ import * as express from 'express'
 import * as morgan from 'morgan'
 import { launchBulkImport } from './functions/http/bulk-import-donations'
 import { createCheque } from './functions/http/create-cheque-donation'
-import { listDonations } from './functions/http/donation-management'
+import {
+  getDonation,
+  listDonations,
+} from './functions/http/donation-management'
 import { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
 import { patchDonation } from './functions/http/patch-donation'
 import { paypalIpn } from './functions/http/paypal-ipn'
@@ -23,6 +26,7 @@ app.use(bodyParser.json())
 app.all('/paypalIpn', paypalIpn)
 app.all('/createCheque', createCheque)
 app.all('/listDonations', listDonations)
+app.all('/getDonation', getDonation)
 app.all('/generatePdfReceipt', generatePdfReceipt)
 app.all('/sendReceipt', sendReceipt)
 app.all('/launchBulkImport', launchBulkImport)
