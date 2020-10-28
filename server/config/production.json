@@ -32,6 +32,10 @@
         "tempBucket": "auto-receipt-prod-temp",
         "createBuckets": false
       }
+    },
+    "authentication": {
+      "provider": "jwt",
+      "unauthorizedStatusCode": 404
     }
   }
 }

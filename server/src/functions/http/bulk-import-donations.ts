@@ -1,19 +1,18 @@
 import { RequestHandler } from 'express'
-import * as Joi from '@hapi/joi'
-
-import {
-  pipeMiddlewares,
-  handleErrors,
-  withApiToken,
-  allowMethods,
-  validateBody,
-} from '../../utils/http'
+import * as Joi from 'joi'
 import {
   BulkImportCommand,
-  BulkImportFormat,
   bulkImportDonationFormatSchema,
+  BulkImportFormat,
 } from '../../models/commands/BulkImportCommand'
 import { publishMessage } from '../../pubsub/service'
+import {
+  allowMethods,
+  handleErrors,
+  pipeMiddlewares,
+  validateBody,
+  withAuth,
+} from '../../utils/http'
 
 interface LaunchBulkImportViewModel {
   filename: string
@@ -25,9 +24,9 @@ const schema = Joi.object<LaunchBulkImportViewModel>({
   format: bulkImportDonationFormatSchema.required(),
 })
 
-export const launchBulkImport: RequestHandler<{}> = pipeMiddlewares(
+export const launchBulkImport: RequestHandler = pipeMiddlewares(
   handleErrors(),
-  withApiToken(),
+  withAuth(),
   allowMethods('POST'),
   validateBody(schema)
 )(async (req, res) => {

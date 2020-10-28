@@ -1,24 +1,37 @@
-import * as Joi from '@hapi/joi'
+import * as Joi from 'joi'
 
-export type CorrespondenceSubject = 'receipt'
-
-export interface Correspondence {
-  date: Date
-  email: string
-  subject: CorrespondenceSubject
-  attachments: string[]
+export const CorrespondenceTypes = {
+  'no-mailing-addr': 'no-mailing-addr',
+  'thank-you': 'thank-you',
 }
 
-const correspondenceSubjectSchema = Joi.string().valid('receipt')
+export type CorrespondenceType = keyof typeof CorrespondenceTypes
+
+export const CorrespondenceStatuses = {
+  created: 'created',
+  sent: 'sent',
+}
+
+export type CorrespondenceStatus = keyof typeof CorrespondenceStatuses
+
+export interface Correspondence {
+  id: string
+  date: Date
+  sentTo: string
+  type: CorrespondenceType
+  attachments: string[]
+  status: CorrespondenceStatus
+}
 
 export const correspondenceSchema = Joi.object<Correspondence>({
+  id: Joi.string().required(),
   date: Joi.date().required(),
-  email: Joi.string()
-    .email()
+  sentTo: Joi.string().email().required(),
+  type: Joi.string()
+    .valid(...Object.keys(CorrespondenceTypes))
     .required(),
-  subject: correspondenceSubjectSchema,
-  attachments: Joi.array()
-    .required()
-    .min(0)
-    .items(Joi.string().required()),
+  attachments: Joi.array().required().items(Joi.string()),
+  status: Joi.string()
+    .valid(...Object.keys(CorrespondenceStatuses))
+    .required(),
 })

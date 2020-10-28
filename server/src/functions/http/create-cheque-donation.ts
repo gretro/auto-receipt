@@ -1,17 +1,15 @@
-import * as Joi from '@hapi/joi'
-import { RequestHandler, Request, Response } from 'express'
-import {
-  pipeMiddlewares,
-  allowMethods,
-  validateBody,
-  withApiToken,
-} from '../../utils/http'
-import { paymentService } from '../../services/payment-service'
+import { Request, RequestHandler, Response } from 'express'
+import * as Joi from 'joi'
 import { DonationType, donationTypeSchema } from '../../models/Donation'
 import { Donor, donorSchema } from '../../models/Donor'
-import { handleErrors } from '../../utils/http'
-import { publishMessage } from '../../pubsub/service'
-import { GeneratePdfCommand } from '../pubsub/pdf-receipt'
+import { paymentService } from '../../services/payment-service'
+import {
+  allowMethods,
+  handleErrors,
+  pipeMiddlewares,
+  validateBody,
+  withAuth,
+} from '../../utils/http'
 
 interface CreateChequeViewModel {
   donationType: DonationType
@@ -33,32 +31,21 @@ const schema = Joi.object<CreateChequeViewModel>({
     otherwise: Joi.string().required(),
   }),
   donor: donorSchema.required(),
-  emailReceipt: Joi.boolean()
-    .strict()
-    .required(),
-  currency: Joi.string()
-    .required()
-    .max(3)
-    .uppercase(),
-  amount: Joi.number()
-    .precision(2)
-    .required(),
-  receiptAmount: Joi.number()
-    .precision(2)
-    .required(),
-  paymentDate: Joi.string()
-    .isoDate()
-    .required(),
+  emailReceipt: Joi.boolean().strict().required(),
+  currency: Joi.string().required().max(3).uppercase(),
+  amount: Joi.number().precision(2).required(),
+  receiptAmount: Joi.number().precision(2).required(),
+  paymentDate: Joi.string().isoDate().required(),
   reason: Joi.string().allow(null),
 })
 
-export const createCheque: RequestHandler<{}> = pipeMiddlewares(
+export const createCheque: RequestHandler<any> = pipeMiddlewares(
   handleErrors(),
-  withApiToken(),
+  withAuth(),
   allowMethods('POST'),
   validateBody(schema)
 )(
-  async (req: Request<{}>, res: Response): Promise<void> => {
+  async (req: Request<any>, res: Response): Promise<void> => {
     const body: CreateChequeViewModel = req.body
 
     const donation = await paymentService.createPayment({
@@ -73,12 +60,6 @@ export const createCheque: RequestHandler<{}> = pipeMiddlewares(
       paymentDate: body.paymentDate,
       reason: body.reason || undefined,
     })
-
-    const generatePdfCommand: GeneratePdfCommand = {
-      donationId: donation.id,
-      queueEmailTransmission: body.emailReceipt,
-    }
-    await publishMessage(generatePdfCommand, 'pdf')
 
     res.status(201).send(donation)
   }

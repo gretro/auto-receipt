@@ -13,7 +13,7 @@ export interface FileProvider {
 
   /**
    * Loads a Handlebars template
-   * @param name Template name (without the .hbs extension)
+   * @param name Template name (with the extension)
    */
   loadTemplate(name: string): Promise<string | undefined>
 

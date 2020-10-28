@@ -1,9 +1,9 @@
-import { Donation } from '../models/Donation'
-import { Correspondence } from '../models/Correspondence'
-import { DocumentMetadata } from '../models/DocumentMetadata'
-import { logger } from '../utils/logging'
 import { donationsRepository } from '../datastore/donations-repository'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
+import { Correspondence } from '../models/Correspondence'
+import { DocumentMetadata } from '../models/DocumentMetadata'
+import { Donation } from '../models/Donation'
+import { logger } from '../utils/logging'
 
 async function addDocument(
   donationId: string,

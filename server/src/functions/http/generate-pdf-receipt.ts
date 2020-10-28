@@ -1,15 +1,14 @@
 import { Request, Response } from 'express'
-import * as Joi from '@hapi/joi'
-
-import {
-  pipeMiddlewares,
-  handleErrors,
-  withApiToken,
-  allowMethods,
-  validateBody,
-} from '../../utils/http'
-import { GeneratePdfCommand } from '../pubsub/pdf-receipt'
+import * as Joi from 'joi'
+import { GeneratePdfCommand } from '../../models/commands/GeneratePdfCommand'
 import { publishMessage } from '../../pubsub/service'
+import {
+  allowMethods,
+  handleErrors,
+  pipeMiddlewares,
+  validateBody,
+  withAuth,
+} from '../../utils/http'
 
 interface QueuePdfGenerationViewModel {
   donationId: string
@@ -23,11 +22,11 @@ const queuePdfGenerationSchema = Joi.object<QueuePdfGenerationViewModel>({
 
 export const generatePdfReceipt = pipeMiddlewares(
   handleErrors(),
-  withApiToken(),
+  withAuth(),
   allowMethods('POST'),
   validateBody(queuePdfGenerationSchema)
 )(
-  async (req: Request<{}>, res: Response): Promise<void> => {
+  async (req: Request, res: Response): Promise<void> => {
     const viewModel: QueuePdfGenerationViewModel = req.body
 
     const command: GeneratePdfCommand = {

@@ -13,11 +13,11 @@ function getLocales(): string[] {
   if (!loadedLocales) {
     const locales = config.get<LocaleConfig[]>('locales')
 
-    locales.forEach(locale => {
+    locales.forEach((locale) => {
       assertLocaleIsPresent(locale)
     })
 
-    loadedLocales = locales.map(locale => locale.locale)
+    loadedLocales = locales.map((locale) => locale.locale)
   }
 
   return loadedLocales

@@ -14,6 +14,11 @@ functions:
     events:
       - http: http
 
+  getDonation:
+    handler: getDonation
+    events:
+      - http: http
+
   generatePdfReceipt:
     handler: generatePdfReceipt
     events:
@@ -21,6 +26,11 @@ functions:
 
   launchBulkImport:
     handler: launchBulkImport
+    events:
+      - http: http
+
+  patchDonation:
+    handler: patchDonation
     events:
       - http: http
 
@@ -37,8 +47,20 @@ functions:
 
   bulkImport:
     handler: bulkImport
-    memorySize: 1024,
+    memorySize: 1024
     events:
       - event:
           eventType: providers/cloud.pubsub/eventTypes/topic.publish
           resource: 'projects/${self:provider.project, ""}/topics/bulk-import'
+
+  email:
+    handler: email
+    environment:
+      # We need to load the secret file dynamically
+      SENDGRID_API_KEY: ${file(./.gcloud/secrets.staging.yml):sendGrid.apiKey}
+      EMAIL_FROM: ${file(./.gcloud/secrets.staging.yml):sendGrid.from}
+      EMAIL_REPLY_TO: ${file(./.gcloud/secrets.staging.yml):sendGrid.replyTo}
+    events:
+      - event:
+          eventType: providers/cloud.pubsub/eventTypes/topic.publish
+          resource: 'projects/${self:provider.project, ""}/topics/send-email'

@@ -1,4 +1,4 @@
-import * as Joi from '@hapi/joi'
+import * as Joi from 'joi'
 import {
   PaypalPaymentSource,
   paypalPaymentSourceSchema,
@@ -16,19 +16,11 @@ export interface Payment {
 }
 
 export const paymentSchema = Joi.object<Payment>({
-  amount: Joi.number()
-    .positive()
-    .required(),
-  currency: Joi.string()
-    .required()
-    .length(3),
-  receiptAmount: Joi.number()
-    .positive()
-    .required(),
+  amount: Joi.number().positive().required(),
+  currency: Joi.string().required().length(3),
+  receiptAmount: Joi.number().positive().required(),
   date: Joi.date().required(),
-  source: Joi.string()
-    .valid('cheque', 'paypal', 'import')
-    .required(),
+  source: Joi.string().valid('cheque', 'paypal', 'import').required(),
   sourceDetails: Joi.any().when('source', {
     break: true,
     switch: [

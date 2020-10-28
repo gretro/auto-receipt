@@ -3,15 +3,17 @@ service: auto-receipt
 provider:
   name: google
   stage: staging
-  runtime: nodejs10
+  runtime: nodejs12
   region: us-east1
   project: auto-receipt-263320
   credentials: ./.gcloud/keyfile.staging.json
-  memorySize: 128
+  memorySize: 256
   labels:
     environment: ${self:provider.stage}
   environment:
-    API__APITOKEN: ${file(./.gcloud/secrets.staging.yml):api.apiToken}
+    AUTH_JWT_JWKS_URL: ${file(./.gcloud/secrets.staging.yml):auth.jwt.jwksUrl}
+    AUTH_JWT_AUDIENCE: ${file(./.gcloud/secrets.staging.yml):auth.jwt.audience}
+    AUTH_JWT_ISSUER: ${file(./.gcloud/secrets.staging.yml):auth.jwt.issuer}
     NODE_ENV: staging
     FUNCTION_REGION: ${self:provider.region}
 

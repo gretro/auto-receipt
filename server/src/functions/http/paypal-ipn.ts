@@ -1,17 +1,17 @@
+import * as config from 'config'
 import { Request, Response } from 'express'
 import PayPalIpn from 'paypal-ipn-types'
 import * as rp from 'request-promise'
-import * as config from 'config'
-import { pipeMiddlewares, allowMethods, handleErrors } from '../../utils/http'
+import { PayPalIpnVerificationError } from '../../errors/PayPalIpnVerificationError'
+import { Address } from '../../models/Address'
+import { DonationType } from '../../models/Donation'
 import { PayPalConfig } from '../../models/PayPalConfig'
-import { getAppInfo } from '../../utils/app'
 import {
   CreatePaymentParams,
   paymentService,
 } from '../../services/payment-service'
-import { Address } from '../../models/Address'
-import { DonationType } from '../../models/Donation'
-import { PayPalIpnVerificationError } from '../../errors/PayPalIpnVerificationError'
+import { getAppInfo } from '../../utils/app'
+import { allowMethods, handleErrors, pipeMiddlewares } from '../../utils/http'
 import { logger } from '../../utils/logging'
 
 const paypalConfig = config.get<PayPalConfig>('paypal')
@@ -39,17 +39,15 @@ async function isValid(ipnData: PayPalIpn): Promise<boolean> {
       'User-Agent': userAgent,
     },
     formData: {
-      cmd: '_notify-validate',
       ...ipnData,
+      cmd: '_notify-validate',
     },
   })
   return validationResponse === 'VERIFIED' // other return is INVALID. If it is INVALID it is probably spoofed
 }
 
 const messageHandlers: Record<string, (ipnData: PayPalIpn) => Promise<void>> = {
-  // eslint-disable-next-line @typescript-eslint/camelcase
   web_accept: createPayment,
-  // eslint-disable-next-line @typescript-eslint/camelcase
   recurring_payment: createPayment,
 }
 
@@ -62,7 +60,7 @@ export const paypalIpn = pipeMiddlewares(
   handleErrors(),
   allowMethods('POST')
 )(
-  async (request: Request<{}>, response: Response): Promise<void> => {
+  async (request: Request<any>, response: Response): Promise<void> => {
     const ipnData = request.body as PayPalIpn
     logger.info('Received PayPal IPN notification')
 
@@ -92,10 +90,7 @@ export const paypalIpn = pipeMiddlewares(
       logger.info('Payment was ignored')
     }
 
-    response
-      .status(200)
-      .send()
-      .end()
+    response.status(200).send().end()
   }
 )
 

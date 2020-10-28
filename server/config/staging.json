@@ -28,6 +28,10 @@
         "tempBucket": "auto-receipt-stg-temp",
         "createBuckets": false
       }
+    },
+    "authentication": {
+      "provider": "jwt",
+      "unauthorizedStatusCode": 401
     }
   }
 }

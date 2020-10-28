@@ -1,14 +1,13 @@
 import * as chromium from 'chrome-aws-lambda'
 import * as config from 'config'
 import { Browser } from 'puppeteer-core'
-
 import { donationsRepository } from '../datastore/donations-repository'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
-import { ReceiptInfo } from '../models/ReceiptInfo'
+import { PdfGenerationError } from '../errors/PdfGenerationError'
 import { Donation } from '../models/Donation'
+import { ReceiptInfo } from '../models/ReceiptInfo'
 import { logger } from '../utils/logging'
 import { localeService } from './locale-service'
-import { PdfGenerationError } from '../errors/PdfGenerationError'
 
 async function getReceiptInfo(donationId: string): Promise<ReceiptInfo> {
   logger.info('Retrieving donation', { donationId })
@@ -105,12 +104,12 @@ async function buildReceiptNumber(donation: Donation): Promise<string> {
     .replace(/[\u0300-\u036f]/g, '')
 
   const indices = donation.documents
-    .filter(doc => doc.id.startsWith(receiptNumberPrefix))
-    .map(doc => {
+    .filter((doc) => doc.id.startsWith(receiptNumberPrefix))
+    .map((doc) => {
       const rawIndex = doc.id.replace(receiptNumberPrefix, '')
       return parseInt(rawIndex)
     })
-    .filter(index => !isNaN(index))
+    .filter((index) => !isNaN(index))
     .sort((x, y) => y - x)
 
   let isUnique = false
@@ -182,7 +181,7 @@ async function generatePdfFromHtml(htmlContent: string): Promise<Buffer> {
     }
 
     if (browserId) {
-      BROWSER_SLOTS = BROWSER_SLOTS.filter(slot => slot !== browserId)
+      BROWSER_SLOTS = BROWSER_SLOTS.filter((slot) => slot !== browserId)
     }
   }
 
@@ -192,7 +191,7 @@ async function generatePdfFromHtml(htmlContent: string): Promise<Buffer> {
 async function randomDelay(minSecs: number, maxSecs: number): Promise<void> {
   const duration =
     (((Math.random() * 100) % (maxSecs - minSecs)) + minSecs) * 1000
-  return new Promise(resolve => setTimeout(resolve, duration))
+  return new Promise((resolve) => setTimeout(resolve, duration))
 }
 
 async function waitForRoom(): Promise<void> {

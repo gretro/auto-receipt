@@ -1,4 +1,4 @@
-export class HandlebarsError extends Error {
+export class MjmlError extends Error {
   constructor(nestedError: unknown) {
     const message =
       typeof nestedError === 'string'
@@ -7,6 +7,6 @@ export class HandlebarsError extends Error {
           ((nestedError as any) || '').toString()
 
     super(`An error occurred while generating Handlebars HTML: ${message}`)
-    Error.captureStackTrace(this, HandlebarsError)
+    Error.captureStackTrace(this, MjmlError)
   }
 }
