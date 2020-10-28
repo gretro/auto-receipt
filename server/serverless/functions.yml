@@ -14,6 +14,11 @@ functions:
     events:
       - http: http
 
+  getDonation:
+    handler: getDonation
+    events:
+      - http: http
+
   generatePdfReceipt:
     handler: generatePdfReceipt
     events:

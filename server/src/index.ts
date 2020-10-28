@@ -1,7 +1,10 @@
 // HTTP functions
 export { launchBulkImport } from './functions/http/bulk-import-donations'
 export { createCheque } from './functions/http/create-cheque-donation'
-export { listDonations } from './functions/http/donation-management'
+export {
+  getDonation,
+  listDonations,
+} from './functions/http/donation-management'
 export { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
 export { patchDonation } from './functions/http/patch-donation'
 export { paypalIpn } from './functions/http/paypal-ipn'
