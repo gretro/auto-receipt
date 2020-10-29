@@ -11,8 +11,12 @@
 # production
 /build
 
+# secrets
+/secrets
+
 # misc
 .env
+public/config.json
 .DS_Store
 .env.local
 .env.development.local

@@ -5,19 +5,28 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { App } from './App';
 
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
-};
+fetch('/config.json')
+  .then((res) => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      throw new Error('Received a non-200 HTTP response');
+    }
+  })
+  .then((firebaseConfig) => {
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
 
-firebase.initializeApp(firebaseConfig);
-firebase.analytics();
+    ReactDOM.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>,
+      document.getElementById('root'),
+    );
+  })
+  .catch((err) => {
+    console.error('Unable to fetch the configuration', err);
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root'),
-);
+    document.querySelector('#bootstrap-loading')?.classList.add('hidden');
+    document.querySelector('#bootstrap-error')?.classList.remove('hidden');
+  });
