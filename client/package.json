@@ -39,7 +39,9 @@
     "lint": "eslint src/**",
     "setup:dev": "node scripts/setup-config.js dev",
     "setup:stg": "node scripts/setup-config.js stg",
-    "setup:prd": "node scripts/setup-config.js prd"
+    "setup:prd": "node scripts/setup-config.js prd",
+    "deploy:stg": "npm run build",
+    "firebase": "firebase"
   },
   "browserslist": {
     "production": [
@@ -57,5 +59,8 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
+  },
+  "devDependencies": {
+    "firebase-tools": "^8.14.1"
   }
 }

@@ -64,8 +64,8 @@ export const DonationsPage: React.FC = () => {
         setDonations(fetchDonationsResponse.donations);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching donations for fiscal year ' + fiscalYear);
-        setError('An error occurred while fetching the donations.');
+        console.error('Error fetching donations', err);
+        setError('An error occurred while fetching the donations. Please try again by refreshing the page.');
       }
     }
 

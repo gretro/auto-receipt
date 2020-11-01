@@ -9,7 +9,7 @@ const TARGETS = {
 
 const SOURCES = {
   dev: {
-    config: path.resolve(PROJ_PATH, 'secrets', 'config.stg.json'),
+    config: path.resolve(PROJ_PATH, 'secrets', 'config.dev.json'),
   },
   stg: {
     config: path.resolve(PROJ_PATH, 'secrets', 'config.stg.json'),

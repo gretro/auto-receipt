@@ -1,4 +1,6 @@
+import { getAppConfig } from '../app-config';
 import { AuthenticatedUser } from '../context/auth.context';
+import { HttpRequestError } from '../errors/HttpRequestError';
 import { Donation } from '../models/donation';
 
 export interface FetchDonationsResponse {
@@ -11,7 +13,7 @@ export async function fetchDonations(
   fiscalYear: number,
   auth: AuthenticatedUser | null | undefined,
 ): Promise<FetchDonationsResponse> {
-  const url = `http://localhost:3001/listDonations?year=${fiscalYear}`;
+  const url = `${getAppConfig().apiUrl}listDonations?year=${fiscalYear}`;
   const idToken = await auth?.firebaseUser.getIdToken();
 
   const httpRes = await fetch(url, {
@@ -22,8 +24,7 @@ export async function fetchDonations(
   });
 
   if (!httpRes.ok) {
-    // TODO: Use an actual well-known error
-    throw new Error('HTTP request return a non-200 response');
+    throw new HttpRequestError('Could not fetch donations', httpRes);
   }
 
   const result = await httpRes.json();

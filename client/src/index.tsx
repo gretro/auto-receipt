@@ -4,6 +4,7 @@ import 'firebase/auth';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { App } from './App';
+import { AppConfig, setAppConfig } from './app-config';
 
 fetch('/config.json')
   .then((res) => {
@@ -13,8 +14,10 @@ fetch('/config.json')
       throw new Error('Received a non-200 HTTP response');
     }
   })
-  .then((firebaseConfig) => {
-    firebase.initializeApp(firebaseConfig);
+  .then((appConfig: AppConfig) => {
+    setAppConfig(appConfig);
+
+    firebase.initializeApp(appConfig.firebase);
     firebase.analytics();
 
     ReactDOM.render(
