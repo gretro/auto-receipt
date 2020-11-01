@@ -36,11 +36,13 @@
     "build": "npm run lint && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint src/**",
+    "lint": "eslint src/** --ext .js --ext .ts --ext .tsx",
     "setup:dev": "node scripts/setup-config.js dev",
     "setup:stg": "node scripts/setup-config.js stg",
     "setup:prd": "node scripts/setup-config.js prd",
-    "deploy:stg": "npm run build",
+    "deploy:stg": "cp ./secrets/stg/.firebaserc ./.firebaserc && cp ./secrets/stg/firebase.json ./firebase.json && npm run setup:stg && npm run build && firebase deploy",
+    "import-user:stg": "firebase auth:import ./secrets/stg/users.json",
+    "firebase:init": "firebase login",
     "firebase": "firebase"
   },
   "browserslist": {

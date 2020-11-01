@@ -41,7 +41,19 @@ function mapDonorAddress(donorAddress: Address | null): string {
     return '-';
   }
 
-  return `${donorAddress.line1} ${donorAddress.line2}, ${donorAddress.city}, ${donorAddress.state}, ${donorAddress.postalCode}`;
+  const parts = [
+    donorAddress.line1,
+    donorAddress.line2,
+    ',',
+    donorAddress.city,
+    donorAddress.state,
+    donorAddress.postalCode,
+  ];
+
+  return parts
+    .filter((part) => !!part)
+    .join(' ')
+    .replace(' ,', ',');
 }
 
 function getDonationCurrency(payments: Payment[]): string {
