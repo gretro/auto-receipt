@@ -1,28 +1,10 @@
-import {
-  AppBar,
-  Avatar,
-  Box,
-  Button,
-  Divider,
-  Drawer,
-  IconButton,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  makeStyles,
-  Theme,
-  Toolbar,
-  Typography,
-} from '@material-ui/core';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ListIcon from '@material-ui/icons/List';
-import PersonIcon from '@material-ui/icons/Person';
-import clsx from 'clsx';
+import { AppBar, Box, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
 import firebase from 'firebase/app';
 import React, { useContext, useState } from 'react';
+import { BrowserRouter, Link } from 'react-router-dom';
 import { authContext } from '../../context/auth.context';
+import { NavDrawer } from '../components/nav-drawer/nav-drawer';
+import { AppRouting } from '../routing/app-routing';
 
 const COLLAPSED_DRAWER_WIDTH = '56px';
 const EXPANDED_DRAWER_WIDTH = '300px';
@@ -35,45 +17,28 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
   },
-  drawer: {
+  appLink: {
+    color: '#FFF',
+    textDecoration: 'none',
+  },
+  appGrid: (props) => ({
     height: '100vh',
-  },
-  collapsedDrawer: {
-    width: COLLAPSED_DRAWER_WIDTH,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  expandedDrawer: {
-    width: EXPANDED_DRAWER_WIDTH,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerPaper: (props) => ({
-    width: props.open ? EXPANDED_DRAWER_WIDTH : COLLAPSED_DRAWER_WIDTH,
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
+    display: 'grid',
+    gridTemplateColumns: `${props.open ? EXPANDED_DRAWER_WIDTH : COLLAPSED_DRAWER_WIDTH} auto`,
+    gridTemplateRows: 'auto',
+    gridTemplateAreas: `'navDrawer contentArea'`,
   }),
-  expand: {
-    transform: 'rotate(-90deg)',
+  drawer: {
+    gridArea: 'navDrawer',
   },
-  collapse: {
-    transform: 'rotate(90deg)',
+  contentArea: {
+    gridArea: 'contentArea',
+    padding: theme.spacing(2),
+    display: 'grid',
+    gridAutoFlow: 'row',
+    gridTemplateRows: 'auto 1fr',
+    gridTemplateColumns: 'auto',
   },
-  navSection: {
-    flex: 1,
-    overflow: 'auto',
-  },
-  hideOnExpand: (props) => ({
-    display: props.open ? 'none' : 'block',
-  }),
-  hideOnCollapse: (props) => ({
-    display: props.open ? 'block' : 'none',
-  }),
 }));
 
 export const AppShell: React.FC = () => {
@@ -95,65 +60,34 @@ export const AppShell: React.FC = () => {
   };
 
   return (
-    <>
+    <BrowserRouter>
       <AppBar position="fixed" className={styles.appBar}>
         <Toolbar>
-          <Typography variant="h6" noWrap>
-            Auto Receipt
+          <Typography variant="h6" component="span" noWrap>
+            <Link to="/" className={styles.appLink}>
+              Auto Receipt Admin Dashboard
+            </Link>
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer
-        variant="permanent"
-        className={clsx(styles.drawer, { [styles.collapsedDrawer]: !open, [styles.expandedDrawer]: open })}
-      >
-        <Toolbar />
-        <Box className={styles.drawerPaper}>
-          <Box padding={2} position="relative" className={styles.hideOnCollapse}>
-            <Box position="absolute" right={16}>
-              <IconButton size="small" title="Collapse drawer" onClick={handleToggleDrawer}>
-                <ExpandMoreIcon className={styles.collapse} />
-              </IconButton>
-            </Box>
-            <Box marginBottom={2}>
-              <Avatar alt={auth?.state?.fullName}>
-                <PersonIcon />
-              </Avatar>
-            </Box>
-            <Typography variant="h6" noWrap title={auth?.state?.fullName}>
-              {auth?.state?.fullName}
-            </Typography>
-            <Typography variant="caption" title={auth?.state?.email}>
-              {auth?.state?.email}
-            </Typography>
-          </Box>
-          <Divider className={styles.hideOnCollapse} />
-          <List component="nav" className={styles.navSection}>
-            {open ? null : (
-              <Box>
-                <Button title="Expand drawer" onClick={handleToggleDrawer}>
-                  <ExpandMoreIcon className={styles.expand} />
-                </Button>
-              </Box>
-            )}
-            <ListItem button>
-              <ListItemIcon title="Donations">
-                <ListIcon />
-              </ListItemIcon>
-              <ListItemText className={styles.hideOnCollapse} primary="Donations" />
-            </ListItem>
-          </List>
-          <Divider className={styles.hideOnCollapse} />
-          <List className={styles.hideOnCollapse}>
-            <ListItem button onClick={handleLogOut}>
-              <ListItemIcon>
-                <ExitToAppIcon />
-              </ListItemIcon>
-              <ListItemText primary="Log out" />
-            </ListItem>
-          </List>
+      <Box className={styles.appGrid}>
+        <Box component="aside">
+          <NavDrawer
+            open={open}
+            expandedWidth={EXPANDED_DRAWER_WIDTH}
+            collapsedWidth={COLLAPSED_DRAWER_WIDTH}
+            userFullName={auth?.state?.fullName}
+            userEmail={auth?.state?.email}
+            onDrawerToggle={handleToggleDrawer}
+            onLogOut={handleLogOut}
+          />
         </Box>
-      </Drawer>
-    </>
+        <Box className={styles.contentArea} component="main">
+          <Toolbar />
+
+          <AppRouting />
+        </Box>
+      </Box>
+    </BrowserRouter>
   );
 };

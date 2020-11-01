@@ -33,7 +33,7 @@ app.all('/launchBulkImport', launchBulkImport)
 app.all('/patchDonation', patchDonation)
 
 async function main(): Promise<void> {
-  app.listen(3000, () => {
+  app.listen(3001, () => {
     logger.info('Listening on port 3000')
   })
 

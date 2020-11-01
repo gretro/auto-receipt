@@ -76,5 +76,9 @@
       "provider": "no-auth",
       "unauthorizedStatusCode": 401
     }
+  },
+  "cors": {
+    "enabled": true,
+    "allowedOrigins": ["http://localhost:3000"]
   }
 }

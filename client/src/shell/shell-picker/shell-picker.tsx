@@ -18,6 +18,7 @@ const useStyles = makeStyles({
 export const ShellPicker: React.FC = () => {
   const [isAuthInit, setAuthInit] = useState(false);
   const auth = useContext(authContext);
+  const authDispatch = auth?.dispatch;
   const styles = useStyles();
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export const ShellPicker: React.FC = () => {
       setAuthInit(true);
 
       if (user) {
-        auth?.dispatch({
+        authDispatch?.({
           type: 'authenticated',
           payload: {
             fullName: user.displayName || user.email || '',
@@ -34,12 +35,12 @@ export const ShellPicker: React.FC = () => {
           },
         });
       } else {
-        auth?.dispatch({
+        authDispatch?.({
           type: 'logged-out',
         });
       }
     });
-  }, [auth]);
+  }, [authDispatch]);
 
   const authNotInit = (
     <Box className={styles.loadingBox}>
