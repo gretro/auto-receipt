@@ -37,8 +37,8 @@
   "cors": {
     "enabled": true,
     "allowedOrigins": [
-      "https://auto-receipt-stg-console.web.app/",
-      "https://auto-receipt-stg-console.firebaseapp.com/"
+      "https://auto-receipt-stg-console.web.app",
+      "https://auto-receipt-stg-console.firebaseapp.com"
     ]
   }
 }
