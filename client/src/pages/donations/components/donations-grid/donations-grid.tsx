@@ -9,6 +9,7 @@ import { GridDonation } from './grid-donation.model';
 interface Props {
   isLoading?: boolean;
   donations: Donation[];
+  onDonationSelected: (donationId: string) => void;
 }
 
 const useStyles = makeStyles<Theme, Props>((theme) => ({
@@ -173,7 +174,7 @@ export const DonationsGrid: React.FC<Props> = (props) => {
 
   const handleRowClicked = (rowParam: RowParams) => {
     const rowId = rowParam.getValue('id');
-    console.log('Donation clicked', rowId);
+    props.onDonationSelected(rowId as string);
   };
 
   const empty = (

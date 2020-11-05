@@ -10,7 +10,7 @@ export interface FetchDonationsResponse {
 }
 
 export async function fetchDonations(
-  fiscalYear: number,
+  fiscalYear: string,
   auth: AuthenticatedUser | null | undefined,
 ): Promise<FetchDonationsResponse> {
   const url = `${getAppConfig().apiUrl}listDonations?year=${fiscalYear}`;
