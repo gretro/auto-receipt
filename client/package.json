@@ -37,6 +37,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src/** --ext .js --ext .ts --ext .tsx",
+    "prestart": "npm run setup:dev",
     "setup:dev": "node scripts/setup-config.js dev",
     "setup:stg": "node scripts/setup-config.js stg",
     "setup:prd": "node scripts/setup-config.js prd",

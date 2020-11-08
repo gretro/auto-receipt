@@ -1,8 +1,9 @@
-import { Box, Button, Divider, makeStyles, Snackbar, Typography } from '@material-ui/core';
+import { Box, Button, makeStyles, Snackbar } from '@material-ui/core';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { fetchDonations } from '../../api/donations.api';
+import { PageHeader } from '../../components/page-header';
 import { authContext } from '../../context/auth.context';
 import { Donation } from '../../models/donation';
 import { DonationDetailsDrawer } from './components/donation-details-drawer/donation-details-drawer';
@@ -23,19 +24,6 @@ const useStyles = makeStyles((theme) => ({
   },
   pageHeader: {
     gridArea: 'header',
-  },
-  pageTitle: {
-    display: 'flex',
-    flexDirection: 'row',
-    paddingBottom: theme.spacing(1.5),
-    alignItems: 'center',
-    '&> *:not(:first-child)': {
-      marginLeft: theme.spacing(2),
-    },
-  },
-  headerDivider: {
-    marginLeft: theme.spacing(-2),
-    marginRight: theme.spacing(-2),
   },
   pageContent: {
     gridArea: 'content',
@@ -120,24 +108,25 @@ export const DonationsPage: React.FC = () => {
   return (
     <Box className={styles.pageGrid}>
       <header className={styles.pageHeader}>
-        <Box className={styles.pageTitle}>
-          <Typography variant="h5" component="h1">
-            {fiscalYear} Donations
-          </Typography>
-          <Button color="primary" variant="text" startIcon={<CalendarTodayIcon />} onClick={handleChangeFiscalYear}>
+        <PageHeader pageTitle={`${fiscalYear} Donations`}>
+          <Button
+            color="primary"
+            variant="contained"
+            startIcon={<CalendarTodayIcon />}
+            onClick={handleChangeFiscalYear}
+          >
             Change fiscal year
           </Button>
           <Button
             color="primary"
-            variant="text"
+            variant="contained"
             startIcon={<RefreshIcon />}
             disabled={isLoading && !error}
             onClick={fetchDonationsFromApi}
           >
             Refresh
           </Button>
-        </Box>
-        <Divider className={styles.headerDivider} />
+        </PageHeader>
       </header>
 
       <div className={styles.pageContent}>

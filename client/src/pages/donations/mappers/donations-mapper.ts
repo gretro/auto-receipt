@@ -1,7 +1,7 @@
-import { Address } from '../../../../models/address';
-import { Donation, DonationType } from '../../../../models/donation';
-import { Payment } from '../../../../models/payment';
-import { GridDonation } from './grid-donation.model';
+import { Address } from '../../../models/address';
+import { Donation, DonationType } from '../../../models/donation';
+import { Payment } from '../../../models/payment';
+import { GridDonation } from '../components/donations-grid/grid-donation.model';
 
 export function mapDonationToGridDonation(donation: Donation): GridDonation {
   return {
@@ -23,7 +23,7 @@ export function mapDonationToGridDonation(donation: Donation): GridDonation {
   };
 }
 
-function mapDonationType(donationType: DonationType): string {
+export function mapDonationType(donationType: DonationType): string {
   switch (donationType) {
     case 'one-time':
       return 'One Time';
@@ -36,9 +36,9 @@ function mapDonationType(donationType: DonationType): string {
   }
 }
 
-function mapDonorAddress(donorAddress: Address | null): string {
+export function mapDonorAddress(donorAddress: Address | undefined | null, emptyString = '-'): string {
   if (!donorAddress) {
-    return '-';
+    return emptyString;
   }
 
   const parts = [
@@ -56,7 +56,7 @@ function mapDonorAddress(donorAddress: Address | null): string {
     .replace(' ,', ',');
 }
 
-function getDonationCurrency(payments: Payment[]): string {
+export function getDonationCurrency(payments: Payment[]): string {
   if (payments.length === 0) {
     return '-';
   }
@@ -64,7 +64,7 @@ function getDonationCurrency(payments: Payment[]): string {
   return payments[0].currency;
 }
 
-function calculateDonationTotalAmount(payments: Payment[], selector: (payment: Payment) => number): number {
+export function calculateDonationTotalAmount(payments: Payment[], selector: (payment: Payment) => number): number {
   return payments.reduce((acc, payment) => {
     return acc + selector(payment);
   }, 0);

@@ -1,4 +1,4 @@
-import { AppBar, Box, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Box, makeStyles, Paper, Theme, Toolbar, Typography } from '@material-ui/core';
 import firebase from 'firebase/app';
 import React, { useContext, useState } from 'react';
 import { BrowserRouter, Link } from 'react-router-dom';
@@ -82,11 +82,10 @@ export const AppShell: React.FC = () => {
             onLogOut={handleLogOut}
           />
         </Box>
-        <Box className={styles.contentArea} component="main">
+        <Paper className={styles.contentArea} component="main">
           <Toolbar />
-
           <AppRouting />
-        </Box>
+        </Paper>
       </Box>
     </BrowserRouter>
   );

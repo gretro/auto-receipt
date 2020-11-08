@@ -4,7 +4,11 @@ import React from 'react';
 import { AuthProvider } from './context/auth.context';
 import { ShellPicker } from './shell/shell-picker/shell-picker';
 
-const theme = createMuiTheme();
+const theme = createMuiTheme({
+  palette: {
+    type: 'dark',
+  },
+});
 
 export const App: React.FC = () => {
   return (

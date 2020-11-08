@@ -3,7 +3,7 @@ import { CellParams, ColDef, DataGrid, RowParams } from '@material-ui/data-grid'
 import DescriptionIcon from '@material-ui/icons/Description';
 import React, { useMemo } from 'react';
 import { Donation } from '../../../../models/donation';
-import { mapDonationToGridDonation } from './donations-mapper';
+import { mapDonationToGridDonation } from '../../mappers/donations-mapper';
 import { GridDonation } from './grid-donation.model';
 
 interface Props {
