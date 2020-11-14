@@ -41,5 +41,8 @@
       "https://auto-receipt-263320.firebaseapp.com",
       "https://dashboard-stg.autoreceipt.app"
     ]
+  },
+  "correspondence": {
+    "enabled": true
   }
 }

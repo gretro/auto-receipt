@@ -34,6 +34,11 @@ functions:
     events:
       - http: http
 
+  sendCorrespondence:
+    handler: sendCorrespondence
+    events:
+      - http: http
+
   pdf:
     handler: pdf
     memorySize: 1024
