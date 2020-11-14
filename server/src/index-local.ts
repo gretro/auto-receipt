@@ -10,7 +10,7 @@ import {
 import { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
 import { patchDonation } from './functions/http/patch-donation'
 import { paypalIpn } from './functions/http/paypal-ipn'
-import { sendReceipt } from './functions/http/send-receipt'
+import { sendCorrespondence } from './functions/http/send-correspondence'
 import { bulkImport } from './functions/pubsub/bulk-import'
 import { email } from './functions/pubsub/email'
 import { pdf } from './functions/pubsub/pdf-receipt'
@@ -28,7 +28,7 @@ app.all('/createCheque', createCheque)
 app.all('/listDonations', listDonations)
 app.all('/getDonation', getDonation)
 app.all('/generatePdfReceipt', generatePdfReceipt)
-app.all('/sendReceipt', sendReceipt)
+app.all('/sendCorrespondence', sendCorrespondence)
 app.all('/launchBulkImport', launchBulkImport)
 app.all('/patchDonation', patchDonation)
 

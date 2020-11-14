@@ -14,5 +14,18 @@
         "issuer": "AUTH_JWT_ISSUER"
       }
     }
+  },
+  "cors": {
+    "enabled": "CORS_ENABLED",
+    "allowedOrigins": "CORS_ALLOWED_ORIGINS"
+  },
+  "correspondence": {
+    "enabled": "CORR_ENABLED",
+    "no-mailing-addr": {
+      "subject": "CORR_NO_MAILING_ADDR_SUBJECT"
+    },
+    "thank-you": {
+      "subject": "CORR_THANK_YOU_SUBJECT"
+    }
   }
 }

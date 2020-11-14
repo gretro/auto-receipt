@@ -68,13 +68,26 @@
       "provider": "sendGrid",
       "sendGrid": {
         "apiKey": "",
-        "from": "do-not-reply@autoreceipt.app",
-        "replyTo": "no-reply@autoreceipt.app"
+        "from": "receipts@autoreceipt.app",
+        "replyTo": "reply@autoreceipt.app"
       }
     },
     "authentication": {
       "provider": "no-auth",
       "unauthorizedStatusCode": 401
+    }
+  },
+  "cors": {
+    "enabled": true,
+    "allowedOrigins": ["http://localhost:3000"]
+  },
+  "correspondence": {
+    "enabled": true,
+    "no-mailing-addr": {
+      "subject": "Merci de votre don / Thank you for your donation"
+    },
+    "thank-you": {
+      "subject": "Votre reçu pour votre don / Your donation receipt"
     }
   }
 }

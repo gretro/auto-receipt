@@ -8,6 +8,7 @@ export {
 export { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
 export { patchDonation } from './functions/http/patch-donation'
 export { paypalIpn } from './functions/http/paypal-ipn'
+export { sendCorrespondence } from './functions/http/send-correspondence'
 // Pubsub functions
 export { bulkImport } from './functions/pubsub/bulk-import'
 export { email } from './functions/pubsub/email'
