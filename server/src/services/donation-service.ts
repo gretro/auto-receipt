@@ -23,10 +23,8 @@ async function patchDonation(
     mergedDonation
   )
 
-  if (generateReceipt) {
-    logger.info(
-      'Patching address in a donation. Will emit the receipt with new donation information.'
-    )
+  if (generateReceipt && updatedDonation.type !== 'recurrent') {
+    logger.info('Will emit the receipt with new donation information.')
 
     const generatePdfCommand: GeneratePdfCommand = {
       donationId,

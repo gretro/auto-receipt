@@ -1,4 +1,5 @@
 import mjml2html = require('mjml')
+import * as config from 'config'
 import { v4 as uuidV4 } from 'uuid'
 import { donationsRepository } from '../datastore/donations-repository'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
@@ -6,6 +7,7 @@ import { HandlebarsError } from '../errors/HandlebarsError'
 import { InvalidEntityStateError } from '../errors/InvalidEntityStateError'
 import { MjmlError } from '../errors/MjmlError'
 import { MjmlParseError } from '../errors/MjmlParseError'
+import { CorrespondenceConfig } from '../models/config-models/Correspondence-config'
 import { Correspondence, CorrespondenceType } from '../models/Correspondence'
 import { DocumentMetadata } from '../models/DocumentMetadata'
 import { Donation, DonationType } from '../models/Donation'
@@ -135,9 +137,14 @@ async function getEmailContent(
   const mjml = buildMjml(template, donation)
   const html = buildHtml(mjml)
 
+  const correspondenceConfig = config.get<CorrespondenceConfig>(
+    'correspondence'
+  )
+  const subject = correspondenceConfig[type].subject || 'Merci / Thank you'
+
   return {
-    html: html,
-    subject: 'Merci de votre don / Thank you for your donation',
+    html,
+    subject,
   }
 }
 

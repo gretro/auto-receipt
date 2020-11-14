@@ -1,7 +1,9 @@
+import * as config from 'config'
 import { v4 as createUuid } from 'uuid'
 import { donationsRepository } from '../datastore/donations-repository'
 import { GeneratePdfCommand } from '../models/commands/GeneratePdfCommand'
 import { SendEmailCommand } from '../models/commands/SendEmailCommand'
+import { CorrespondenceConfig } from '../models/config-models/Correspondence-config'
 import { Donation, DonationType } from '../models/Donation'
 import { Donor } from '../models/Donor'
 import { Payment, PaymentSource } from '../models/Payment'
@@ -189,6 +191,12 @@ async function triggerReceiptGenerationNextStep(
   donation: Donation,
   preventReceiptGeneration: boolean
 ): Promise<void> {
+  const corrConfig = config.get<CorrespondenceConfig>('correspondence')
+  if (!corrConfig.enabled) {
+    logger.info('Correspondences are disabled in configuration')
+    return
+  }
+
   if (!donation.donor.address) {
     logger.info(
       'No mailing address found on the donation. Will send an email requesting the information',
