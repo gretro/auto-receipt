@@ -4,7 +4,7 @@ export interface Payment {
   amount: number;
   currency: string;
   receiptAmount: number;
-  date: Date;
+  date: string;
   source: PaymentSource;
   sourceDetails: PaypalPaymentSource | null;
 }

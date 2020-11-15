@@ -1,20 +1,21 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, TextField } from '@material-ui/core';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@material-ui/core';
 import firebase from 'firebase/app';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { notificationContext } from '../../context/notification.context';
 
 interface LoginFormData {
   username: string;
   password: string;
   loading: boolean;
-  errorMessage: string | null;
 }
 
 export const AuthenticationShell: React.FC = () => {
+  const notifications = useContext(notificationContext);
+
   const [state, setState] = useState<LoginFormData>({
     username: '',
     password: '',
     loading: false,
-    errorMessage: null,
   });
 
   const handleUsernameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +33,8 @@ export const AuthenticationShell: React.FC = () => {
       return;
     }
 
-    setState({ ...state, loading: true, errorMessage: null });
+    setState({ ...state, loading: true });
+    notifications.dispatch({ type: 'clear-notification' });
 
     try {
       const userCredentials = await firebase.auth().signInWithEmailAndPassword(state.username, state.password);
@@ -43,13 +45,17 @@ export const AuthenticationShell: React.FC = () => {
       setState({
         ...state,
         loading: false,
-        errorMessage: 'There was an error authenticating you. Please check your credentials and retry.',
+      });
+
+      notifications.dispatch({
+        type: 'show-notification',
+        payload: {
+          message: 'There was an error authenticating you. Please check your credentials and retry.',
+          type: 'error',
+          timeoutInMs: 3000,
+        },
       });
     }
-  };
-
-  const clearError = () => {
-    setState({ ...state, errorMessage: null });
   };
 
   return (
@@ -79,8 +85,6 @@ export const AuthenticationShell: React.FC = () => {
               onChange={handlePasswordChanged}
               required
             />
-
-            <Snackbar open={!!state.errorMessage} message={state.errorMessage} onClose={clearError} />
           </DialogContent>
           <DialogActions>
             <Button type="submit" color="primary" disabled={state.loading}>

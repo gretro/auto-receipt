@@ -1,26 +1,71 @@
-import { Card, CardActions, CardContent, CardHeader, IconButton, Typography } from '@material-ui/core';
+import {
+  Box,
+  CardActions,
+  CardContent,
+  CardHeader,
+  IconButton,
+  makeStyles,
+  Theme,
+  Typography,
+} from '@material-ui/core';
+import AnnouncementIcon from '@material-ui/icons/Announcement';
 import EditIcon from '@material-ui/icons/Edit';
 import EmailIcon from '@material-ui/icons/Email';
 import React from 'react';
+import { useApi } from '../../../../../../api/api.hook';
+import { FlowGridCard } from '../../../../../../components/FlowGrid';
+import { Donation } from '../../../../../../models/donation';
 import { Donor } from '../../../../../../models/donor';
-import { mapDonorAddress } from '../../../../mappers/donations-mapper';
+import { mapDonorAddressMultiLine } from '../../../../mappers/donations-mapper';
 
 interface Props {
+  donationId?: string;
   donor: Donor | null | undefined;
+  onDonationUpdated: (donation: Donation) => void;
 }
 
+const useStyles = makeStyles<Theme, Props>((theme) => ({
+  donorContent: {
+    '& + &': {
+      marginTop: theme.spacing(1),
+    },
+  },
+}));
+
 export const DonorInformation: React.FC<Props> = (props) => {
+  const api = useApi();
+
+  const handleSendMissingAddressEmail = () => {
+    api(
+      async (httpApi) => {
+        const newDonation = await httpApi.sendCorrespondence(props.donationId || '', 'no-mailing-addr');
+        props.onDonationUpdated(newDonation);
+      },
+      'sending mailing address notification',
+      { showLoading: true, showSuccess: true },
+    );
+  };
+
+  const styles = useStyles(props);
+
   const empty = <Typography>No donor information found</Typography>;
 
+  const mailingAddress = mapDonorAddressMultiLine(props.donor?.address, 'No address on file');
   const content = (
     <>
-      <Typography>{mapDonorAddress(props.donor?.address, 'No address on file')}</Typography>
-      <Typography>{props.donor?.email}</Typography>
+      <Box className={styles.donorContent}>
+        <Typography>{props.donor?.email}</Typography>
+      </Box>
+      <Box className={styles.donorContent}>
+        {mailingAddress.map((line, index) => (
+          <Typography key={index}>{line}</Typography>
+        ))}
+      </Box>
     </>
   );
 
   return (
-    <Card variant="outlined">
+    <FlowGridCard variant="outlined">
       <CardHeader
         title="Donor information"
         subheader={props.donor ? `${props.donor.lastName}, ${props.donor.firstName}` : null}
@@ -35,7 +80,12 @@ export const DonorInformation: React.FC<Props> = (props) => {
             <EmailIcon />
           </IconButton>
         ) : null}
+        {props.donor?.email && !props.donor.address ? (
+          <IconButton title="Send missing address email" onClick={handleSendMissingAddressEmail}>
+            <AnnouncementIcon />
+          </IconButton>
+        ) : null}
       </CardActions>
-    </Card>
+    </FlowGridCard>
   );
 };

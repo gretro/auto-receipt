@@ -1,6 +1,7 @@
-import { Drawer, GridList, GridListTile, makeStyles, Paper, Theme } from '@material-ui/core';
+import { Box, Drawer, makeStyles, Paper, Theme, useMediaQuery, useTheme } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import React from 'react';
+import { FlowGrid, FlowGridItem } from '../../../../components/FlowGrid';
 import { PageHeader } from '../../../../components/page-header';
 import { Donation } from '../../../../models/donation';
 import { DonorInformation } from './components/donor-information/donor-information';
@@ -8,25 +9,47 @@ import { PaymentInformation } from './components/payment-information/payment-inf
 
 interface Props {
   donation: Donation | null;
-  onDrawerClose: (replacedDonation: Donation | null) => void;
+  onDonationUpdated: (replacedDonation: Donation) => void;
+  onDrawerClose: () => void;
 }
 
 const useStyles = makeStyles<Theme, Props>((theme) => ({
   drawerSurface: {
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr',
     width: '80vw',
     height: '100vh',
+    overflow: 'hidden',
     padding: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      width: '100vw',
+    },
   },
   header: {
     marginBottom: theme.spacing(2),
+  },
+  mainArea: {
+    overflowY: 'auto',
+    margin: theme.spacing(-2),
+    padding: theme.spacing(2),
   },
 }));
 
 export const DonationDetailsDrawer: React.FC<Props> = (props) => {
   const styles = useStyles(props);
+  const theme = useTheme();
+
+  const isTablet = useMediaQuery(theme.breakpoints.only('sm'));
+  const isPhone = useMediaQuery(theme.breakpoints.only('xs'));
+
+  const cols = isPhone ? 1 : isTablet ? 2 : 3;
 
   const handleDrawerClose = () => {
-    props.onDrawerClose(props.donation);
+    props.onDrawerClose();
+  };
+
+  const handleDonationUpdated = (newDonation: Donation) => {
+    props.onDonationUpdated(newDonation);
   };
 
   return (
@@ -42,17 +65,23 @@ export const DonationDetailsDrawer: React.FC<Props> = (props) => {
             smallTitle
           />
         </header>
-        <GridList cols={3} spacing={8} cellHeight="auto">
-          <GridListTile>
-            <DonorInformation donor={props.donation?.donor} />
-          </GridListTile>
-          <GridListTile>
-            <PaymentInformation
-              donationType={props.donation?.type || 'one-time'}
-              payments={props.donation?.payments || []}
-            />
-          </GridListTile>
-        </GridList>
+        <Box className={styles.mainArea}>
+          <FlowGrid columns={cols} spacing={8}>
+            <FlowGridItem>
+              <DonorInformation
+                donationId={props.donation?.id}
+                donor={props.donation?.donor}
+                onDonationUpdated={handleDonationUpdated}
+              />
+            </FlowGridItem>
+            <FlowGridItem>
+              <PaymentInformation
+                donationType={props.donation?.type || 'one-time'}
+                payments={props.donation?.payments || []}
+              />
+            </FlowGridItem>
+          </FlowGrid>
+        </Box>
       </Paper>
     </Drawer>
   );

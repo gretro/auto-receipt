@@ -1,10 +1,9 @@
-import { Box, Button, makeStyles, Snackbar } from '@material-ui/core';
+import { Box, Button, makeStyles } from '@material-ui/core';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { fetchDonations } from '../../api/donations.api';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useApi } from '../../api/api.hook';
 import { PageHeader } from '../../components/page-header';
-import { authContext } from '../../context/auth.context';
 import { Donation } from '../../models/donation';
 import { DonationDetailsDrawer } from './components/donation-details-drawer/donation-details-drawer';
 import { DonationsGrid } from './components/donations-grid/donations-grid';
@@ -42,30 +41,28 @@ function getAvailableFiscalYears(now: Date, count: number): string[] {
 const now = new Date();
 
 export const DonationsPage: React.FC = () => {
-  const authUser = useContext(authContext)?.state;
   const styles = useStyles();
   const availableFiscalYears = useMemo(() => getAvailableFiscalYears(now, 3), []);
+  const api = useApi();
 
   const [selectingFiscalYear, setSelectingFiscalYear] = useState(false);
   const [fiscalYear, setFiscalYear] = useState(availableFiscalYears[0]);
   const [isLoading, setLoading] = useState(true);
   const [donations, setDonations] = useState<Donation[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [activeDonation, setActiveDonation] = useState<Donation | null>(null);
 
-  const fetchDonationsFromApi = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const fetchDonationsFromApi = useCallback(() => {
+    api(async (api) => {
+      setLoading(true);
 
-    try {
-      const fetchDonationsResponse = await fetchDonations(fiscalYear, authUser);
-      setDonations(fetchDonationsResponse.donations);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching donations', err);
-      setError('An error occurred while fetching the donations. Please try again by refreshing the page.');
-    }
-  }, [fiscalYear, authUser]);
+      try {
+        const fetchDonationsResponse = await api.fetchDonations(fiscalYear);
+        setDonations(fetchDonationsResponse.donations);
+      } finally {
+        setLoading(false);
+      }
+    }, 'fetching donations');
+  }, [api, fiscalYear]);
 
   useEffect(() => {
     fetchDonationsFromApi();
@@ -89,20 +86,22 @@ export const DonationsPage: React.FC = () => {
     }
   };
 
-  const handleDrawerClosed = (newDonation: Donation | null) => {
+  const handleDonationUpdated = (newDonation: Donation) => {
+    setDonations((donations) =>
+      donations.map((donation) => {
+        if (donation.id === newDonation.id) {
+          return newDonation;
+        }
+
+        return donation;
+      }),
+    );
+
+    setActiveDonation(newDonation);
+  };
+
+  const handleDrawerClosed = () => {
     setActiveDonation(null);
-
-    if (newDonation) {
-      setDonations((donations) =>
-        donations.map((donation) => {
-          if (donation.id === newDonation.id) {
-            return newDonation;
-          }
-
-          return donation;
-        }),
-      );
-    }
   };
 
   return (
@@ -121,7 +120,7 @@ export const DonationsPage: React.FC = () => {
             color="primary"
             variant="contained"
             startIcon={<RefreshIcon />}
-            disabled={isLoading && !error}
+            disabled={isLoading}
             onClick={fetchDonationsFromApi}
           >
             Refresh
@@ -133,8 +132,11 @@ export const DonationsPage: React.FC = () => {
         <DonationsGrid isLoading={isLoading} donations={donations} onDonationSelected={handleDonationSelected} />
       </div>
 
-      <DonationDetailsDrawer donation={activeDonation} onDrawerClose={handleDrawerClosed} />
-      <Snackbar open={!!error} message={error || ''} />
+      <DonationDetailsDrawer
+        donation={activeDonation}
+        onDrawerClose={handleDrawerClosed}
+        onDonationUpdated={handleDonationUpdated}
+      />
       <FiscalYearSelector
         open={selectingFiscalYear}
         initialFiscalYear={fiscalYear}

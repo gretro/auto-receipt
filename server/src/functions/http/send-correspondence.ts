@@ -10,6 +10,7 @@ import {
   pipeMiddlewares,
   validateBody,
   withAuth,
+  withCORS,
 } from '../../utils/http'
 
 interface SendCorrespondenceViewModel {
@@ -25,16 +26,18 @@ const vmSchema = Joi.object<SendCorrespondenceViewModel>({
 })
 
 export const sendCorrespondence = pipeMiddlewares(
+  withCORS(),
   handleErrors(),
   withAuth(),
   allowMethods('POST'),
   validateBody(vmSchema)
 )(async (req, res) => {
   const viewModel: SendCorrespondenceViewModel = req.body
-  await correspondenceService.sendEmail(
+  const correspondence = await correspondenceService.sendEmail(
     viewModel.donationId,
     viewModel.correspondenceType
   )
 
-  res.sendStatus(201)
+  res.status(201)
+  res.send(correspondence)
 })

@@ -76,7 +76,10 @@ export const withCORS = (): FunctionMiddleware => {
       }
 
       response.setHeader('Access-Control-Allow-Origin', origin)
-      response.setHeader('Access-Control-Allow-Headers', 'Authorization')
+      response.setHeader(
+        'Access-Control-Allow-Headers',
+        'Authorization,Content-Type'
+      )
       response.setHeader(
         'Access-Control-Allow-Methods',
         request.header('Access-Control-Request-Method') || ''
