@@ -22,3 +22,19 @@ jobs:
       - name: Build
         working-directory: ./server
         run: npm run build:prod
+  build-client:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - name: Git Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: Install
+        working-directory: ./client
+        run: npm install
+      - name: Build
+        working-directory: ./client
+        run: npm run build

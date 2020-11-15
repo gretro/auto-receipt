@@ -7,6 +7,7 @@ import {
   handleErrors,
   pipeMiddlewares,
   withAuth,
+  withCORS,
 } from '../../utils/http'
 
 interface DonationListingViewModel {
@@ -16,6 +17,7 @@ interface DonationListingViewModel {
 }
 
 export const getDonation = pipeMiddlewares(
+  withCORS(),
   handleErrors(),
   withAuth(),
   allowMethods('GET')
@@ -38,6 +40,7 @@ export const getDonation = pipeMiddlewares(
 )
 
 export const listDonations = pipeMiddlewares(
+  withCORS(),
   handleErrors(),
   withAuth(),
   allowMethods('GET')

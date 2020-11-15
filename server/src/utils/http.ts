@@ -11,6 +11,11 @@ import {
 } from '../providers/authentication'
 import { logger } from './logging'
 
+interface CorsConfig {
+  enabled: boolean
+  allowedOrigins: string[]
+}
+
 export type FunctionMiddleware = (
   requestHandler: RequestHandler
 ) => RequestHandler
@@ -48,6 +53,44 @@ export const withAuth = (): FunctionMiddleware => {
       }
 
       return
+    }
+  }
+}
+
+export const withCORS = (): FunctionMiddleware => {
+  return (handler: RequestHandler): RequestHandler => {
+    return (
+      request: Request,
+      response: Response,
+      next: NextFunction
+    ): unknown => {
+      const corsConfig = config.get<CorsConfig>('cors')
+      const origin = request.header('Origin')
+      if (
+        !corsConfig.enabled ||
+        !origin ||
+        !corsConfig.allowedOrigins.includes(origin.toLowerCase())
+      ) {
+        response.sendStatus(200)
+        return
+      }
+
+      response.setHeader('Access-Control-Allow-Origin', origin)
+      response.setHeader(
+        'Access-Control-Allow-Headers',
+        'Authorization,Content-Type'
+      )
+      response.setHeader(
+        'Access-Control-Allow-Methods',
+        request.header('Access-Control-Request-Method') || ''
+      )
+
+      if (request.method.toUpperCase() !== 'OPTIONS') {
+        return handler(request, response, next)
+      } else {
+        response.sendStatus(200)
+        return
+      }
     }
   }
 }

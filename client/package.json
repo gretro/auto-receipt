@@ -1,0 +1,69 @@
+{
+  "name": "auto-receipt-client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/data-grid": "^4.0.0-alpha.8",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/system": "^4.9.14",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/jest": "^24.0.0",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "@types/react-router-dom": "^5.1.5",
+    "@typescript-eslint/eslint-plugin": "^3.9.0",
+    "@typescript-eslint/parser": "^3.9.0",
+    "clsx": "^1.1.1",
+    "cross-env": "^7.0.2",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "firebase": "^8.0.0",
+    "husky": "^4.2.5",
+    "prettier": "^2.0.5",
+    "pretty-quick": "^2.0.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "3.4.3",
+    "typescript": "~3.7.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "npm run lint && react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint src/** --ext .js --ext .ts --ext .tsx",
+    "prestart": "npm run setup:dev",
+    "setup:dev": "node scripts/setup-config.js dev",
+    "setup:stg": "node scripts/setup-config.js stg",
+    "setup:prd": "node scripts/setup-config.js prd",
+    "deploy:stg": "cp ./secrets/stg/.firebaserc ./.firebaserc && cp ./secrets/stg/firebase.json ./firebase.json && npm run setup:stg && npm run build && firebase deploy",
+    "import-user:stg": "firebase auth:import ./secrets/stg/users.json",
+    "firebase:init": "firebase login",
+    "firebase": "firebase"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "devDependencies": {
+    "firebase-tools": "^8.14.1"
+  }
+}
