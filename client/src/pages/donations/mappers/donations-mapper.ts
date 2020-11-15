@@ -20,6 +20,9 @@ export function mapDonationToGridDonation(donation: Donation): GridDonation {
     paymentsCount: donation.payments.length,
     documentsCount: donation.documents.length,
     correspondencesCount: donation.correspondences.length,
+    search: `${donation.donor.firstName?.toLowerCase()} ${donation.donor.lastName?.toLowerCase()} ${
+      donation.donor.email?.toLowerCase() || ''
+    }`,
   };
 }
 

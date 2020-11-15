@@ -14,4 +14,5 @@ export interface GridDonation {
   paymentsCount: number;
   documentsCount: number;
   correspondencesCount: number;
+  search: string;
 }
