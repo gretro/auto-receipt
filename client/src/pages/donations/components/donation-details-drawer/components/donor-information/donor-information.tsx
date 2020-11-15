@@ -11,12 +11,13 @@ import {
 import AnnouncementIcon from '@material-ui/icons/Announcement';
 import EditIcon from '@material-ui/icons/Edit';
 import EmailIcon from '@material-ui/icons/Email';
-import React from 'react';
+import React, { useState } from 'react';
 import { useApi } from '../../../../../../api/api.hook';
 import { FlowGridCard } from '../../../../../../components/FlowGrid';
 import { Donation } from '../../../../../../models/donation';
 import { Donor } from '../../../../../../models/donor';
 import { mapDonorAddressMultiLine } from '../../../../mappers/donations-mapper';
+import { DonorEditor } from './donor-editor';
 
 interface Props {
   donationId?: string;
@@ -34,6 +35,8 @@ const useStyles = makeStyles<Theme, Props>((theme) => ({
 
 export const DonorInformation: React.FC<Props> = (props) => {
   const api = useApi();
+  const styles = useStyles(props);
+  const [isEditing, setEditing] = useState<boolean>(false);
 
   const handleSendMissingAddressEmail = () => {
     api(
@@ -46,7 +49,9 @@ export const DonorInformation: React.FC<Props> = (props) => {
     );
   };
 
-  const styles = useStyles(props);
+  const handleToggleEdit = () => {
+    setEditing((current) => !current);
+  };
 
   const empty = <Typography>No donor information found</Typography>;
 
@@ -65,27 +70,31 @@ export const DonorInformation: React.FC<Props> = (props) => {
   );
 
   return (
-    <FlowGridCard variant="outlined">
-      <CardHeader
-        title="Donor information"
-        subheader={props.donor ? `${props.donor.lastName}, ${props.donor.firstName}` : null}
-      ></CardHeader>
-      <CardContent>{props.donor ? content : empty}</CardContent>
-      <CardActions disableSpacing>
-        <IconButton title="Edit donor information">
-          <EditIcon />
-        </IconButton>
-        {props.donor?.email ? (
-          <IconButton href={`mailto:${props.donor.email}`} target="_blank" title="Send an email">
-            <EmailIcon />
+    <>
+      <FlowGridCard variant="outlined">
+        <CardHeader
+          title="Donor information"
+          subheader={props.donor ? `${props.donor.lastName}, ${props.donor.firstName}` : null}
+        ></CardHeader>
+        <CardContent>{props.donor ? content : empty}</CardContent>
+        <CardActions disableSpacing>
+          <IconButton title="Edit donor information" onClick={handleToggleEdit}>
+            <EditIcon />
           </IconButton>
-        ) : null}
-        {props.donor?.email && !props.donor.address ? (
-          <IconButton title="Send missing address email" onClick={handleSendMissingAddressEmail}>
-            <AnnouncementIcon />
-          </IconButton>
-        ) : null}
-      </CardActions>
-    </FlowGridCard>
+          {props.donor?.email ? (
+            <IconButton href={`mailto:${props.donor.email}`} target="_blank" title="Send an email">
+              <EmailIcon />
+            </IconButton>
+          ) : null}
+          {props.donor?.email && !props.donor.address ? (
+            <IconButton title="Send missing address email" onClick={handleSendMissingAddressEmail}>
+              <AnnouncementIcon />
+            </IconButton>
+          ) : null}
+        </CardActions>
+      </FlowGridCard>
+
+      <DonorEditor open={isEditing} donationId={props.donationId} donor={props.donor} onClose={handleToggleEdit} />
+    </>
   );
 };
