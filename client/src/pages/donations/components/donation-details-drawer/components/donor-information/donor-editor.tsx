@@ -1,16 +1,4 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  Divider,
-  Drawer,
-  FormControlLabel,
-  makeStyles,
-  Paper,
-  TextField,
-  Theme,
-  Typography,
-} from '@material-ui/core';
+import { Box, Button, Divider, Drawer, makeStyles, Paper, TextField, Theme, Typography } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { useFormik } from 'formik';
 import React from 'react';
@@ -103,17 +91,8 @@ export const DonorEditor: React.FC<Props> = (props) => {
         postalCode: props.donor?.address?.postalCode || '',
         country: props.donor?.address?.country || '',
       },
-      generateReceipt: !props.donor?.address,
     },
     onSubmit: (values) => {
-      if (values.generateReceipt) {
-        const confirmed = window.confirm(
-          'A new receipt will be generated and sent by email (if possible). Are you certain you want to proceed?',
-        );
-        if (!confirmed) {
-          return;
-        }
-      }
       props.onSave(values);
     },
     validationSchema: Yup.object<Partial<DonorEdit>>({
@@ -223,18 +202,6 @@ export const DonorEditor: React.FC<Props> = (props) => {
             {...formik.getFieldProps('address.country')}
             error={!!formik.errors.address?.country}
             helperText={formik.errors.address?.country}
-          />
-
-          <FormControlLabel
-            control={
-              <Checkbox
-                disabled={props.busy}
-                color="primary"
-                checked={formik.values.generateReceipt}
-                {...formik.getFieldProps('generateReceipt')}
-              />
-            }
-            label="Generate and send a new receipt"
           />
         </Box>
         <Divider className={styles.divider} />

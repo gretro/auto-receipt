@@ -7,7 +7,7 @@ export function mapDonationToGridDonation(donation: Donation): GridDonation {
   return {
     id: donation.id,
     created: donation.created,
-    donationType: mapDonationType(donation.type),
+    donationType: donation.type,
     donationReason: donation.reason || '-',
     donorLastName: donation.donor.lastName,
     donorFirstName: donation.donor.firstName || '-',
@@ -20,13 +20,14 @@ export function mapDonationToGridDonation(donation: Donation): GridDonation {
     paymentsCount: donation.payments.length,
     documentsCount: donation.documents.length,
     correspondencesCount: donation.correspondences.length,
+    receiptSent: donation.correspondences.some((corr) => corr.type === 'thank-you'),
     search: `${donation.donor.firstName?.toLowerCase()} ${donation.donor.lastName?.toLowerCase()} ${
       donation.donor.email?.toLowerCase() || ''
     }`,
   };
 }
 
-export function mapDonationType(donationType: DonationType): string {
+export function formatDonationType(donationType: DonationType): string {
   switch (donationType) {
     case 'one-time':
       return 'One Time';

@@ -13,6 +13,7 @@ export interface GridDonation {
   totalReceiptAmount: number;
   paymentsCount: number;
   documentsCount: number;
+  receiptSent: boolean;
   correspondencesCount: number;
   search: string;
 }

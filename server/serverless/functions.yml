@@ -36,6 +36,11 @@ functions:
 
   sendCorrespondence:
     handler: sendCorrespondence
+    environment:
+      # We need to load the secret file dynamically
+      SENDGRID_API_KEY: ${file(./.gcloud/secrets.staging.yml):sendGrid.apiKey}
+      EMAIL_FROM: ${file(./.gcloud/secrets.staging.yml):sendGrid.from}
+      EMAIL_REPLY_TO: ${file(./.gcloud/secrets.staging.yml):sendGrid.replyTo}
     events:
       - http: http
 

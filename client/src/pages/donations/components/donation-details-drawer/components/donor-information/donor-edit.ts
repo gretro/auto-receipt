@@ -5,5 +5,4 @@ export interface DonorEdit {
   lastName?: string;
   email?: string;
   address: Partial<Address>;
-  generateReceipt: boolean;
 }
