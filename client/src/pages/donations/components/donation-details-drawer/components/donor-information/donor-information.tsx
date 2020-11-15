@@ -14,9 +14,11 @@ import EmailIcon from '@material-ui/icons/Email';
 import React, { useState } from 'react';
 import { useApi } from '../../../../../../api/api.hook';
 import { FlowGridCard } from '../../../../../../components/FlowGrid';
+import { DeepPartial } from '../../../../../../models/deep-partial';
 import { Donation } from '../../../../../../models/donation';
 import { Donor } from '../../../../../../models/donor';
 import { mapDonorAddressMultiLine } from '../../../../mappers/donations-mapper';
+import { DonorEdit } from './donor-edit';
 import { DonorEditor } from './donor-editor';
 
 interface Props {
@@ -37,6 +39,7 @@ export const DonorInformation: React.FC<Props> = (props) => {
   const api = useApi();
   const styles = useStyles(props);
   const [isEditing, setEditing] = useState<boolean>(false);
+  const [isSaving, setSaving] = useState<boolean>(false);
 
   const handleSendMissingAddressEmail = () => {
     api(
@@ -45,6 +48,49 @@ export const DonorInformation: React.FC<Props> = (props) => {
         props.onDonationUpdated(newDonation);
       },
       'sending mailing address notification',
+      { showLoading: true, showSuccess: true },
+    );
+  };
+
+  const handleDonorSave = (newValues: DonorEdit) => {
+    console.log('Handling donor edit', newValues);
+    setSaving(true);
+
+    const hasAddress = newValues.address && Object.values(newValues.address).some(Boolean);
+    const donor: DeepPartial<Donor> = {
+      firstName: newValues.firstName || undefined,
+      lastName: newValues.lastName || undefined,
+      email: newValues.email || undefined,
+      address: hasAddress
+        ? {
+            line1: newValues.address.line1 || undefined,
+            line2: newValues.address.line2 || null,
+            city: newValues.address.city || undefined,
+            state: newValues.address.state || undefined,
+            country: newValues.address.country || undefined,
+            postalCode: newValues.address.postalCode || undefined,
+          }
+        : undefined,
+    };
+
+    api(
+      async (httpApi) => {
+        try {
+          const newDonation = await httpApi.patchDonation(
+            props.donationId || '',
+            {
+              donor,
+            },
+            newValues.generateReceipt,
+          );
+
+          props.onDonationUpdated(newDonation);
+          setEditing(false);
+        } finally {
+          setSaving(false);
+        }
+      },
+      'saving donor information',
       { showLoading: true, showSuccess: true },
     );
   };
@@ -94,7 +140,14 @@ export const DonorInformation: React.FC<Props> = (props) => {
         </CardActions>
       </FlowGridCard>
 
-      <DonorEditor open={isEditing} donationId={props.donationId} donor={props.donor} onClose={handleToggleEdit} />
+      <DonorEditor
+        open={isEditing}
+        busy={isSaving}
+        donationId={props.donationId}
+        donor={props.donor}
+        onSave={handleDonorSave}
+        onClose={handleToggleEdit}
+      />
     </>
   );
 };

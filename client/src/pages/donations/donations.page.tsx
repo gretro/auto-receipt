@@ -1,4 +1,4 @@
-import { Box, Button, makeStyles } from '@material-ui/core';
+import { Box, Button, Hidden, makeStyles } from '@material-ui/core';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -124,7 +124,8 @@ export const DonationsPage: React.FC = () => {
             startIcon={<CalendarTodayIcon />}
             onClick={handleChangeFiscalYear}
           >
-            Change fiscal year
+            {/* This is ugly... Fix it */}
+            <Hidden smDown>Change fiscal year</Hidden>
           </Button>
           <Button
             color="primary"
@@ -133,7 +134,8 @@ export const DonationsPage: React.FC = () => {
             disabled={isLoading}
             onClick={fetchDonationsFromApi}
           >
-            Refresh
+            {/* This is ugly... Fix it */}
+            <Hidden smDown>Refresh</Hidden>
           </Button>
         </PageHeader>
       </header>

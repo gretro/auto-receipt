@@ -10,6 +10,7 @@ import {
   pipeMiddlewares,
   validateBody,
   withAuth,
+  withCORS,
 } from '../../utils/http'
 
 interface PatchDonationViewModel {
@@ -41,6 +42,7 @@ const patchDonationSchema = Joi.object<PatchDonationViewModel>({
 })
 
 export const patchDonation = pipeMiddlewares(
+  withCORS(),
   handleErrors(),
   withAuth(),
   allowMethods('PATCH'),
