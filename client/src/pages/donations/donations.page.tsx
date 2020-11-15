@@ -1,13 +1,17 @@
-import { Box, Button, makeStyles } from '@material-ui/core';
+import { Box, Button, Hidden, makeStyles } from '@material-ui/core';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Route, Switch, useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import { useApi } from '../../api/api.hook';
+import { appUrls } from '../../app-urls';
 import { PageHeader } from '../../components/page-header';
 import { Donation } from '../../models/donation';
-import { DonationDetailsDrawer } from './components/donation-details-drawer/donation-details-drawer';
 import { DonationsGrid } from './components/donations-grid/donations-grid';
 import { FiscalYearSelector } from './components/fiscal-year-selector/fiscal-year-selector';
+import { DonationsDrawerPage } from './donations-drawer.page';
+
+const FISCAL_YEAR_REGEX = /^\d{4}$/;
 
 const useStyles = makeStyles((theme) => ({
   pageGrid: {
@@ -45,13 +49,25 @@ export const DonationsPage: React.FC = () => {
   const availableFiscalYears = useMemo(() => getAvailableFiscalYears(now, 3), []);
   const api = useApi();
 
+  const history = useHistory();
+  const { fiscalYear } = useParams<{ fiscalYear: string }>();
+  const isFiscalYearValid = useMemo(() => FISCAL_YEAR_REGEX.test(fiscalYear), [fiscalYear]);
+
+  useEffect(() => {
+    if (!isFiscalYearValid) {
+      history.replace(appUrls.donations().root());
+    }
+  }, [isFiscalYearValid, history]);
+
   const [selectingFiscalYear, setSelectingFiscalYear] = useState(false);
-  const [fiscalYear, setFiscalYear] = useState(availableFiscalYears[0]);
   const [isLoading, setLoading] = useState(true);
   const [donations, setDonations] = useState<Donation[]>([]);
-  const [activeDonation, setActiveDonation] = useState<Donation | null>(null);
 
   const fetchDonationsFromApi = useCallback(() => {
+    if (!isFiscalYearValid) {
+      return;
+    }
+
     api(async (api) => {
       setLoading(true);
 
@@ -62,7 +78,9 @@ export const DonationsPage: React.FC = () => {
         setLoading(false);
       }
     }, 'fetching donations');
-  }, [api, fiscalYear]);
+  }, [api, fiscalYear, isFiscalYearValid]);
+
+  const { path } = useRouteMatch();
 
   useEffect(() => {
     fetchDonationsFromApi();
@@ -76,14 +94,12 @@ export const DonationsPage: React.FC = () => {
     setSelectingFiscalYear(false);
   };
 
+  const handleFiscalYearSelected = (nextFiscalYear: string) => {
+    history.push(appUrls.donations().forFiscalYear(nextFiscalYear));
+  };
+
   const handleDonationSelected = (donationId: string) => {
-    const nextActiveDonation = donations.find((donation) => donation.id === donationId);
-    if (!nextActiveDonation) {
-      console.error('Invalid donation ID.', donationId);
-      setActiveDonation(null);
-    } else {
-      setActiveDonation(nextActiveDonation);
-    }
+    history.push(appUrls.donations().forDonation(fiscalYear, donationId));
   };
 
   const handleDonationUpdated = (newDonation: Donation) => {
@@ -96,12 +112,6 @@ export const DonationsPage: React.FC = () => {
         return donation;
       }),
     );
-
-    setActiveDonation(newDonation);
-  };
-
-  const handleDrawerClosed = () => {
-    setActiveDonation(null);
   };
 
   return (
@@ -114,7 +124,8 @@ export const DonationsPage: React.FC = () => {
             startIcon={<CalendarTodayIcon />}
             onClick={handleChangeFiscalYear}
           >
-            Change fiscal year
+            {/* This is ugly... Fix it */}
+            <Hidden smDown>Change fiscal year</Hidden>
           </Button>
           <Button
             color="primary"
@@ -123,7 +134,8 @@ export const DonationsPage: React.FC = () => {
             disabled={isLoading}
             onClick={fetchDonationsFromApi}
           >
-            Refresh
+            {/* This is ugly... Fix it */}
+            <Hidden smDown>Refresh</Hidden>
           </Button>
         </PageHeader>
       </header>
@@ -132,18 +144,19 @@ export const DonationsPage: React.FC = () => {
         <DonationsGrid isLoading={isLoading} donations={donations} onDonationSelected={handleDonationSelected} />
       </div>
 
-      <DonationDetailsDrawer
-        donation={activeDonation}
-        onDrawerClose={handleDrawerClosed}
-        onDonationUpdated={handleDonationUpdated}
-      />
       <FiscalYearSelector
         open={selectingFiscalYear}
         initialFiscalYear={fiscalYear}
         availableYears={availableFiscalYears}
-        onFiscalYearSelected={setFiscalYear}
+        onFiscalYearSelected={handleFiscalYearSelected}
         onClose={handleChangeFiscalYearClose}
       />
+
+      <Switch>
+        <Route path={`${path}/:donationId`}>
+          {isLoading ? <></> : <DonationsDrawerPage donations={donations} onDonationUpdated={handleDonationUpdated} />}
+        </Route>
+      </Switch>
     </Box>
   );
 };

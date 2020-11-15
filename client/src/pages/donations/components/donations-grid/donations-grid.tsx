@@ -1,7 +1,7 @@
-import { Box, makeStyles, Theme, Tooltip, Typography } from '@material-ui/core';
+import { Box, makeStyles, TextField, Theme, Tooltip, Typography } from '@material-ui/core';
 import { CellParams, ColDef, DataGrid, RowParams } from '@material-ui/data-grid';
 import DescriptionIcon from '@material-ui/icons/Description';
-import React, { useMemo } from 'react';
+import React, { ChangeEvent, useMemo, useState } from 'react';
 import { Donation } from '../../../../models/donation';
 import { mapDonationToGridDonation } from '../../mappers/donations-mapper';
 import { GridDonation } from './grid-donation.model';
@@ -23,6 +23,11 @@ const useStyles = makeStyles<Theme, Props>((theme) => ({
   notFoundIcon: {
     height: theme.spacing(20),
     width: theme.spacing(20),
+  },
+  content: {
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr',
+    gap: `${theme.spacing(2)}px`,
   },
 }));
 
@@ -168,9 +173,21 @@ const columns: ColDef[] = [
 ];
 
 export const DonationsGrid: React.FC<Props> = (props) => {
+  const [filter, setFilter] = useState<string>('');
+
   const isEmpty = !props.isLoading && props.donations.length === 0;
-  const mappedDonations = useMemo(() => props.donations.map(mapDonationToGridDonation), [props.donations]);
   const styles = useStyles(props);
+
+  const mappedDonations = useMemo(() => props.donations.map(mapDonationToGridDonation), [props.donations]);
+
+  // TODO: Improve search. We should debounce the search
+  const filteredMappedDonations = useMemo(() => {
+    return mappedDonations.filter((donation) => donation.search.indexOf(filter.toLowerCase()) > -1);
+  }, [filter, mappedDonations]);
+
+  const handleFilterChanged = (event: ChangeEvent<HTMLInputElement>) => {
+    setFilter(event.target.value);
+  };
 
   const handleRowClicked = (rowParam: RowParams) => {
     const rowId = rowParam.getValue('id');
@@ -187,13 +204,18 @@ export const DonationsGrid: React.FC<Props> = (props) => {
   return isEmpty ? (
     empty
   ) : (
-    <DataGrid
-      rows={mappedDonations}
-      columns={columns}
-      disableSelectionOnClick
-      disableColumnResize
-      onRowClick={handleRowClicked}
-      loading={props.isLoading}
-    ></DataGrid>
+    <Box className={styles.content}>
+      <TextField label="Search by name or email" variant="outlined" value={filter} onChange={handleFilterChanged} />
+      <Box>
+        <DataGrid
+          rows={filteredMappedDonations}
+          columns={columns}
+          disableSelectionOnClick
+          disableColumnResize
+          onRowClick={handleRowClicked}
+          loading={props.isLoading}
+        ></DataGrid>
+      </Box>
+    </Box>
   );
 };
