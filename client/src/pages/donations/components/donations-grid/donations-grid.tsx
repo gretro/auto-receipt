@@ -1,9 +1,14 @@
 import { Box, makeStyles, TextField, Theme, Tooltip, Typography } from '@material-ui/core';
-import { CellParams, ColDef, DataGrid, RowParams } from '@material-ui/data-grid';
+import { CellParams, ColDef, DataGrid, RowParams, SortModel } from '@material-ui/data-grid';
 import DescriptionIcon from '@material-ui/icons/Description';
+import DoneIcon from '@material-ui/icons/Done';
+import LooksOneIcon from '@material-ui/icons/LooksOne';
+import RotateRightIcon from '@material-ui/icons/RotateRight';
 import React, { ChangeEvent, useMemo, useState } from 'react';
 import { Donation } from '../../../../models/donation';
-import { mapDonationToGridDonation } from '../../mappers/donations-mapper';
+import { formatCurrency, formatDate } from '../../../../utils/formatters.utils';
+import { formatDonationType, mapDonationToGridDonation } from '../../mappers/donations-mapper';
+import { DonationsCardCarousel } from './donations-card-carousel';
 import { GridDonation } from './grid-donation.model';
 
 interface Props {
@@ -26,7 +31,7 @@ const useStyles = makeStyles<Theme, Props>((theme) => ({
   },
   content: {
     display: 'grid',
-    gridTemplateRows: 'auto 1fr',
+    gridTemplateRows: 'auto auto 1fr',
     gap: `${theme.spacing(2)}px`,
   },
 }));
@@ -46,6 +51,31 @@ const withTooltipRenderer: ColDef['renderCell'] = (params: CellParams) => {
   );
 };
 
+const withCheckmarkRenderer: ColDef['renderCell'] = (params: CellParams) => {
+  return (
+    <Tooltip title={params.value ? 'Sent' : 'Not sent'}>
+      <Box width="100%" display="flex" alignItems="center" justifyContent="center" color="#4caf50">
+        {params.value ? <DoneIcon /> : <Box />}
+      </Box>
+    </Tooltip>
+  );
+};
+
+const withDonationTypeRenderer: ColDef['renderCell'] = (params: CellParams) => {
+  const icon = params.value === 'recurrent' ? <RotateRightIcon /> : <LooksOneIcon />;
+  const displayValue = params.colDef?.valueFormatter
+    ? params.colDef.valueFormatter(params)
+    : params.value?.toString() || '';
+
+  return (
+    <Tooltip title={displayValue}>
+      <Box width="100%" display="flex" alignItems="center" justifyContent="center">
+        {icon}
+      </Box>
+    </Tooltip>
+  );
+};
+
 const DEFAULT_COL_DEF: Partial<ColDef> = {
   sortable: true,
   width: 150,
@@ -58,33 +88,22 @@ const currencyFormatter = (params: CellParams) => {
   }
 
   const currency: any = params.getValue('donationCurrency' as keyof GridDonation) || 'USD';
-  const formatter = new Intl.NumberFormat('en-US', {
-    currency,
-    useGrouping: true,
-    style: 'currency',
-  });
-  return formatter.format(params.value);
+  return formatCurrency(params.value, currency);
 };
 
 const columns: ColDef[] = [
   {
+    field: 'donationType' as keyof GridDonation,
+    headerName: 'Type',
+    sortable: true,
+    width: 75,
+    renderCell: withDonationTypeRenderer,
+    valueFormatter: (params) => formatDonationType(params.value as any),
+  },
+  {
     field: 'created' as keyof GridDonation,
     headerName: 'Donation date',
-    valueFormatter: (params) => {
-      const date = new Date(params.value as string);
-      if (isNaN(date.getTime())) {
-        return '-';
-      }
-
-      const dtFormatter = new Intl.DateTimeFormat('en-CA', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-      });
-      return dtFormatter.format(date);
-    },
+    valueFormatter: (params) => formatDate(params.value as string),
     ...DEFAULT_COL_DEF,
     width: LARGE_COL_WIDTH,
   },
@@ -123,20 +142,10 @@ const columns: ColDef[] = [
     valueFormatter: currencyFormatter,
   },
   {
-    field: 'donationCurrency' as keyof GridDonation,
-    headerName: 'Currency',
-    ...DEFAULT_COL_DEF,
-  },
-  {
     field: 'donationReason' as keyof GridDonation,
     headerName: 'Reason for donation',
     ...DEFAULT_COL_DEF,
     width: LARGE_COL_WIDTH,
-  },
-  {
-    field: 'donationType' as keyof GridDonation,
-    headerName: 'Type',
-    ...DEFAULT_COL_DEF,
   },
   {
     field: 'paymentsCount' as keyof GridDonation,
@@ -162,6 +171,12 @@ const columns: ColDef[] = [
     ...DEFAULT_COL_DEF,
     headerAlign: 'right',
     align: 'right',
+  },
+  {
+    field: 'receiptSent' as keyof GridDonation,
+    headerName: 'Receipt sent',
+    width: 115,
+    renderCell: withCheckmarkRenderer,
   },
   {
     field: 'correspondencesCount' as keyof GridDonation,
@@ -194,6 +209,13 @@ export const DonationsGrid: React.FC<Props> = (props) => {
     props.onDonationSelected(rowId as string);
   };
 
+  const defaultSortModel: SortModel = [
+    {
+      field: 'created' as keyof GridDonation,
+      sort: 'desc',
+    },
+  ];
+
   const empty = (
     <Box className={styles.center}>
       <DescriptionIcon className={styles.notFoundIcon} color="primary" />
@@ -205,11 +227,13 @@ export const DonationsGrid: React.FC<Props> = (props) => {
     empty
   ) : (
     <Box className={styles.content}>
+      <DonationsCardCarousel mappedDonations={mappedDonations} />
       <TextField label="Search by name or email" variant="outlined" value={filter} onChange={handleFilterChanged} />
       <Box>
         <DataGrid
           rows={filteredMappedDonations}
           columns={columns}
+          sortModel={defaultSortModel}
           disableSelectionOnClick
           disableColumnResize
           onRowClick={handleRowClicked}

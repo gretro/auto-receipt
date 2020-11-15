@@ -22,8 +22,7 @@ import { DonorEdit } from './donor-edit';
 import { DonorEditor } from './donor-editor';
 
 interface Props {
-  donationId?: string;
-  donor: Donor | null | undefined;
+  donation?: Donation | null | undefined;
   onDonationUpdated: (donation: Donation) => void;
 }
 
@@ -44,7 +43,7 @@ export const DonorInformation: React.FC<Props> = (props) => {
   const handleSendMissingAddressEmail = () => {
     api(
       async (httpApi) => {
-        const newDonation = await httpApi.sendCorrespondence(props.donationId || '', 'no-mailing-addr');
+        const newDonation = await httpApi.sendCorrespondence(props.donation?.id || '', 'no-mailing-addr');
         props.onDonationUpdated(newDonation);
       },
       'sending mailing address notification',
@@ -73,15 +72,19 @@ export const DonorInformation: React.FC<Props> = (props) => {
         : undefined,
     };
 
+    // TODO: Offer the option to emit a revised receipt in the future
+    // Generate the receipt if we had no address and we now have one
+    const generateReceipt = props.donation?.type !== 'recurrent' && !props.donation?.donor.address && !!donor.address;
+
     api(
       async (httpApi) => {
         try {
           const newDonation = await httpApi.patchDonation(
-            props.donationId || '',
+            props.donation?.id || '',
             {
               donor,
             },
-            newValues.generateReceipt,
+            generateReceipt,
           );
 
           props.onDonationUpdated(newDonation);
@@ -101,11 +104,11 @@ export const DonorInformation: React.FC<Props> = (props) => {
 
   const empty = <Typography>No donor information found</Typography>;
 
-  const mailingAddress = mapDonorAddressMultiLine(props.donor?.address, 'No address on file');
+  const mailingAddress = mapDonorAddressMultiLine(props.donation?.donor?.address, 'No address on file');
   const content = (
     <>
       <Box className={styles.donorContent}>
-        <Typography>{props.donor?.email}</Typography>
+        <Typography>{props.donation?.donor?.email}</Typography>
       </Box>
       <Box className={styles.donorContent}>
         {mailingAddress.map((line, index) => (
@@ -120,19 +123,21 @@ export const DonorInformation: React.FC<Props> = (props) => {
       <FlowGridCard variant="outlined">
         <CardHeader
           title="Donor information"
-          subheader={props.donor ? `${props.donor.lastName}, ${props.donor.firstName}` : null}
+          subheader={
+            props.donation?.donor ? `${props.donation?.donor.lastName}, ${props.donation?.donor.firstName}` : null
+          }
         ></CardHeader>
-        <CardContent>{props.donor ? content : empty}</CardContent>
+        <CardContent>{props.donation?.donor ? content : empty}</CardContent>
         <CardActions disableSpacing>
           <IconButton title="Edit donor information" onClick={handleToggleEdit}>
             <EditIcon />
           </IconButton>
-          {props.donor?.email ? (
-            <IconButton href={`mailto:${props.donor.email}`} target="_blank" title="Send an email">
+          {props.donation?.donor?.email ? (
+            <IconButton href={`mailto:${props.donation?.donor.email}`} target="_blank" title="Send an email">
               <EmailIcon />
             </IconButton>
           ) : null}
-          {props.donor?.email && !props.donor.address ? (
+          {props.donation?.donor?.email && !props.donation?.donor.address ? (
             <IconButton title="Send missing address email" onClick={handleSendMissingAddressEmail}>
               <AnnouncementIcon />
             </IconButton>
@@ -143,8 +148,8 @@ export const DonorInformation: React.FC<Props> = (props) => {
       <DonorEditor
         open={isEditing}
         busy={isSaving}
-        donationId={props.donationId}
-        donor={props.donor}
+        donationId={props.donation?.id}
+        donor={props.donation?.donor}
         onSave={handleDonorSave}
         onClose={handleToggleEdit}
       />

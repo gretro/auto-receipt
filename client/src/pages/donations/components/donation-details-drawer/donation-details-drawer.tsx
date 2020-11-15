@@ -68,11 +68,7 @@ export const DonationDetailsDrawer: React.FC<Props> = (props) => {
         <Box className={styles.mainArea}>
           <FlowGrid columns={cols} spacing={8}>
             <FlowGridItem>
-              <DonorInformation
-                donationId={props.donation?.id}
-                donor={props.donation?.donor}
-                onDonationUpdated={handleDonationUpdated}
-              />
+              <DonorInformation donation={props.donation} onDonationUpdated={handleDonationUpdated} />
             </FlowGridItem>
             <FlowGridItem>
               <PaymentInformation

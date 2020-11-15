@@ -4,9 +4,9 @@ import React from 'react';
 import { FlowGridCard } from '../../../../../../components/FlowGrid';
 import { DonationType } from '../../../../../../models/donation';
 import { Payment } from '../../../../../../models/payment';
+import { formatCurrency, formatDateRange } from '../../../../../../utils/formatters.utils';
 import {
   calculateDonationTotalAmount,
-  formatDateRange,
   getDonationCurrency,
   getPaymentDateRange,
   getPaymentSource,
@@ -28,11 +28,6 @@ export const PaymentInformation: React.FC<Props> = (props) => {
   const formattedDateRange = formatDateRange(dateRange);
   const paymentSource = getPaymentSource(props.payments);
 
-  const currencyFormatter = new Intl.NumberFormat('en-US', {
-    currency,
-    style: 'currency',
-  });
-
   return (
     <FlowGridCard variant="outlined">
       <CardHeader title="Payment information" subheader={cardTitle}></CardHeader>
@@ -42,13 +37,13 @@ export const PaymentInformation: React.FC<Props> = (props) => {
             <Typography variant="subtitle2" component="span">
               Amount donated
             </Typography>
-            <Typography>{currencyFormatter.format(amountDonated)}</Typography>
+            <Typography>{formatCurrency(amountDonated, currency)}</Typography>
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography variant="subtitle2" component="span">
               Receipt amount
             </Typography>
-            <Typography>{currencyFormatter.format(receiptAmount)}</Typography>
+            <Typography>{formatCurrency(receiptAmount, currency)}</Typography>
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography variant="subtitle2" component="span">

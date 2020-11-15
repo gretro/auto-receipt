@@ -1,4 +1,5 @@
 import { Address } from '../../../models/address';
+import { DateRange } from '../../../models/date-range';
 import { Donation, DonationType } from '../../../models/donation';
 import { Payment } from '../../../models/payment';
 import { GridDonation } from '../components/donations-grid/grid-donation.model';
@@ -7,7 +8,7 @@ export function mapDonationToGridDonation(donation: Donation): GridDonation {
   return {
     id: donation.id,
     created: donation.created,
-    donationType: mapDonationType(donation.type),
+    donationType: donation.type,
     donationReason: donation.reason || '-',
     donorLastName: donation.donor.lastName,
     donorFirstName: donation.donor.firstName || '-',
@@ -20,13 +21,14 @@ export function mapDonationToGridDonation(donation: Donation): GridDonation {
     paymentsCount: donation.payments.length,
     documentsCount: donation.documents.length,
     correspondencesCount: donation.correspondences.length,
+    receiptSent: donation.correspondences.some((corr) => corr.type === 'thank-you'),
     search: `${donation.donor.firstName?.toLowerCase()} ${donation.donor.lastName?.toLowerCase()} ${
       donation.donor.email?.toLowerCase() || ''
     }`,
   };
 }
 
-export function mapDonationType(donationType: DonationType): string {
+export function formatDonationType(donationType: DonationType): string {
   switch (donationType) {
     case 'one-time':
       return 'One Time';
@@ -93,11 +95,6 @@ export function calculateDonationTotalAmount(payments: Payment[], selector: (pay
   }, 0);
 }
 
-export interface DateRange {
-  start: Date;
-  end?: Date;
-}
-
 export function getPaymentDateRange(payments: Payment[]): DateRange | null {
   if (payments.length === 0) {
     return null;
@@ -127,29 +124,6 @@ export function getPaymentDateRange(payments: Payment[]): DateRange | null {
   );
 
   return dateRange;
-}
-
-export function formatDateRange(dateRange: DateRange | null, locale = 'en-US'): string {
-  if (!dateRange) {
-    return '-';
-  }
-
-  if (!dateRange.end) {
-    const fullDateFormatter = new Intl.DateTimeFormat(locale, {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
-
-    return fullDateFormatter.format(dateRange.start);
-  }
-
-  const monthDateFormatter = new Intl.DateTimeFormat(locale, {
-    month: 'long',
-    year: 'numeric',
-  });
-
-  return `${monthDateFormatter.format(dateRange.start)} - ${monthDateFormatter.format(dateRange.end)}`;
 }
 
 export interface PaymentSourceLink {
