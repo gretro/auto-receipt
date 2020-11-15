@@ -6,7 +6,9 @@ import LooksOneIcon from '@material-ui/icons/LooksOne';
 import RotateRightIcon from '@material-ui/icons/RotateRight';
 import React, { ChangeEvent, useMemo, useState } from 'react';
 import { Donation } from '../../../../models/donation';
+import { formatCurrency, formatDate } from '../../../../utils/formatters.utils';
 import { formatDonationType, mapDonationToGridDonation } from '../../mappers/donations-mapper';
+import { DonationsCardCarousel } from './donations-card-carousel';
 import { GridDonation } from './grid-donation.model';
 
 interface Props {
@@ -29,7 +31,7 @@ const useStyles = makeStyles<Theme, Props>((theme) => ({
   },
   content: {
     display: 'grid',
-    gridTemplateRows: 'auto 1fr',
+    gridTemplateRows: 'auto auto 1fr',
     gap: `${theme.spacing(2)}px`,
   },
 }));
@@ -86,12 +88,7 @@ const currencyFormatter = (params: CellParams) => {
   }
 
   const currency: any = params.getValue('donationCurrency' as keyof GridDonation) || 'USD';
-  const formatter = new Intl.NumberFormat('en-US', {
-    currency,
-    useGrouping: true,
-    style: 'currency',
-  });
-  return formatter.format(params.value);
+  return formatCurrency(params.value, currency);
 };
 
 const columns: ColDef[] = [
@@ -106,21 +103,7 @@ const columns: ColDef[] = [
   {
     field: 'created' as keyof GridDonation,
     headerName: 'Donation date',
-    valueFormatter: (params) => {
-      const date = new Date(params.value as string);
-      if (isNaN(date.getTime())) {
-        return '-';
-      }
-
-      const dtFormatter = new Intl.DateTimeFormat('en-CA', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-      });
-      return dtFormatter.format(date);
-    },
+    valueFormatter: (params) => formatDate(params.value as string),
     ...DEFAULT_COL_DEF,
     width: LARGE_COL_WIDTH,
   },
@@ -157,11 +140,6 @@ const columns: ColDef[] = [
     headerAlign: 'right',
     align: 'right',
     valueFormatter: currencyFormatter,
-  },
-  {
-    field: 'donationCurrency' as keyof GridDonation,
-    headerName: 'Currency',
-    ...DEFAULT_COL_DEF,
   },
   {
     field: 'donationReason' as keyof GridDonation,
@@ -249,6 +227,7 @@ export const DonationsGrid: React.FC<Props> = (props) => {
     empty
   ) : (
     <Box className={styles.content}>
+      <DonationsCardCarousel mappedDonations={mappedDonations} />
       <TextField label="Search by name or email" variant="outlined" value={filter} onChange={handleFilterChanged} />
       <Box>
         <DataGrid

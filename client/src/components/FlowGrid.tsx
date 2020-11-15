@@ -14,6 +14,7 @@ const useStyles = makeStyles<Theme, Props>((theme) => ({
     gap: `${props.spacing}px`,
     listStyle: 'none',
     padding: 0,
+    margin: 0,
   }),
 }));
 
