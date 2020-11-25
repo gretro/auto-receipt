@@ -18,6 +18,9 @@ provider:
     FUNCTION_REGION: ${self:provider.region}
     CORR_NO_MAILING_ADDR_SUBJECT: ${file(./.gcloud/secrets.staging.yml):correspondence.no-mailing-addr.subject}
     CORR_THANK_YOU_SUBJECT: ${file(./.gcloud/secrets.staging.yml):correspondence.thank-you.subject}
+    SENDGRID_API_KEY: ${file(./.gcloud/secrets.staging.yml):sendGrid.apiKey}
+    EMAIL_FROM: ${file(./.gcloud/secrets.staging.yml):sendGrid.from}
+    EMAIL_REPLY_TO: ${file(./.gcloud/secrets.staging.yml):sendGrid.replyTo}
 
 plugins:
   - serverless-google-cloudfunctions

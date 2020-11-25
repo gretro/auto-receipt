@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- NodeJS 10.x
+- NodeJS 12.x
 - Docker and docker-compose
 
 ## Run locally

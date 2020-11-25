@@ -55,7 +55,7 @@ function mapDonationToReceiptInfo(
 
   const receiptInfo: ReceiptInfo = {
     cultures: localeService.getLocales(),
-    receipts: ['donor_receipt', 'federal_receipt', 'provincial_receipt'],
+    receipts: ['receipt-1', 'receipt-2'],
     receiptNumber,
     receiptDate: new Date(),
     donationDate: lastPayment.date,

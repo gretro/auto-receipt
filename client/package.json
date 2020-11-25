@@ -44,7 +44,9 @@
     "setup:stg": "node scripts/setup-config.js stg",
     "setup:prd": "node scripts/setup-config.js prd",
     "deploy:stg": "cp ./secrets/stg/.firebaserc ./.firebaserc && cp ./secrets/stg/firebase.json ./firebase.json && npm run setup:stg && npm run build && firebase deploy",
-    "import-user:stg": "firebase auth:import ./secrets/stg/users.json",
+    "deploy:prd": "cp ./secrets/prd/.firebaserc ./.firebaserc && cp ./secrets/prd/firebase.json ./firebase.json && npm run setup:prd && npm run build && firebase deploy",
+    "import-users:stg": "firebase auth:import ./secrets/stg/users.json",
+    "import-users:prd": "firebase auth:import ./secrets/prd/users.json",
     "firebase:init": "firebase login",
     "firebase": "firebase"
   },

@@ -3,7 +3,7 @@ service: auto-receipt
 provider:
   name: google
   stage: production
-  runtime: nodejs10
+  runtime: nodejs12
   region: us-east1
   project: auto-receipt-prod
   credentials: ./.gcloud/keyfile.production.json
@@ -18,6 +18,9 @@ provider:
     FUNCTION_REGION: ${self:provider.region}
     CORR_NO_MAILING_ADDR_SUBJECT: ${file(./.gcloud/secrets.prod.yml):correspondence.no-mailing-addr.subject}
     CORR_THANK_YOU_SUBJECT: ${file(./.gcloud/secrets.prod.yml):correspondence.thank-you.subject}
+    SENDGRID_API_KEY: ${file(./.gcloud/secrets.prod.yml):sendGrid.apiKey}
+    EMAIL_FROM: ${file(./.gcloud/secrets.prod.yml):sendGrid.from}
+    EMAIL_REPLY_TO: ${file(./.gcloud/secrets.prod.yml):sendGrid.replyTo}
 
 plugins:
   - serverless-google-cloudfunctions
