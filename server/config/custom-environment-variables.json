@@ -5,6 +5,12 @@
         "apiKey": "SENDGRID_API_KEY",
         "from": "EMAIL_FROM",
         "replyTo": "EMAIL_REPLY_TO"
+      },
+      "smtp": {
+        "authUsername": "SMTP_USERNAME",
+        "authPassword": "SMTP_PASSWORD",
+        "from": "EMAIL_FROM",
+        "replyTo": "EMAIL_REPLY_TO"
       }
     },
     "authentication": {

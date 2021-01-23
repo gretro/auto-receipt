@@ -65,12 +65,7 @@
       }
     },
     "email": {
-      "provider": "sendGrid",
-      "sendGrid": {
-        "apiKey": "",
-        "from": "receipts@autoreceipt.app",
-        "replyTo": "reply@autoreceipt.app"
-      }
+      "provider": "fake"
     },
     "authentication": {
       "provider": "no-auth",
