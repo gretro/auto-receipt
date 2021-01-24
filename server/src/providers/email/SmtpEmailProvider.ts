@@ -1,4 +1,5 @@
 import { createTransport, SendMailOptions } from 'nodemailer'
+import { logger } from '../../utils/logging'
 import { EmailProvider, SendEmailParams } from './EmailProvider'
 
 export interface SmtpOptions {
@@ -70,7 +71,19 @@ export function smtpEmailProviderFactory(
     async sendEmail(params: SendEmailParams): Promise<void> {
       const mailOptions = buildMailOptions(options, params)
 
-      await transport.sendMail(mailOptions)
+      try {
+        await transport.sendMail(mailOptions)
+      } catch (err) {
+        const message = err instanceof Error ? err.message : err
+        const stackTrace = err instanceof Error ? err.stack : undefined
+        const name = err instanceof Error ? err.name : undefined
+
+        logger.error('Could not send email', {
+          err: { message, stackTrace, name },
+          provider: 'smtp',
+        })
+        throw new Error('Could not send email via SMTP')
+      }
     },
   }
 }

@@ -70,15 +70,26 @@ async function sendEmail(
     getEmailAttachments(attachments),
   ])
 
-  const emailProvider = getEmailProvider()
-  await emailProvider.sendEmail({
-    to: correspondence.sentTo,
-    subject: emailContent.subject,
-    html: emailContent.html,
-    attachments: emailAttachments,
-  })
+  let correspondenceStatus: 'sent' | 'error' = 'sent'
+  try {
+    const emailProvider = getEmailProvider()
+    await emailProvider.sendEmail({
+      to: correspondence.sentTo,
+      subject: emailContent.subject,
+      html: emailContent.html,
+      attachments: emailAttachments,
+    })
+  } catch (err) {
+    correspondenceStatus = 'error'
 
-  return await markCorrespondenceAsSent(donation, correspondence)
+    throw err
+  } finally {
+    return await setCorrespondenceStatus(
+      donation,
+      correspondence,
+      correspondenceStatus
+    )
+  }
 }
 
 function getAttachmentsToInclude(
@@ -226,15 +237,16 @@ async function getEmailAttachments(
   return await Promise.all(promises)
 }
 
-async function markCorrespondenceAsSent(
+async function setCorrespondenceStatus(
   donation: Donation,
-  correspondence: Correspondence
+  correspondence: Correspondence,
+  status: 'sent' | 'error'
 ): Promise<Correspondence> {
   if (!donation.correspondences.find((corr) => corr.id === correspondence.id)) {
     donation.correspondences.push(correspondence)
   }
 
-  correspondence.status = 'sent'
+  correspondence.status = status
   await donationsRepository.updateDonation(donation, false)
 
   return correspondence
