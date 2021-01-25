@@ -31,6 +31,12 @@ export interface FileProvider {
   loadDocument(name: string): Promise<Buffer | undefined>
 
   /**
+   * Loads a document in a stream using the file provider
+   * @param name Name of the file to stream
+   */
+  loadDocumentAsStream(name: string): Stream
+
+  /**
    * Loads a temporary document
    * @param name Name of the file to load (including extension)
    */

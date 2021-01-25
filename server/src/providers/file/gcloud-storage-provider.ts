@@ -168,6 +168,8 @@ export async function gCloudProviderFactory(
       readFile(buckets.templates, `${filename}`, 'template', bufferToString),
     loadDocument: (filename): Promise<Buffer | undefined> =>
       readFile(buckets.documents, filename, 'document', (x) => x),
+    loadDocumentAsStream: (filename): Stream =>
+      readFileAsStream(buckets.documents, filename),
     saveDocument: (filename, data): Promise<void> =>
       saveFile(buckets.documents, filename, 'document', data),
     loadTranslations: (filename): Promise<Translations | undefined> =>

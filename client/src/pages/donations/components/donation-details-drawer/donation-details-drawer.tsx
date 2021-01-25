@@ -6,6 +6,7 @@ import { PageHeader } from '../../../../components/page-header';
 import { Donation } from '../../../../models/donation';
 import { DonorInformation } from './components/donor-information/donor-information';
 import { PaymentInformation } from './components/payment-information/payment-information';
+import { ReceiptsInformation } from './components/receipts-information/receipts-information';
 
 interface Props {
   donation: Donation | null;
@@ -75,6 +76,9 @@ export const DonationDetailsDrawer: React.FC<Props> = (props) => {
                 donationType={props.donation?.type || 'one-time'}
                 payments={props.donation?.payments || []}
               />
+            </FlowGridItem>
+            <FlowGridItem>
+              <ReceiptsInformation donationId={props.donation?.id} documents={props.donation?.documents || []} />
             </FlowGridItem>
           </FlowGrid>
         </Box>
