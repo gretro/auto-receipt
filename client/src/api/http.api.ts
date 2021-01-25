@@ -7,7 +7,7 @@ export interface HttpRequestOptions {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 }
 
-export async function makeHttpRequest<T>(requestOptions: HttpRequestOptions, body?: unknown): Promise<T> {
+export async function makeHttpRequest(requestOptions: HttpRequestOptions, body?: unknown): Promise<Response> {
   const url = `${getAppConfig().apiUrl}${requestOptions.urlPath}`;
   const idToken = await firebase.auth().currentUser?.getIdToken();
 
@@ -25,6 +25,12 @@ export async function makeHttpRequest<T>(requestOptions: HttpRequestOptions, bod
     method: requestOptions.method,
     body: body ? JSON.stringify(body) : undefined,
   });
+
+  return httpRes;
+}
+
+export async function makeHttpJsonRequest<T>(requestOptions: HttpRequestOptions, body?: unknown): Promise<T> {
+  const httpRes = await makeHttpRequest(requestOptions, body);
 
   if (!httpRes.ok) {
     throw new HttpRequestError('HTTP request failed', httpRes);

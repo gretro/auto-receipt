@@ -5,9 +5,11 @@ import {
   handleErrors,
   pipeMiddlewares,
   withAuth,
+  withCORS,
 } from '../../utils/http'
 
 export const downloadReceipt: RequestHandler<any> = pipeMiddlewares(
+  withCORS(),
   handleErrors(),
   withAuth(),
   allowMethods('GET')
