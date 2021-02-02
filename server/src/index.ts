@@ -5,7 +5,10 @@ export {
   getDonation,
   listDonations,
 } from './functions/http/donation-management'
-export { downloadReceipt } from './functions/http/download-receipt'
+export {
+  bulkExportReceipts,
+  downloadReceipt,
+} from './functions/http/download-receipt'
 export { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
 export { patchDonation } from './functions/http/patch-donation'
 export { paypalIpn } from './functions/http/paypal-ipn'

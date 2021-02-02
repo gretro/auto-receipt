@@ -65,16 +65,7 @@
       }
     },
     "email": {
-      "provider": "smtp",
-      "smtp": {
-        "host": "smtp.gmail.com",
-        "port": 465,
-        "secure": true,
-        "authUsername": "",
-        "authPassword": "",
-        "from": "reply@autoreceipt.app",
-        "replyTo": "reply@autoreceipt.app"
-      }
+      "provider": "fake"
     },
     "authentication": {
       "provider": "no-auth",
