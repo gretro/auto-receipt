@@ -39,6 +39,11 @@ functions:
     events:
       - http: http
 
+  downloadReceipt:
+    handler: downloadReceipt
+    events:
+      - http: http
+
   pdf:
     handler: pdf
     memorySize: 1024

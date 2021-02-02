@@ -1,7 +1,8 @@
+import { HttpRequestError } from '../errors/HttpRequestError';
 import { CorrespondenceType } from '../models/correspondence';
 import { DeepPartial } from '../models/deep-partial';
 import { Donation } from '../models/donation';
-import { HttpRequestOptions, makeHttpRequest } from './http.api';
+import { HttpRequestOptions, makeHttpJsonRequest, makeHttpRequest } from './http.api';
 
 export interface FetchDonationsResponse {
   fiscalYear: string;
@@ -15,7 +16,7 @@ async function fetchDonations(fiscalYear: string): Promise<FetchDonationsRespons
     method: 'GET',
   };
 
-  const result = await makeHttpRequest<FetchDonationsResponse>(requestOptions);
+  const result = await makeHttpJsonRequest<FetchDonationsResponse>(requestOptions);
   return result;
 }
 
@@ -25,7 +26,7 @@ async function fetchDonation(donationId: string): Promise<Donation> {
     method: 'GET',
   };
 
-  const result = await makeHttpRequest<Donation>(requestOptions);
+  const result = await makeHttpJsonRequest<Donation>(requestOptions);
   return result;
 }
 
@@ -40,7 +41,7 @@ async function sendCorrespondence(donationId: string, correspondenceType: Corres
     correspondenceType,
   };
 
-  await makeHttpRequest(requestOptions, request);
+  await makeHttpJsonRequest(requestOptions, request);
   return await fetchDonation(donationId);
 }
 
@@ -62,7 +63,23 @@ async function patchDonation(
     generateReceipt,
   };
 
-  const result = await makeHttpRequest<Donation>(requestOptions, request);
+  const result = await makeHttpJsonRequest<Donation>(requestOptions, request);
+  return result;
+}
+
+async function downloadReceipt(donationId: string, documentId: string): Promise<ArrayBuffer> {
+  const requestOptions: HttpRequestOptions = {
+    urlPath: `downloadReceipt?donationId=${donationId}&documentId=${documentId}`,
+    method: 'GET',
+  };
+
+  const res = await makeHttpRequest(requestOptions);
+
+  if (!res.ok) {
+    throw new HttpRequestError('HTTP request failed', res);
+  }
+
+  const result = await res.arrayBuffer();
   return result;
 }
 
@@ -71,4 +88,5 @@ export const httpApi = {
   fetchDonation,
   sendCorrespondence,
   patchDonation,
+  downloadReceipt,
 };

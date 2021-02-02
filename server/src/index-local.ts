@@ -7,6 +7,7 @@ import {
   getDonation,
   listDonations,
 } from './functions/http/donation-management'
+import { downloadReceipt } from './functions/http/download-receipt'
 import { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
 import { patchDonation } from './functions/http/patch-donation'
 import { paypalIpn } from './functions/http/paypal-ipn'
@@ -31,6 +32,7 @@ app.all('/generatePdfReceipt', generatePdfReceipt)
 app.all('/sendCorrespondence', sendCorrespondence)
 app.all('/launchBulkImport', launchBulkImport)
 app.all('/patchDonation', patchDonation)
+app.all('/downloadReceipt', downloadReceipt)
 
 async function main(): Promise<void> {
   app.listen(3001, () => {

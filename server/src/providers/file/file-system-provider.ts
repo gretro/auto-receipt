@@ -49,7 +49,7 @@ async function readFile<T>(
 function readFileAsStream(directory: string, fileName: string): Stream {
   const filePath = path.resolve(directory, fileName)
 
-  const stream = fs.createReadStream(filePath, { encoding: 'utf8' })
+  const stream = fs.createReadStream(filePath)
   return stream
 }
 
@@ -99,6 +99,8 @@ export function fileSystemProviderFactory(
       saveFile(resolvedOptions.documentPath, name, 'document', data),
     loadDocument: (name: string): Promise<Buffer | undefined> =>
       readFile(resolvedOptions.documentPath, name, 'document', (x) => x),
+    loadDocumentAsStream: (name: string): Stream =>
+      readFileAsStream(resolvedOptions.documentPath, name),
     loadTemp: (name: string): Stream =>
       readFileAsStream(resolvedOptions.tempPath, name),
   }
