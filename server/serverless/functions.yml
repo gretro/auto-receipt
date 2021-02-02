@@ -46,7 +46,7 @@ functions:
 
   bulkExportReceipts:
     handler: bulkExportReceipts
-    memorySize: 1024
+    memorySize: 512
     timeout: 120s
     events:
       - http: http
