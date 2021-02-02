@@ -65,10 +65,14 @@
       }
     },
     "email": {
-      "provider": "sendGrid",
-      "sendGrid": {
-        "apiKey": "",
-        "from": "receipts@autoreceipt.app",
+      "provider": "smtp",
+      "smtp": {
+        "host": "smtp.gmail.com",
+        "port": 465,
+        "secure": true,
+        "authUsername": "",
+        "authPassword": "",
+        "from": "reply@autoreceipt.app",
         "replyTo": "reply@autoreceipt.app"
       }
     },
@@ -84,10 +88,10 @@
   "correspondence": {
     "enabled": true,
     "no-mailing-addr": {
-      "subject": "Merci de votre don / Thank you for your donation"
+      "subject": "[TEST] Merci de votre don / Thank you for your donation"
     },
     "thank-you": {
-      "subject": "Votre reçu pour votre don / Your donation receipt"
+      "subject": "[TEST] Votre reçu pour votre don / Your donation receipt"
     }
   }
 }

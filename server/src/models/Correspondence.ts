@@ -10,6 +10,7 @@ export type CorrespondenceType = keyof typeof CorrespondenceTypes
 export const CorrespondenceStatuses = {
   created: 'created',
   sent: 'sent',
+  error: 'error',
 }
 
 export type CorrespondenceStatus = keyof typeof CorrespondenceStatuses
