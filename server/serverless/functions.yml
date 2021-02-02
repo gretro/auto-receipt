@@ -44,6 +44,13 @@ functions:
     events:
       - http: http
 
+  bulkExportReceipts:
+    handler: bulkExportReceipts
+    memorySize: 512
+    timeout: 120s
+    events:
+      - http: http
+
   pdf:
     handler: pdf
     memorySize: 1024
