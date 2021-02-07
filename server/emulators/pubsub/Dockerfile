@@ -1,4 +1,4 @@
-FROM google/cloud-sdk:308.0.0-alpine
+FROM google/cloud-sdk:alpine
 
 RUN apk add openjdk8-jre && \
   gcloud components install beta pubsub-emulator
