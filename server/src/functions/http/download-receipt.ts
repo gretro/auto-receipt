@@ -19,7 +19,8 @@ export const downloadReceipt: RequestHandler<any> = pipeMiddlewares(
   allowMethods('GET')
 )(
   async (req: Request<any>, res: Response): Promise<void> => {
-    const { donationId, documentId } = req.query
+    const donationId = req.query.donationId as string
+    const documentId = req.query.documentId as string
 
     if (!donationId || !documentId) {
       res.sendStatus(400)

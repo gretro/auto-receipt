@@ -1,7 +1,7 @@
+import axios from 'axios'
 import * as config from 'config'
 import { Request, Response } from 'express'
 import PayPalIpn from 'paypal-ipn-types'
-import * as rp from 'request-promise'
 import { PayPalIpnVerificationError } from '../../errors/PayPalIpnVerificationError'
 import { Address } from '../../models/Address'
 import { DonationType } from '../../models/Donation'
@@ -13,6 +13,7 @@ import {
 import { getAppInfo } from '../../utils/app'
 import { allowMethods, handleErrors, pipeMiddlewares } from '../../utils/http'
 import { logger } from '../../utils/logging'
+import FormData = require('form-data')
 
 const paypalConfig = config.get<PayPalConfig>('paypal')
 
@@ -32,18 +33,22 @@ async function isValid(ipnData: PayPalIpn): Promise<boolean> {
   const appInfo = getAppInfo()
   const userAgent = `${appInfo.appName}/${appInfo.version}`
 
-  const validationResponse = await rp({
-    method: 'POST',
-    uri: paypalConfig.ipnUrl,
+  const formData = new FormData()
+  formData.append('cmd', '_notify-validate')
+  Object.entries(ipnData).forEach(([key, value]) => {
+    formData.append(key, value)
+  })
+
+  const response = await axios.post(paypalConfig.ipnUrl, formData, {
     headers: {
       'User-Agent': userAgent,
+      'Content-Length': formData.getLengthSync(),
+      ...formData.getHeaders(),
     },
-    formData: {
-      ...ipnData,
-      cmd: '_notify-validate',
-    },
+    responseType: 'text',
   })
-  return validationResponse === 'VERIFIED' // other return is INVALID. If it is INVALID it is probably spoofed
+
+  return response.data === 'VERIFIED' // other return is INVALID. If it is INVALID it is probably spoofed
 }
 
 const messageHandlers: Record<string, (ipnData: PayPalIpn) => Promise<void>> = {

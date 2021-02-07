@@ -1,5 +1,5 @@
+import axios from 'axios'
 import * as jwt from 'jsonwebtoken'
-import * as rp from 'request-promise'
 import { AuthenticationProvider } from './AuthenticationProvider'
 
 export interface JwtConfig {
@@ -59,8 +59,10 @@ export function jwtAuthProviderFactory(
 
 function getJwks(jwksUrl: string): jwt.GetPublicKeyOrSecret {
   return (header, callback) => {
-    rp.get(jwksUrl, { json: true })
-      .then((jwks: Record<string, string>) => {
+    axios
+      .get<Record<string, string>>(jwksUrl)
+      .then((response) => {
+        const jwks = response.data
         const publicKey = jwks[header.kid || '']
         callback(null, publicKey)
       })

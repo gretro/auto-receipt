@@ -23,7 +23,7 @@ export const getDonation = pipeMiddlewares(
   allowMethods('GET')
 )(
   async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.query
+    const id = req.query.id as string
 
     if (!id) {
       res.sendStatus(400)
@@ -46,7 +46,8 @@ export const listDonations = pipeMiddlewares(
   allowMethods('GET')
 )(
   async (req: Request, res: Response): Promise<void> => {
-    const { year, externalId } = req.query
+    const year: string = req.query.year as string
+    const externalId = req.query.query as string
 
     let fiscalYear = parseInt(year, 10)
     if (isNaN(fiscalYear)) {
