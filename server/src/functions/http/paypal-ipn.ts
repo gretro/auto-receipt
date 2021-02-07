@@ -42,6 +42,7 @@ async function isValid(ipnData: PayPalIpn): Promise<boolean> {
   const response = await axios.post(paypalConfig.ipnUrl, formData, {
     headers: {
       'User-Agent': userAgent,
+      'Content-Length': formData.getLengthSync(),
       ...formData.getHeaders(),
     },
     responseType: 'text',
