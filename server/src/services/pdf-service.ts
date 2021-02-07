@@ -1,6 +1,6 @@
 import * as chromium from 'chrome-aws-lambda'
 import * as config from 'config'
-import { Browser } from 'puppeteer-core'
+import { Browser } from 'puppeteer/lib/cjs/puppeteer/api-docs-entry'
 import { donationsRepository } from '../datastore/donations-repository'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
 import { PdfGenerationError } from '../errors/PdfGenerationError'
@@ -163,7 +163,7 @@ async function generatePdfFromHtml(htmlContent: string): Promise<Buffer> {
 
     // TODO: Make configurable (maybe at some point...)
     pdf = await page.pdf({
-      format: 'Letter',
+      format: 'letter',
       margin: {
         top: '0.75in',
         right: '0.75in',
@@ -210,7 +210,7 @@ async function launchBrowser(): Promise<{
   const browserId = slotId++
   BROWSER_SLOTS.push(browserId)
 
-  const browser = await chromium.puppeteer.launch({
+  const browser: Browser = await (chromium.puppeteer as any).launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
     executablePath: await chromium.executablePath,
