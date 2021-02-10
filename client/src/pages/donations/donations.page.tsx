@@ -1,4 +1,5 @@
-import { Box, Button, Hidden, makeStyles } from '@material-ui/core';
+import { Box, Button, Hidden, ListItemIcon, ListItemText, makeStyles, MenuItem } from '@material-ui/core';
+import AnnouncementIcon from '@material-ui/icons/Announcement';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -43,6 +44,8 @@ function getAvailableFiscalYears(now: Date, count: number): string[] {
 }
 
 const now = new Date();
+
+type SelectionAction = 'missing-addr';
 
 export const DonationsPage: React.FC = () => {
   const styles = useStyles();
@@ -114,34 +117,122 @@ export const DonationsPage: React.FC = () => {
     );
   };
 
+  const [selectionAction, setSelectionAction] = useState<SelectionAction | null>(null);
+  const [selectedDonations, setSelectedDonations] = useState<string[]>([]);
+  const handleStartMissingAddress = () => {
+    setSelectionAction('missing-addr');
+  };
+
+  const handleSelectionActionCancelled = () => {
+    setSelectionAction(null);
+  };
+
+  const handleSelectionActionDone = () => {
+    const activeAction = selectionAction;
+    setSelectionAction(null);
+
+    switch (activeAction) {
+      case 'missing-addr': {
+        api(
+          async (httpApi) => {
+            try {
+              await httpApi.sendCorrespondenceInBulk(selectedDonations, 'no-mailing-addr');
+            } catch (err) {
+              setSelectionAction(activeAction);
+              throw err;
+            }
+          },
+          'sending missing address email',
+          { showLoading: true, showSuccess: true },
+        );
+      }
+    }
+  };
+
+  const handleDonationSelectionChanged = (donationIds: string[]): void => {
+    setSelectedDonations(donationIds);
+    console.log('Selection changed', donationIds);
+  };
+
+  const menuItems: React.ReactElement[] = [
+    <Hidden key="actions.refresh" mdUp>
+      <MenuItem disabled={isLoading} onClick={fetchDonationsFromApi}>
+        <ListItemIcon>
+          <RefreshIcon />
+        </ListItemIcon>
+        <ListItemText>Refresh</ListItemText>
+      </MenuItem>
+    </Hidden>,
+    <Hidden key="actions.changeFiscalYear" mdUp>
+      <MenuItem disabled={isLoading} onClick={handleChangeFiscalYear}>
+        <ListItemIcon>
+          <CalendarTodayIcon />
+        </ListItemIcon>
+        <ListItemText>Change fiscal year</ListItemText>
+      </MenuItem>
+    </Hidden>,
+    <MenuItem key="actions.missing-addr" disabled={isLoading} onClick={handleStartMissingAddress}>
+      <ListItemIcon>
+        <AnnouncementIcon />
+      </ListItemIcon>
+      <ListItemText>Send missing address email</ListItemText>
+    </MenuItem>,
+  ];
+
   return (
     <Box className={styles.pageGrid}>
       <header className={styles.pageHeader}>
-        <PageHeader pageTitle={`${fiscalYear} Donations`}>
-          <Button
-            color="primary"
-            variant="contained"
-            startIcon={<CalendarTodayIcon />}
-            onClick={handleChangeFiscalYear}
-          >
-            {/* This is ugly... Fix it */}
-            <Hidden smDown>Change fiscal year</Hidden>
-          </Button>
-          <Button
-            color="primary"
-            variant="contained"
-            startIcon={<RefreshIcon />}
-            disabled={isLoading}
-            onClick={fetchDonationsFromApi}
-          >
-            {/* This is ugly... Fix it */}
-            <Hidden smDown>Refresh</Hidden>
-          </Button>
+        <PageHeader pageTitle={`${fiscalYear} Donations`} hamburgerMenuItems={selectionAction ? undefined : menuItems}>
+          {selectionAction ? (
+            <>
+              <Button
+                color="primary"
+                variant="contained"
+                disabled={selectedDonations.length === 0}
+                onClick={handleSelectionActionDone}
+              >
+                Done
+              </Button>
+              <Button variant="contained" onClick={handleSelectionActionCancelled}>
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <>
+              <Hidden smDown>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  startIcon={<CalendarTodayIcon />}
+                  onClick={handleChangeFiscalYear}
+                >
+                  Change fiscal year
+                </Button>
+              </Hidden>
+              <Hidden smDown>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  startIcon={<RefreshIcon />}
+                  disabled={isLoading}
+                  onClick={fetchDonationsFromApi}
+                >
+                  Refresh
+                </Button>
+              </Hidden>
+            </>
+          )}
         </PageHeader>
       </header>
 
       <div className={styles.pageContent}>
-        <DonationsGrid isLoading={isLoading} donations={donations} onDonationSelected={handleDonationSelected} />
+        <DonationsGrid
+          isLoading={isLoading}
+          donations={donations}
+          onDonationSelected={handleDonationSelected}
+          gridMode={selectionAction ? 'select' : 'view'}
+          onDonationSelectionChanged={handleDonationSelectionChanged}
+        />
       </div>
 
       <FiscalYearSelector

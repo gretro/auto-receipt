@@ -78,7 +78,11 @@ export const DonationDetailsDrawer: React.FC<Props> = (props) => {
               />
             </FlowGridItem>
             <FlowGridItem>
-              <ReceiptsInformation donationId={props.donation?.id} documents={props.donation?.documents || []} />
+              <ReceiptsInformation
+                donationId={props.donation?.id}
+                documents={props.donation?.documents || []}
+                canSendByEmail={!!props.donation?.donor?.email}
+              />
             </FlowGridItem>
           </FlowGrid>
         </Box>

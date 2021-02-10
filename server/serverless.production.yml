@@ -8,6 +8,7 @@ provider:
   project: auto-receipt-prod
   credentials: ./.gcloud/keyfile.production.json
   memorySize: 256
+  maxInstances: 10
   labels:
     environment: ${self:provider.stage}
   environment:

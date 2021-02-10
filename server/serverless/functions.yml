@@ -54,6 +54,7 @@ functions:
   pdf:
     handler: pdf
     memorySize: 1024
+    maxInstances: 5
     environment:
       NODE_ICU_DATA: 'node_modules/full-icu'
     timeout: 120s
@@ -72,6 +73,7 @@ functions:
 
   email:
     handler: email
+    maxInstances: 5
     events:
       - event:
           eventType: providers/cloud.pubsub/eventTypes/topic.publish

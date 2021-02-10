@@ -1,5 +1,5 @@
 import { Box, makeStyles, TextField, Theme, Tooltip, Typography } from '@material-ui/core';
-import { CellParams, ColDef, DataGrid, RowParams, SortModel } from '@material-ui/data-grid';
+import { CellParams, ColDef, DataGrid, RowParams, SelectionChangeParams, SortModel } from '@material-ui/data-grid';
 import DescriptionIcon from '@material-ui/icons/Description';
 import DoneIcon from '@material-ui/icons/Done';
 import LooksOneIcon from '@material-ui/icons/LooksOne';
@@ -15,6 +15,8 @@ interface Props {
   isLoading?: boolean;
   donations: Donation[];
   onDonationSelected: (donationId: string) => void;
+  gridMode: 'view' | 'select';
+  onDonationSelectionChanged: (selectedDonationIds: string[]) => void;
 }
 
 const useStyles = makeStyles<Theme, Props>((theme) => ({
@@ -142,6 +144,12 @@ const columns: ColDef[] = [
     valueFormatter: currencyFormatter,
   },
   {
+    field: 'receiptSent' as keyof GridDonation,
+    headerName: 'Receipt sent',
+    width: 115,
+    renderCell: withCheckmarkRenderer,
+  },
+  {
     field: 'donationReason' as keyof GridDonation,
     headerName: 'Reason for donation',
     ...DEFAULT_COL_DEF,
@@ -173,12 +181,6 @@ const columns: ColDef[] = [
     align: 'right',
   },
   {
-    field: 'receiptSent' as keyof GridDonation,
-    headerName: 'Receipt sent',
-    width: 115,
-    renderCell: withCheckmarkRenderer,
-  },
-  {
     field: 'correspondencesCount' as keyof GridDonation,
     headerName: 'Emails sent',
     ...DEFAULT_COL_DEF,
@@ -205,6 +207,10 @@ export const DonationsGrid: React.FC<Props> = (props) => {
   };
 
   const handleRowClicked = (rowParam: RowParams) => {
+    if (props.gridMode !== 'view') {
+      return;
+    }
+
     const rowId = rowParam.getValue('id');
     props.onDonationSelected(rowId as string);
   };
@@ -215,6 +221,11 @@ export const DonationsGrid: React.FC<Props> = (props) => {
       sort: 'desc',
     },
   ];
+
+  const handleDonationSelectionChanged = (params: SelectionChangeParams) => {
+    const donationIds = params.rows.map((row) => String(row.id));
+    props.onDonationSelectionChanged(donationIds);
+  };
 
   const empty = (
     <Box className={styles.center}>
@@ -238,6 +249,8 @@ export const DonationsGrid: React.FC<Props> = (props) => {
           disableColumnResize
           onRowClick={handleRowClicked}
           loading={props.isLoading}
+          checkboxSelection={props.gridMode === 'select'}
+          onSelectionChange={handleDonationSelectionChanged}
         ></DataGrid>
       </Box>
     </Box>

@@ -37,12 +37,40 @@ async function sendCorrespondence(donationId: string, correspondenceType: Corres
   };
 
   const request = {
-    donationId,
-    correspondenceType,
+    toSend: [
+      {
+        donationId,
+        correspondenceType,
+      },
+    ],
   };
 
-  await makeHttpJsonRequest(requestOptions, request);
-  return await fetchDonation(donationId);
+  const response = await makeHttpRequest(requestOptions, request);
+
+  if (response.ok) {
+    return await fetchDonation(donationId);
+  } else {
+    throw new HttpRequestError('Http request failed', response);
+  }
+}
+
+async function sendCorrespondenceInBulk(donationIds: string[], correspondenceType: CorrespondenceType): Promise<void> {
+  const requestOptions: HttpRequestOptions = {
+    urlPath: `sendCorrespondence`,
+    method: 'POST',
+  };
+
+  const request = {
+    toSend: donationIds.map((donationId) => ({
+      donationId,
+      correspondenceType,
+    })),
+  };
+
+  const response = await makeHttpRequest(requestOptions, request);
+  if (!response.ok) {
+    throw new HttpRequestError('Http request failed', response);
+  }
 }
 
 async function patchDonation(
@@ -87,6 +115,7 @@ export const httpApi = {
   fetchDonations,
   fetchDonation,
   sendCorrespondence,
+  sendCorrespondenceInBulk,
   patchDonation,
   downloadReceipt,
 };
