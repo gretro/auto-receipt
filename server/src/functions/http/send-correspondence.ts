@@ -1,9 +1,10 @@
 import * as Joi from 'joi'
+import { SendEmailCommand } from '../../models/commands/SendEmailCommand'
 import {
   CorrespondenceType,
   CorrespondenceTypes,
 } from '../../models/Correspondence'
-import { correspondenceService } from '../../services/correspondence-service'
+import { publishMessage } from '../../pubsub/service'
 import {
   allowMethods,
   handleErrors,
@@ -13,15 +14,26 @@ import {
   withCORS,
 } from '../../utils/http'
 
+interface BulkSendCorrespondenceViewModel {
+  toSend: SendCorrespondenceViewModel[]
+}
+
 interface SendCorrespondenceViewModel {
   donationId: string
   correspondenceType: CorrespondenceType
 }
 
-const vmSchema = Joi.object<SendCorrespondenceViewModel>({
-  donationId: Joi.string().required(),
-  correspondenceType: Joi.string()
-    .valid(...Object.keys(CorrespondenceTypes))
+const requestSchema = Joi.object<BulkSendCorrespondenceViewModel>({
+  toSend: Joi.array()
+    .min(1)
+    .items(
+      Joi.object<SendCorrespondenceViewModel>({
+        donationId: Joi.string().required(),
+        correspondenceType: Joi.string()
+          .valid(...Object.keys(CorrespondenceTypes))
+          .required(),
+      })
+    )
     .required(),
 })
 
@@ -30,14 +42,18 @@ export const sendCorrespondence = pipeMiddlewares(
   handleErrors(),
   withAuth(),
   allowMethods('POST'),
-  validateBody(vmSchema)
+  validateBody(requestSchema)
 )(async (req, res) => {
-  const viewModel: SendCorrespondenceViewModel = req.body
-  const correspondence = await correspondenceService.sendEmail(
-    viewModel.donationId,
-    viewModel.correspondenceType
-  )
+  const viewModel: BulkSendCorrespondenceViewModel = req.body
 
-  res.status(201)
-  res.send(correspondence)
+  const promises = viewModel.toSend.map(async (toSend) => {
+    const command: SendEmailCommand = {
+      donationId: toSend.donationId,
+      type: toSend.correspondenceType,
+    }
+    await publishMessage(command, 'email')
+  })
+  await Promise.all(promises)
+
+  res.sendStatus(201)
 })

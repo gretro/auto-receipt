@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import ReceiptIcon from '@material-ui/icons/Receipt';
+import SendIcon from '@material-ui/icons/Send';
 import React, { useMemo, useState } from 'react';
 import { useApi } from '../../../../../../api/api.hook';
 import { FlowGridCard } from '../../../../../../components/FlowGrid';
@@ -20,6 +21,7 @@ import { formatDate } from '../../../../../../utils/formatters.utils';
 interface Props {
   donationId?: string | null;
   documents: DocumentMetadata[];
+  canSendByEmail: boolean;
 }
 
 const useStyles = makeStyles<Theme, Props>((theme) => ({
@@ -36,7 +38,7 @@ export const ReceiptsInformation: React.FC<Props> = (props) => {
   const styles = useStyles(props);
   const api = useApi();
 
-  const [isDownloading, setDownloading] = useState(false);
+  const [isBusy, setBusy] = useState(false);
 
   const latestDocument = useMemo(() => {
     if (props.documents.length === 0) {
@@ -69,7 +71,7 @@ export const ReceiptsInformation: React.FC<Props> = (props) => {
   const handleDownloadReceipt = () => {
     api(
       async (httpApi) => {
-        setDownloading(true);
+        setBusy(true);
 
         try {
           const receiptContent = await httpApi.downloadReceipt(props.donationId || '', latestDocument?.id || '');
@@ -83,10 +85,26 @@ export const ReceiptsInformation: React.FC<Props> = (props) => {
 
           window.URL.revokeObjectURL(downloadUrl);
         } finally {
-          setDownloading(false);
+          setBusy(false);
         }
       },
       'downloading receipt',
+      { showLoading: true, showSuccess: true },
+    );
+  };
+
+  const handleResendReceipt = () => {
+    api(
+      async (httpApi) => {
+        setBusy(true);
+
+        try {
+          await httpApi.sendCorrespondence(props.donationId || '', 'thank-you');
+        } finally {
+          setBusy(false);
+        }
+      },
+      'sending receipt',
       { showLoading: true, showSuccess: true },
     );
   };
@@ -116,9 +134,16 @@ export const ReceiptsInformation: React.FC<Props> = (props) => {
       </CardContent>
       <CardActions>
         {isEmpty ? null : (
-          <IconButton title="Download receipt" disabled={isDownloading} onClick={handleDownloadReceipt}>
-            <GetAppIcon />
-          </IconButton>
+          <>
+            <IconButton title="Download receipt" disabled={isBusy} onClick={handleDownloadReceipt}>
+              <GetAppIcon />
+            </IconButton>
+            {props.canSendByEmail ? (
+              <IconButton title="Send receipt by email" disabled={isBusy} onClick={handleResendReceipt}>
+                <SendIcon />
+              </IconButton>
+            ) : null}
+          </>
         )}
       </CardActions>
     </FlowGridCard>
