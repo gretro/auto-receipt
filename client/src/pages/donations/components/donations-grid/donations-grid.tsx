@@ -1,10 +1,10 @@
-import { Box, makeStyles, TextField, Theme, Tooltip, Typography } from '@material-ui/core';
+import { Box, debounce, makeStyles, TextField, Theme, Tooltip, Typography } from '@material-ui/core';
 import { CellParams, ColDef, DataGrid, RowParams, SelectionChangeParams, SortModel } from '@material-ui/data-grid';
 import DescriptionIcon from '@material-ui/icons/Description';
 import DoneIcon from '@material-ui/icons/Done';
 import LooksOneIcon from '@material-ui/icons/LooksOne';
 import RotateRightIcon from '@material-ui/icons/RotateRight';
-import React, { ChangeEvent, useMemo, useState } from 'react';
+import React, { ChangeEvent, useMemo, useRef, useState } from 'react';
 import { Donation } from '../../../../models/donation';
 import { formatCurrency, formatDate } from '../../../../utils/formatters.utils';
 import { formatDonationType, mapDonationToGridDonation } from '../../mappers/donations-mapper';
@@ -190,6 +190,7 @@ const columns: ColDef[] = [
 ];
 
 export const DonationsGrid: React.FC<Props> = (props) => {
+  const [rawFilter, setRawFilter] = useState<string>('');
   const [filter, setFilter] = useState<string>('');
 
   const isEmpty = !props.isLoading && props.donations.length === 0;
@@ -197,13 +198,20 @@ export const DonationsGrid: React.FC<Props> = (props) => {
 
   const mappedDonations = useMemo(() => props.donations.map(mapDonationToGridDonation), [props.donations]);
 
-  // TODO: Improve search. We should debounce the search
   const filteredMappedDonations = useMemo(() => {
     return mappedDonations.filter((donation) => donation.search.indexOf(filter.toLowerCase()) > -1);
   }, [filter, mappedDonations]);
 
-  const handleFilterChanged = (event: ChangeEvent<HTMLInputElement>) => {
-    setFilter(event.target.value);
+  const handleFilterChangedRef = useRef(
+    debounce((nextValue: string) => {
+      setFilter(nextValue);
+    }, 250),
+  );
+
+  const handleRawFilterChanged = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value || '';
+    setRawFilter(value);
+    handleFilterChangedRef.current(value);
   };
 
   const handleRowClicked = (rowParam: RowParams) => {
@@ -239,7 +247,12 @@ export const DonationsGrid: React.FC<Props> = (props) => {
   ) : (
     <Box className={styles.content}>
       <DonationsCardCarousel mappedDonations={mappedDonations} />
-      <TextField label="Search by name or email" variant="outlined" value={filter} onChange={handleFilterChanged} />
+      <TextField
+        label="Search by name or email"
+        variant="outlined"
+        value={rawFilter}
+        onChange={handleRawFilterChanged}
+      />
       <Box>
         <DataGrid
           rows={filteredMappedDonations}

@@ -1,6 +1,8 @@
 import { Box, Button, Hidden, ListItemIcon, ListItemText, makeStyles, MenuItem } from '@material-ui/core';
 import AnnouncementIcon from '@material-ui/icons/Announcement';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import ReceiptIcon from '@material-ui/icons/Receipt';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Route, Switch, useHistory, useParams, useRouteMatch } from 'react-router-dom';
@@ -8,6 +10,7 @@ import { useApi } from '../../api/api.hook';
 import { appUrls } from '../../app-urls';
 import { PageHeader } from '../../components/page-header';
 import { Donation } from '../../models/donation';
+import { downloadBlobFile } from '../../utils/download.utils';
 import { DonationsGrid } from './components/donations-grid/donations-grid';
 import { FiscalYearSelector } from './components/fiscal-year-selector/fiscal-year-selector';
 import { DonationsDrawerPage } from './donations-drawer.page';
@@ -45,7 +48,7 @@ function getAvailableFiscalYears(now: Date, count: number): string[] {
 
 const now = new Date();
 
-type SelectionAction = 'missing-addr';
+type SelectionAction = 'missing-addr' | 'generate-receipt' | 'download-receipts';
 
 export const DonationsPage: React.FC = () => {
   const styles = useStyles();
@@ -119,8 +122,9 @@ export const DonationsPage: React.FC = () => {
 
   const [selectionAction, setSelectionAction] = useState<SelectionAction | null>(null);
   const [selectedDonations, setSelectedDonations] = useState<string[]>([]);
-  const handleStartMissingAddress = () => {
-    setSelectionAction('missing-addr');
+
+  const handleSelectionActionStarted = (action: SelectionAction) => () => {
+    setSelectionAction(action);
   };
 
   const handleSelectionActionCancelled = () => {
@@ -135,16 +139,74 @@ export const DonationsPage: React.FC = () => {
       case 'missing-addr': {
         api(
           async (httpApi) => {
-            try {
-              await httpApi.sendCorrespondenceInBulk(selectedDonations, 'no-mailing-addr');
-            } catch (err) {
-              setSelectionAction(activeAction);
-              throw err;
-            }
+            await httpApi.sendCorrespondenceInBulk(selectedDonations, 'no-mailing-addr');
           },
           'sending missing address email',
           { showLoading: true, showSuccess: true },
         );
+
+        break;
+      }
+
+      case 'generate-receipt': {
+        api(
+          async (httpApi) => {
+            const request = selectedDonations
+              .map((donationId) => {
+                const donation = donations.find((donation) => donation.id === donationId);
+                if (!donation) {
+                  return null;
+                }
+
+                return {
+                  donationId,
+                  sendEmail: !!donation.donor.email,
+                };
+              })
+              .filter(Boolean) as { donationId: string; sendEmail: boolean }[];
+
+            await httpApi.forceGenerateReceipt(request);
+          },
+          'generating receipts',
+          { showLoading: true, showSuccess: true },
+        );
+
+        break;
+      }
+
+      case 'download-receipts': {
+        api(
+          async (httpApi) => {
+            const toDownload = selectedDonations
+              .map((donationId) => {
+                const donation = donations.find((donation) => donation.id === donationId);
+                if (!donation) {
+                  return null;
+                }
+
+                const sortedDocuments = [...donation.documents].sort(
+                  (left, right) => left.created.getTime() - right.created.getTime(),
+                );
+                const documentId = sortedDocuments.length > 0 ? sortedDocuments[0].id : null;
+
+                if (!documentId) {
+                  return null;
+                }
+
+                return {
+                  donationId,
+                  documentId,
+                };
+              })
+              .filter(Boolean) as { donationId: string; documentId: string }[];
+
+            const fileContent = await httpApi.bulkDownloadReceipts(toDownload);
+            downloadBlobFile(fileContent, 'receipts_export.zip');
+          },
+          'downloading receipts',
+          { showSuccess: true, showLoading: true },
+        );
+        break;
       }
     }
   };
@@ -153,6 +215,22 @@ export const DonationsPage: React.FC = () => {
     setSelectedDonations(donationIds);
     console.log('Selection changed', donationIds);
   };
+
+  const filteredDonations = useMemo(() => {
+    switch (selectionAction) {
+      case 'missing-addr':
+        return filterDonationsForMissingAddress(donations);
+
+      case 'generate-receipt':
+        return filterDonationsForMissingReceipt(donations);
+
+      case 'download-receipts':
+        return filterDonationsForDownloadingReceipts(donations);
+
+      default:
+        return donations;
+    }
+  }, [donations, selectionAction]);
 
   const menuItems: React.ReactElement[] = [
     <Hidden key="actions.refresh" mdUp>
@@ -171,11 +249,31 @@ export const DonationsPage: React.FC = () => {
         <ListItemText>Change fiscal year</ListItemText>
       </MenuItem>
     </Hidden>,
-    <MenuItem key="actions.missing-addr" disabled={isLoading} onClick={handleStartMissingAddress}>
+    <MenuItem key="actions.missing-addr" disabled={isLoading} onClick={handleSelectionActionStarted('missing-addr')}>
       <ListItemIcon>
         <AnnouncementIcon />
       </ListItemIcon>
       <ListItemText>Send missing address email</ListItemText>
+    </MenuItem>,
+    <MenuItem
+      key="actions.generate-receipt"
+      disabled={isLoading}
+      onClick={handleSelectionActionStarted('generate-receipt')}
+    >
+      <ListItemIcon>
+        <ReceiptIcon />
+      </ListItemIcon>
+      <ListItemText>Generate missing receipt</ListItemText>
+    </MenuItem>,
+    <MenuItem
+      key="actions.download-receipts"
+      disabled={isLoading}
+      onClick={handleSelectionActionStarted('download-receipts')}
+    >
+      <ListItemIcon>
+        <GetAppIcon />
+      </ListItemIcon>
+      <ListItemText>Download receipts</ListItemText>
     </MenuItem>,
   ];
 
@@ -228,7 +326,7 @@ export const DonationsPage: React.FC = () => {
       <div className={styles.pageContent}>
         <DonationsGrid
           isLoading={isLoading}
-          donations={donations}
+          donations={filteredDonations}
           onDonationSelected={handleDonationSelected}
           gridMode={selectionAction ? 'select' : 'view'}
           onDonationSelectionChanged={handleDonationSelectionChanged}
@@ -251,3 +349,15 @@ export const DonationsPage: React.FC = () => {
     </Box>
   );
 };
+
+function filterDonationsForMissingAddress(donations: Donation[]): Donation[] {
+  return donations.filter((donation) => !donation.donor.address && donation.donor.email);
+}
+
+function filterDonationsForMissingReceipt(donations: Donation[]): Donation[] {
+  return donations.filter((donation) => donation.donor.address && (donation.documents || []).length === 0);
+}
+
+function filterDonationsForDownloadingReceipts(donations: Donation[]): Donation[] {
+  return donations.filter((donation) => (donation.documents || []).length > 0);
+}
