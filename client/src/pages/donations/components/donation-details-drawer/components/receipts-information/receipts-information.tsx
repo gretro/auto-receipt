@@ -16,6 +16,7 @@ import React, { useMemo, useState } from 'react';
 import { useApi } from '../../../../../../api/api.hook';
 import { FlowGridCard } from '../../../../../../components/FlowGrid';
 import { DocumentMetadata } from '../../../../../../models/document-metadata';
+import { downloadBlobFile } from '../../../../../../utils/download.utils';
 import { formatDate } from '../../../../../../utils/formatters.utils';
 
 interface Props {
@@ -75,15 +76,7 @@ export const ReceiptsInformation: React.FC<Props> = (props) => {
 
         try {
           const receiptContent = await httpApi.downloadReceipt(props.donationId || '', latestDocument?.id || '');
-          const blob = new Blob([receiptContent]);
-          const downloadUrl = window.URL.createObjectURL(blob);
-
-          const anchor = document.createElement('a');
-          anchor.setAttribute('href', downloadUrl);
-          anchor.setAttribute('download', latestDocument?.name || 'receipt.pdf');
-          anchor.click();
-
-          window.URL.revokeObjectURL(downloadUrl);
+          downloadBlobFile(receiptContent, latestDocument?.name || 'receipt.pdf');
         } finally {
           setBusy(false);
         }

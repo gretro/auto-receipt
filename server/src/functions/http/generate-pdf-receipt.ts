@@ -8,34 +8,51 @@ import {
   pipeMiddlewares,
   validateBody,
   withAuth,
+  withCORS,
 } from '../../utils/http'
+
+interface BulkQueuePdfGeneration {
+  toGenerate: QueuePdfGenerationViewModel[]
+}
 
 interface QueuePdfGenerationViewModel {
   donationId: string
   sendEmail: boolean
 }
 
-const queuePdfGenerationSchema = Joi.object<QueuePdfGenerationViewModel>({
-  donationId: Joi.string().required(),
-  sendEmail: Joi.boolean().required(),
+const bulkQueuePdfGenerationSchema = Joi.object<BulkQueuePdfGeneration>({
+  toGenerate: Joi.array()
+    .min(1)
+    .items(
+      Joi.object<QueuePdfGenerationViewModel>({
+        donationId: Joi.string().required(),
+        sendEmail: Joi.boolean().required(),
+      })
+    )
+    .required(),
 })
 
 export const generatePdfReceipt = pipeMiddlewares(
+  withCORS(),
   handleErrors(),
   withAuth(),
   allowMethods('POST'),
-  validateBody(queuePdfGenerationSchema)
+  validateBody(bulkQueuePdfGenerationSchema)
 )(
   async (req: Request, res: Response): Promise<void> => {
-    const viewModel: QueuePdfGenerationViewModel = req.body
+    const bulk: BulkQueuePdfGeneration = req.body
 
-    const command: GeneratePdfCommand = {
-      donationId: viewModel.donationId,
-      queueEmailTransmission: viewModel.sendEmail,
-    }
+    const promises = bulk.toGenerate.map(async (toGenerate) => {
+      const command: GeneratePdfCommand = {
+        donationId: toGenerate.donationId,
+        queueEmailTransmission: toGenerate.sendEmail,
+      }
 
-    await publishMessage(command, 'pdf')
+      await publishMessage(command, 'pdf')
+    })
 
-    res.status(201).send()
+    await Promise.all(promises)
+
+    res.sendStatus(201)
   }
 )

@@ -73,6 +73,22 @@ async function sendCorrespondenceInBulk(donationIds: string[], correspondenceTyp
   }
 }
 
+async function forceGenerateReceipt(toGenerate: { donationId: string; sendEmail: boolean }[]): Promise<void> {
+  const requestOptions: HttpRequestOptions = {
+    urlPath: `generatePdfReceipt`,
+    method: 'POST',
+  };
+
+  const request = {
+    toGenerate,
+  };
+
+  const response = await makeHttpRequest(requestOptions, request);
+  if (!response.ok) {
+    throw new HttpRequestError('Http request failed', response);
+  }
+}
+
 async function patchDonation(
   donationId: string,
   donationPatch: DeepPartial<Donation>,
@@ -111,11 +127,33 @@ async function downloadReceipt(donationId: string, documentId: string): Promise<
   return result;
 }
 
+async function bulkDownloadReceipts(toDownload: { donationId: string; documentId: string }[]): Promise<ArrayBuffer> {
+  const requestOptions: HttpRequestOptions = {
+    urlPath: `bulkExportReceipts`,
+    method: 'POST',
+  };
+
+  const request = {
+    receipts: toDownload,
+  };
+
+  const res = await makeHttpRequest(requestOptions, request);
+
+  if (!res.ok) {
+    throw new HttpRequestError('HTTP request failed', res);
+  }
+
+  const result = await res.arrayBuffer();
+  return result;
+}
+
 export const httpApi = {
   fetchDonations,
   fetchDonation,
   sendCorrespondence,
   sendCorrespondenceInBulk,
+  forceGenerateReceipt,
   patchDonation,
   downloadReceipt,
+  bulkDownloadReceipts,
 };
