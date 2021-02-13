@@ -51,11 +51,11 @@ const useStyles = makeStyles<Theme, Props>((theme) => ({
   },
 }));
 
-function getAddressSchema(value: Address): Yup.Schema<any> {
+function getAddressSchema(value: Address): Yup.SchemaOf<any> {
   const required = value && Object.values(value).some(Boolean);
 
   if (required) {
-    return Yup.object<Partial<Address>>({
+    return Yup.object({
       line1: Yup.string().min(3).required(),
       line2: Yup.string().optional(),
       city: Yup.string().min(3).required(),
@@ -65,7 +65,7 @@ function getAddressSchema(value: Address): Yup.Schema<any> {
     });
   }
 
-  return Yup.object<Partial<Address>>({
+  return Yup.object({
     line1: Yup.string().min(3).optional(),
     line2: Yup.string().optional(),
     city: Yup.string().min(3).optional(),
@@ -95,7 +95,7 @@ export const DonorEditor: React.FC<Props> = (props) => {
     onSubmit: (values) => {
       props.onSave(values);
     },
-    validationSchema: Yup.object<Partial<DonorEdit>>({
+    validationSchema: Yup.object({
       firstName: Yup.string().min(3).optional(),
       lastName: Yup.string().min(3).required(),
       email: Yup.string().email().optional(),

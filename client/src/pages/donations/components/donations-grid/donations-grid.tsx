@@ -259,7 +259,7 @@ export const DonationsGrid: React.FC<Props> = (props) => {
   ];
 
   const handleDonationSelectionChanged = (params: SelectionChangeParams) => {
-    const donationIds = params.rows.map((row) => String(row.id));
+    const donationIds = params.rowIds.map((rowId) => String(rowId));
     props.onDonationSelectionChanged(donationIds);
   };
 
