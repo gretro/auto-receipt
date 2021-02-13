@@ -1,4 +1,4 @@
-export type PaymentSource = 'cheque' | 'paypal' | 'import';
+export type PaymentSource = 'cheque' | 'paypal' | 'import' | 'directDeposit' | 'stocks' | 'unknown';
 
 export interface Payment {
   amount: number;
