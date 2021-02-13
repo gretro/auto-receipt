@@ -1,3 +1,4 @@
+export type ReceiptSentStatus = 'sent' | 'waiting-to-be-sent' | 'snail-mail' | 'no-receipt';
 export interface GridDonation {
   id: string;
   created: Date;
@@ -13,7 +14,7 @@ export interface GridDonation {
   totalReceiptAmount: number;
   paymentsCount: number;
   documentsCount: number;
-  receiptSent: boolean;
+  receiptSentStatus: ReceiptSentStatus;
   correspondencesCount: number;
   search: string;
 }

@@ -1,15 +1,17 @@
 import { Box, debounce, makeStyles, TextField, Theme, Tooltip, Typography } from '@material-ui/core';
 import { CellParams, ColDef, DataGrid, RowParams, SelectionChangeParams, SortModel } from '@material-ui/data-grid';
 import DescriptionIcon from '@material-ui/icons/Description';
-import DoneIcon from '@material-ui/icons/Done';
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
 import LooksOneIcon from '@material-ui/icons/LooksOne';
+import MarkunreadMailboxIcon from '@material-ui/icons/MarkunreadMailbox';
 import RotateRightIcon from '@material-ui/icons/RotateRight';
+import SendIcon from '@material-ui/icons/Send';
 import React, { ChangeEvent, useMemo, useRef, useState } from 'react';
 import { Donation } from '../../../../models/donation';
 import { formatCurrency, formatDate } from '../../../../utils/formatters.utils';
 import { formatDonationType, mapDonationToGridDonation } from '../../mappers/donations-mapper';
 import { DonationsCardCarousel } from './donations-card-carousel';
-import { GridDonation } from './grid-donation.model';
+import { GridDonation, ReceiptSentStatus } from './grid-donation.model';
 
 interface Props {
   isLoading?: boolean;
@@ -53,11 +55,37 @@ const withTooltipRenderer: ColDef['renderCell'] = (params: CellParams) => {
   );
 };
 
-const withCheckmarkRenderer: ColDef['renderCell'] = (params: CellParams) => {
+const receiptSentStatusRenderer: ColDef['renderCell'] = (params: CellParams) => {
+  const value = params.value as ReceiptSentStatus;
+  let title: string;
+  let icon: React.ReactElement | null = null;
+
+  switch (value) {
+    case 'sent':
+      title = 'Sent';
+      icon = <SendIcon />;
+      break;
+
+    case 'waiting-to-be-sent':
+      title = 'Waiting to be sent';
+      icon = <HourglassEmptyIcon />;
+      break;
+
+    case 'snail-mail':
+      title = 'To be sent by snail mail';
+      icon = <MarkunreadMailboxIcon />;
+      break;
+
+    default:
+      title = 'No receipt';
+      icon = null;
+      break;
+  }
+
   return (
-    <Tooltip title={params.value ? 'Sent' : 'Not sent'}>
-      <Box width="100%" display="flex" alignItems="center" justifyContent="center" color="#4caf50">
-        {params.value ? <DoneIcon /> : <Box />}
+    <Tooltip title={title}>
+      <Box width="100%" display="flex" alignItems="center" justifyContent="center">
+        {icon ?? <Box />}
       </Box>
     </Tooltip>
   );
@@ -144,10 +172,10 @@ const columns: ColDef[] = [
     valueFormatter: currencyFormatter,
   },
   {
-    field: 'receiptSent' as keyof GridDonation,
+    field: 'receiptSentStatus' as keyof GridDonation,
     headerName: 'Receipt sent',
     width: 115,
-    renderCell: withCheckmarkRenderer,
+    renderCell: receiptSentStatusRenderer,
   },
   {
     field: 'donationReason' as keyof GridDonation,

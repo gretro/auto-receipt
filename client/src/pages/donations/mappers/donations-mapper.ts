@@ -2,7 +2,7 @@ import { Address } from '../../../models/address';
 import { DateRange } from '../../../models/date-range';
 import { Donation, DonationType } from '../../../models/donation';
 import { Payment } from '../../../models/payment';
-import { GridDonation } from '../components/donations-grid/grid-donation.model';
+import { GridDonation, ReceiptSentStatus } from '../components/donations-grid/grid-donation.model';
 
 export function mapDonationToGridDonation(donation: Donation): GridDonation {
   return {
@@ -21,7 +21,7 @@ export function mapDonationToGridDonation(donation: Donation): GridDonation {
     paymentsCount: donation.payments.length,
     documentsCount: donation.documents.length,
     correspondencesCount: donation.correspondences.length,
-    receiptSent: donation.correspondences.some((corr) => corr.type === 'thank-you'),
+    receiptSentStatus: getReceiptSentStatus(donation),
     search: `${donation.donor.firstName?.toLowerCase()} ${donation.donor.lastName?.toLowerCase()} ${
       donation.donor.email?.toLowerCase() || ''
     }`,
@@ -159,9 +159,14 @@ function formatPayment(payment: Payment): PaymentSourceLink {
         link: payment.sourceDetails ? `https://www.paypal.com/activity/payment/${payment.sourceDetails.id}` : undefined,
       };
 
-    case 'import':
+    case 'directDeposit':
       return {
-        sourceName: 'Bulk import',
+        sourceName: 'Direct Deposit',
+      };
+
+    case 'stocks':
+      return {
+        sourceName: 'Stocks',
       };
 
     default:
@@ -169,4 +174,16 @@ function formatPayment(payment: Payment): PaymentSourceLink {
         sourceName: 'Unknown',
       };
   }
+}
+
+function getReceiptSentStatus(donation: Donation): ReceiptSentStatus {
+  if (donation.correspondences.some((corr) => corr.type === 'thank-you')) {
+    return 'sent';
+  }
+
+  if (donation.documents.length > 0) {
+    return donation.donor.email ? 'waiting-to-be-sent' : 'snail-mail';
+  }
+
+  return 'no-receipt';
 }
