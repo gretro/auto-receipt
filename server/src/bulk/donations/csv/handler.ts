@@ -124,7 +124,7 @@ function mapCsvDataToCreatePaymentParams(
     currency: 'CAD',
     emailReceipt: false,
     paymentDate: parseDate(paymentData.Date_Inscription).toISOString(),
-    source: 'import',
+    source: 'unknown',
     type: isRecurrent ? 'recurrent' : 'one-time',
     externalId: `${paymentData.NO_DONAD.trim()}${isRecurrent ? '-REC' : ''}`,
     reason:

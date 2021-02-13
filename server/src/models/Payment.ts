@@ -4,7 +4,15 @@ import {
   paypalPaymentSourceSchema,
 } from './PaypalPaymentSource'
 
-export type PaymentSource = 'cheque' | 'paypal' | 'import'
+export const PaymentSources = {
+  cheque: 'cheque',
+  paypal: 'paypal',
+  directDeposit: 'directDeposit',
+  stocks: 'stocks',
+  unknown: 'unknown',
+}
+
+export type PaymentSource = keyof typeof PaymentSources
 
 export interface Payment {
   amount: number
@@ -20,22 +28,16 @@ export const paymentSchema = Joi.object<Payment>({
   currency: Joi.string().required().length(3),
   receiptAmount: Joi.number().positive().required(),
   date: Joi.date().required(),
-  source: Joi.string().valid('cheque', 'paypal', 'import').required(),
+  source: Joi.string()
+    .valid(...Object.keys(PaymentSources))
+    .required(),
   sourceDetails: Joi.any().when('source', {
-    break: true,
     switch: [
-      {
-        is: 'cheque',
-        then: Joi.any().valid(null),
-      },
       {
         is: 'paypal',
         then: paypalPaymentSourceSchema.required(),
       },
-      {
-        is: 'import',
-        then: Joi.any().valid(null),
-      },
     ],
+    otherwise: Joi.any().valid(null),
   }),
 })

@@ -2,6 +2,7 @@ import { Request, RequestHandler, Response } from 'express'
 import * as Joi from 'joi'
 import { DonationType, donationTypeSchema } from '../../models/Donation'
 import { Donor, donorSchema } from '../../models/Donor'
+import { PaymentSource, PaymentSources } from '../../models/Payment'
 import { paymentService } from '../../services/payment-service'
 import {
   allowMethods,
@@ -20,6 +21,7 @@ interface CreateChequeViewModel {
   amount: number
   receiptAmount: number
   paymentDate: string
+  source: PaymentSource
   reason?: string
 }
 
@@ -36,6 +38,13 @@ const schema = Joi.object<CreateChequeViewModel>({
   amount: Joi.number().precision(2).required(),
   receiptAmount: Joi.number().precision(2).required(),
   paymentDate: Joi.string().isoDate().required(),
+  source: Joi.string()
+    .valid(
+      PaymentSources.cheque,
+      PaymentSources.directDeposit,
+      PaymentSources.stocks
+    )
+    .required(),
   reason: Joi.string().allow(null),
 })
 
@@ -49,7 +58,7 @@ export const createCheque: RequestHandler<any> = pipeMiddlewares(
     const body: CreateChequeViewModel = req.body
 
     const donation = await paymentService.createPayment({
-      source: 'cheque',
+      source: body.source,
       type: body.donationType,
       externalId: body.donationId,
       donor: body.donor,
