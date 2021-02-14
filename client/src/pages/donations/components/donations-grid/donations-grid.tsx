@@ -1,4 +1,4 @@
-import { Box, debounce, makeStyles, TextField, Theme, Tooltip, Typography } from '@material-ui/core';
+import { Box, makeStyles, Theme, Tooltip, Typography } from '@material-ui/core';
 import { CellParams, ColDef, DataGrid, RowParams, SelectionChangeParams, SortModel } from '@material-ui/data-grid';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
@@ -6,11 +6,12 @@ import LooksOneIcon from '@material-ui/icons/LooksOne';
 import MarkunreadMailboxIcon from '@material-ui/icons/MarkunreadMailbox';
 import RotateRightIcon from '@material-ui/icons/RotateRight';
 import SendIcon from '@material-ui/icons/Send';
-import React, { ChangeEvent, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Donation } from '../../../../models/donation';
 import { formatCurrency, formatDate } from '../../../../utils/formatters.utils';
 import { formatDonationType, mapDonationToGridDonation } from '../../mappers/donations-mapper';
 import { DonationsCardCarousel } from './donations-card-carousel';
+import { FilterBar, QuickFilter } from './filter-bar';
 import { GridDonation, ReceiptSentStatus } from './grid-donation.model';
 
 interface Props {
@@ -72,7 +73,7 @@ const receiptSentStatusRenderer: ColDef['renderCell'] = (params: CellParams) => 
       break;
 
     case 'snail-mail':
-      title = 'To be sent by snail mail';
+      title = 'Snail mail';
       icon = <MarkunreadMailboxIcon />;
       break;
 
@@ -217,9 +218,36 @@ const columns: ColDef[] = [
   },
 ];
 
+interface QuickFilterWithFn extends QuickFilter {
+  filterFn: (donation: GridDonation) => boolean;
+}
+
+const QUICK_FILTERS: QuickFilterWithFn[] = [
+  {
+    id: 'missing-address',
+    label: 'Donations with missing address',
+    filterFn: (donation) => !donation.donorAddress,
+  },
+  {
+    id: 'snail-mail-donations',
+    label: 'Donations to be sent by snail mail',
+    filterFn: (donation) => donation.receiptSentStatus === 'snail-mail',
+  },
+  {
+    id: 'one-time-donations',
+    label: 'One time donations',
+    filterFn: (donation) => donation.donationType === 'one-time',
+  },
+  {
+    id: 'recurrent-donations',
+    label: 'Recurrent donations',
+    filterFn: (donation) => donation.donationType === 'recurrent',
+  },
+];
+
 export const DonationsGrid: React.FC<Props> = (props) => {
-  const [rawFilter, setRawFilter] = useState<string>('');
-  const [filter, setFilter] = useState<string>('');
+  const [textFilter, setTextFilter] = useState<string>('');
+  const [quickFilter, setQuickFilter] = useState<string | null>(null);
 
   const isEmpty = !props.isLoading && props.donations.length === 0;
   const styles = useStyles(props);
@@ -227,20 +255,13 @@ export const DonationsGrid: React.FC<Props> = (props) => {
   const mappedDonations = useMemo(() => props.donations.map(mapDonationToGridDonation), [props.donations]);
 
   const filteredMappedDonations = useMemo(() => {
-    return mappedDonations.filter((donation) => donation.search.indexOf(filter.toLowerCase()) > -1);
-  }, [filter, mappedDonations]);
+    const quickFilterFn = QUICK_FILTERS.find((filter) => filter.id === quickFilter)?.filterFn || (() => true);
+    const textFilterFn = textFilter
+      ? (donation: GridDonation) => donation.search.indexOf(textFilter.toLowerCase()) > -1
+      : () => true;
 
-  const handleFilterChangedRef = useRef(
-    debounce((nextValue: string) => {
-      setFilter(nextValue);
-    }, 250),
-  );
-
-  const handleRawFilterChanged = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value || '';
-    setRawFilter(value);
-    handleFilterChangedRef.current(value);
-  };
+    return mappedDonations.filter(textFilterFn).filter(quickFilterFn);
+  }, [textFilter, quickFilter, mappedDonations]);
 
   const handleRowClicked = (rowParam: RowParams) => {
     if (props.gridMode !== 'view') {
@@ -275,11 +296,10 @@ export const DonationsGrid: React.FC<Props> = (props) => {
   ) : (
     <Box className={styles.content}>
       <DonationsCardCarousel mappedDonations={mappedDonations} />
-      <TextField
-        label="Search by name or email"
-        variant="outlined"
-        value={rawFilter}
-        onChange={handleRawFilterChanged}
+      <FilterBar
+        quickFilters={QUICK_FILTERS}
+        onTextFilterChanged={setTextFilter}
+        onQuickFilterChanged={setQuickFilter}
       />
       <Box>
         <DataGrid
@@ -287,7 +307,8 @@ export const DonationsGrid: React.FC<Props> = (props) => {
           columns={columns}
           sortModel={defaultSortModel}
           disableSelectionOnClick
-          disableColumnResize
+          disableColumnFilter
+          disableColumnMenu
           onRowClick={handleRowClicked}
           loading={props.isLoading}
           checkboxSelection={props.gridMode === 'select'}
