@@ -135,6 +135,7 @@ async function createPayment(ipnData: PayPalIpn): Promise<void> {
     currency: ipnData.mc_currency || '',
     amount,
     receiptAmount: amount,
+    reason: ipnData.item_name || undefined,
     emailReceipt: true,
     paymentDate: ipnData.payment_date || '',
     type: donationType,
