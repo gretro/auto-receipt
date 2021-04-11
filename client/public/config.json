@@ -1,9 +1,0 @@
-{
-  "apiUrl": "http://localhost:3001/",
-  "firebase": {
-    "apiKey": "AIzaSyC8rI57xeu5gtpMtAh-1gfQvZoXFciAxms",
-    "authDomain": "auto-receipt-263320.firebaseapp.com",
-    "projectId": "auto-receipt-263320",
-    "appId": "1:370747370281:web:e007ce7df4fbaa42f0e538"
-  }
-}
