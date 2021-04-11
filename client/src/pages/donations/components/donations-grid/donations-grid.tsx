@@ -173,11 +173,6 @@ const columns: ColDef[] = [
     valueFormatter: currencyFormatter,
   },
   {
-    field: 'source' as keyof GridDonation,
-    headerName: 'Source',
-    ...DEFAULT_COL_DEF,
-  },
-  {
     field: 'receiptSentStatus' as keyof GridDonation,
     headerName: 'Receipt sent',
     width: 115,

@@ -7,8 +7,7 @@ import { GridDonation, ReceiptSentStatus } from '../components/donations-grid/gr
 export function mapDonationToGridDonation(donation: Donation): GridDonation {
   return {
     id: donation.id,
-    created: getDonationDate(donation),
-    source: getPaymentSource(donation.payments)?.sourceName,
+    created: donation.created,
     donationType: donation.type,
     donationReason: donation.reason || '-',
     donorLastName: donation.donor.lastName,
@@ -187,23 +186,4 @@ function getReceiptSentStatus(donation: Donation): ReceiptSentStatus {
   }
 
   return 'no-receipt';
-}
-
-function getDonationDate(donation: Donation): Date {
-  if (donation.type === 'one-time') {
-    return donation.created;
-  }
-
-  const paymentDates = donation.payments.map((p) => new Date(p.date));
-  return paymentDates.reduce((prevDate, currentDate) => {
-    if (isNaN(currentDate.getTime())) {
-      return prevDate;
-    }
-
-    if (currentDate.getTime() > prevDate.getTime()) {
-      return currentDate;
-    }
-
-    return prevDate;
-  }, new Date(0));
 }
