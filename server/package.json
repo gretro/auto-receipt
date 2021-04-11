@@ -13,9 +13,6 @@
     "build:prd": "npm run lint && tsc",
     "serve": "node --icu-data-dir=node_modules/full-icu -r dotenv/config --inspect lib/index-local.js",
     "serve:watch": "nodemon --icu-data-dir=node_modules/full-icu -r dotenv/config --inspect lib/index-local.js",
-    "package:stg": "npm run build:prd && serverless package --config serverless.staging.yml",
-    "deploy:stg": "npm run build:prd && serverless deploy --config serverless.staging.yml",
-    "deploy:prd": "npm run build:prd && serverless deploy --config serverless.production.yml",
     "start": "npm run build && run-p build:watch serve:watch"
   },
   "author": {
@@ -76,8 +73,6 @@
     "prettier": "^2.2.1",
     "puppeteer": "^7.0.1",
     "rimraf": "^3.0.2",
-    "serverless": "^2.22.0",
-    "serverless-google-cloudfunctions": "^3.1.1",
     "typescript": "^4.1.3"
   },
   "engines": {
