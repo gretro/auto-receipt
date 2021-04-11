@@ -2,6 +2,7 @@ export type ReceiptSentStatus = 'sent' | 'waiting-to-be-sent' | 'snail-mail' | '
 export interface GridDonation {
   id: string;
   created: Date;
+  source: string;
   donationType: string;
   donationReason: string;
   donorLastName: string;
