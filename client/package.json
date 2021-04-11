@@ -21,17 +21,7 @@
     "build": "npm run lint && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint src/** --ext .js --ext .ts --ext .tsx",
-    "prestart": "npm run setup:dev",
-    "setup:dev": "node scripts/setup-config.js dev",
-    "setup:stg": "node scripts/setup-config.js stg",
-    "setup:prd": "node scripts/setup-config.js prd",
-    "deploy:stg": "cp ./secrets/stg/.firebaserc ./.firebaserc && cp ./secrets/stg/firebase.json ./firebase.json && npm run setup:stg && npm run build && firebase use auto-receipt-263320 && firebase deploy",
-    "deploy:prd": "cp ./secrets/prd/.firebaserc ./.firebaserc && cp ./secrets/prd/firebase.json ./firebase.json && npm run setup:prd && npm run build && firebase use auto-receipt-prod && firebase deploy",
-    "import-users:stg": "firebase auth:import ./secrets/stg/users.json",
-    "import-users:prd": "firebase auth:import ./secrets/prd/users.json",
-    "firebase:init": "firebase login",
-    "firebase": "firebase"
+    "lint": "eslint src/** --ext .js --ext .ts --ext .tsx"
   },
   "browserslist": {
     "production": [
@@ -64,7 +54,6 @@
     "cross-env": "^7.0.3",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-prettier": "^3.3.1",
-    "firebase-tools": "^9.3.0",
     "husky": "^5.0.9",
     "prettier": "^2.2.1",
     "pretty-quick": "^3.1.0",
