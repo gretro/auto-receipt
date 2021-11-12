@@ -1,10 +1,21 @@
 version: '3.7'
 
 services:
+  // Deprecated. To be removed
   firestore:
     build: ./emulators/firestore
     ports:
       - '1865:8080'
+
+  postgres:
+    image: postgres:13.3-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass123!
+      POSTGRES_DB: autoreceipt
+    ports:
+      - '5432:5432'
 
   pubsub:
     build: ./emulators/pubsub
