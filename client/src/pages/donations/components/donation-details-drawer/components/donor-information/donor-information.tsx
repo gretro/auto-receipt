@@ -8,6 +8,7 @@ import {
   Theme,
   Typography,
 } from '@material-ui/core';
+import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
 import AnnouncementIcon from '@material-ui/icons/Announcement';
 import EditIcon from '@material-ui/icons/Edit';
 import EmailIcon from '@material-ui/icons/Email';
@@ -17,7 +18,8 @@ import { FlowGridCard } from '../../../../../../components/FlowGrid';
 import { DeepPartial } from '../../../../../../models/deep-partial';
 import { Donation } from '../../../../../../models/donation';
 import { Donor } from '../../../../../../models/donor';
-import { mapDonorAddressMultiLine } from '../../../../mappers/donations-mapper';
+import { formatDate } from '../../../../../../utils/formatters.utils';
+import { getLastReminderSent, mapDonorAddressMultiLine } from '../../../../mappers/donations-mapper';
 import { DonorEdit } from './donor-edit';
 import { DonorEditor } from './donor-editor';
 
@@ -47,6 +49,17 @@ export const DonorInformation: React.FC<Props> = (props) => {
         props.onDonationUpdated(newDonation);
       },
       'sending mailing address notification',
+      { showLoading: true, showSuccess: true },
+    );
+  };
+
+  const handleSendReminderEmail = () => {
+    api(
+      async (httpApi) => {
+        const newDonation = await httpApi.sendCorrespondence(props.donation?.id || '', 'reminder-mailing-addr');
+        props.onDonationUpdated(newDonation);
+      },
+      'sending reminder email',
       { showLoading: true, showSuccess: true },
     );
   };
@@ -104,7 +117,11 @@ export const DonorInformation: React.FC<Props> = (props) => {
 
   const empty = <Typography>No donor information found</Typography>;
 
-  const mailingAddress = mapDonorAddressMultiLine(props.donation?.donor?.address, 'No address on file');
+  const lastReminderSentAt = getLastReminderSent(props.donation);
+  const mailingAddress = mapDonorAddressMultiLine(props.donation?.donor?.address, [
+    'No address on file',
+    `Last reminder sent on: ${formatDate(lastReminderSentAt)}`,
+  ]);
   const content = (
     <>
       <Box className={styles.donorContent}>
@@ -140,6 +157,11 @@ export const DonorInformation: React.FC<Props> = (props) => {
           {props.donation?.donor?.email && !props.donation?.donor.address ? (
             <IconButton title="Send missing address email" onClick={handleSendMissingAddressEmail}>
               <AnnouncementIcon />
+            </IconButton>
+          ) : null}
+          {props.donation?.donor.email && !props.donation.donor.address ? (
+            <IconButton title="Send missing address reminder email" onClick={handleSendReminderEmail}>
+              <AccessAlarmIcon />
             </IconButton>
           ) : null}
         </CardActions>

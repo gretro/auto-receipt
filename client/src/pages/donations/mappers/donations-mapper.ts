@@ -22,6 +22,7 @@ export function mapDonationToGridDonation(donation: Donation): GridDonation {
     paymentsCount: donation.payments.length,
     documentsCount: donation.documents.length,
     correspondencesCount: donation.correspondences.length,
+    lastReminderSent: getLastReminderSent(donation),
     receiptSentStatus: getReceiptSentStatus(donation),
     search: `${donation.donor.firstName?.toLowerCase()} ${donation.donor.lastName?.toLowerCase()} ${
       donation.donor.email?.toLowerCase() || ''
@@ -62,9 +63,9 @@ export function mapDonorAddress(donorAddress: Address | undefined | null, emptyS
     .replace(' ,', ',');
 }
 
-export function mapDonorAddressMultiLine(donorAddress: Address | undefined | null, emptyString = '-'): string[] {
+export function mapDonorAddressMultiLine(donorAddress: Address | undefined | null, emptyStrings = ['-']): string[] {
   if (!donorAddress) {
-    return [emptyString];
+    return emptyStrings;
   }
 
   const linesAndParts = [
@@ -175,6 +176,17 @@ function formatPayment(payment: Payment): PaymentSourceLink {
         sourceName: 'Unknown',
       };
   }
+}
+
+export function getLastReminderSent(donation?: Donation | null): Date {
+  const reminders = (donation?.correspondences || [])
+    .filter((corr) => corr.type === 'reminder-mailing-addr' || corr.type === 'no-mailing-addr')
+    .map((corr) => {
+      return new Date(corr.date);
+    })
+    .sort((left, right) => right.getTime() - left.getTime());
+
+  return reminders.length > 0 ? reminders[0] : new Date(Number.NaN);
 }
 
 function getReceiptSentStatus(donation: Donation): ReceiptSentStatus {

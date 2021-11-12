@@ -15,6 +15,7 @@ export interface GridDonation {
   totalReceiptAmount: number;
   paymentsCount: number;
   documentsCount: number;
+  lastReminderSent: Date | null;
   receiptSentStatus: ReceiptSentStatus;
   correspondencesCount: number;
   search: string;

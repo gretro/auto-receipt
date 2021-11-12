@@ -1,4 +1,5 @@
 import { Box, Button, Hidden, ListItemIcon, ListItemText, makeStyles, MenuItem } from '@material-ui/core';
+import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
 import AnnouncementIcon from '@material-ui/icons/Announcement';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -48,7 +49,7 @@ function getAvailableFiscalYears(now: Date, count: number): string[] {
 
 const now = new Date();
 
-type SelectionAction = 'missing-addr' | 'generate-receipt' | 'download-receipts';
+type SelectionAction = 'missing-addr' | 'reminder-addr' | 'generate-receipt' | 'download-receipts';
 
 export const DonationsPage: React.FC = () => {
   const styles = useStyles();
@@ -148,6 +149,18 @@ export const DonationsPage: React.FC = () => {
         break;
       }
 
+      case 'reminder-addr': {
+        api(
+          async (httpApi) => {
+            await httpApi.sendCorrespondenceInBulk(selectedDonations, 'reminder-mailing-addr');
+          },
+          'sending reminder emails',
+          { showLoading: true, showSuccess: true },
+        );
+
+        break;
+      }
+
       case 'generate-receipt': {
         api(
           async (httpApi) => {
@@ -221,6 +234,9 @@ export const DonationsPage: React.FC = () => {
       case 'missing-addr':
         return filterDonationsForMissingAddress(donations);
 
+      case 'reminder-addr':
+        return filterDonationsForMissingAddress(donations);
+
       case 'generate-receipt':
         return filterDonationsForMissingReceipt(donations);
 
@@ -254,6 +270,12 @@ export const DonationsPage: React.FC = () => {
         <AnnouncementIcon />
       </ListItemIcon>
       <ListItemText>Send missing address email</ListItemText>
+    </MenuItem>,
+    <MenuItem key="actions.reminder-addr" disabled={isLoading} onClick={handleSelectionActionStarted('reminder-addr')}>
+      <ListItemIcon>
+        <AccessAlarmIcon />
+      </ListItemIcon>
+      <ListItemText>Send missing address reminder email</ListItemText>
     </MenuItem>,
     <MenuItem
       key="actions.generate-receipt"
