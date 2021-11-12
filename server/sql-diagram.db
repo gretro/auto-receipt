@@ -1,0 +1,81 @@
+// To open on https://dbdiagram.io/d
+Project AutoReceipt {
+  database_type: 'PostgreSQL'
+}
+
+Table donors {
+  id uuid [pk, unique]
+  firstname varchar
+  name varchar [not null]
+  email varchar
+  created timestamp [not null]
+  last_updated timestamp [not null]
+  email_allowed bit [not null]
+  
+  Indexes {
+    email
+  }
+}
+
+Table donor_addresses {
+  id uuid [pk, unique]
+  donor_id uuid [not null, ref: > donors.id]
+  line1 varchar(50) [not null]
+  line2 varchar(50)
+  city varchar(50) [not null]
+  state varchar(50) [not null]
+  postal_code varchar(50) [not null]
+  country varchar(50) [not null]
+  
+  created timestamp [not null]
+  last_updated timestamp [not null]
+}
+
+Table donations {
+  id uuid [pk, unique]
+  donor_id uuid [not null, ref: > donors.id]
+  donor_address uuid [ref: > donor_addresses.id]
+  type varchar [not null]
+  fiscal_year smallint [not null]
+  reason varchar
+  created timestamp [not null]
+  external_id varchar
+  email_receipt_enabled bit [not null]
+  
+  Indexes {
+    fiscal_year
+  }
+}
+
+Table donation_payments {
+  id uuid [pk, unique]
+  donation_id uuid [not null, ref: > donations.id]
+  amount int [not null]
+  receipt_amount int [not null]
+  currency varchar(3) [not null]
+  date timestamp [not null]
+  source varchar(50) [not null]
+  paypal_id varchar(50)
+}
+
+Table donation_documents {
+  id uuid [pk, unique]
+  donation_id uuid [not null, ref: > donations.id]
+  name varchar(255) [not null]
+  description varchar
+  created timestamp [not null]
+}
+
+Table donation_correspondences {
+  id uuid [pk, unique]
+  donation_id uuid [not null, ref: > donations.id]
+  date timestamp [not null]
+  sent_to varchar [not null]
+  type varchar(50) [not null]
+  attachments string [not null, note: "JSON"]
+  status varchar(25) [not null]
+  
+  Indexes {
+    type
+  }
+}
