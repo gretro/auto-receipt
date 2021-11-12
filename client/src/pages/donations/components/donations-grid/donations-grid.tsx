@@ -215,6 +215,13 @@ const columns: ColDef[] = [
     align: 'right',
   },
   {
+    field: 'lastReminderSent' as keyof GridDonation,
+    headerName: 'Last reminder sent on',
+    valueFormatter: (params) => formatDate(params.value as string),
+    ...DEFAULT_COL_DEF,
+    width: LARGE_COL_WIDTH,
+  },
+  {
     field: 'correspondencesCount' as keyof GridDonation,
     headerName: 'Emails sent',
     ...DEFAULT_COL_DEF,

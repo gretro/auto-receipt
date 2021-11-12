@@ -96,21 +96,21 @@ function getAttachmentsToInclude(
   donation: Donation,
   type: CorrespondenceType
 ): DocumentMetadata[] {
-  if (type === 'no-mailing-addr') {
-    return []
+  if (type === 'thank-you') {
+    const docs = [...donation.documents].sort(
+      (left, right) => right.created.getTime() - left.created.getTime()
+    )
+
+    if (docs.length === 0) {
+      throw new InvalidEntityStateError('donation', donation.id, 'sendEmail', [
+        'No documents metadata found on donation',
+      ])
+    }
+
+    return [docs[0]]
   }
 
-  const docs = [...donation.documents].sort(
-    (left, right) => right.created.getTime() - left.created.getTime()
-  )
-
-  if (docs.length === 0) {
-    throw new InvalidEntityStateError('donation', donation.id, 'sendEmail', [
-      'No documents metadata found on donation',
-    ])
-  }
-
-  return [docs[0]]
+  return []
 }
 
 async function createCorrespondence(

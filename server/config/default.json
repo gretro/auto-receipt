@@ -81,6 +81,9 @@
     "no-mailing-addr": {
       "subject": "[TEST] Merci de votre don / Thank you for your donation"
     },
+    "reminder-mailing-addr": {
+      "subject": "[TEST][RAPPEL / REMINDER] Merci de votre don / Thank you for your donation"
+    },
     "thank-you": {
       "subject": "[TEST] Votre reçu pour votre don / Your donation receipt"
     }

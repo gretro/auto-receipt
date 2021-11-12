@@ -2,6 +2,7 @@ import * as Joi from 'joi'
 
 export const CorrespondenceTypes = {
   'no-mailing-addr': 'no-mailing-addr',
+  'reminder-mailing-addr': 'reminder-mailing-addr',
   'thank-you': 'thank-you',
 }
 
