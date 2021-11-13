@@ -25,7 +25,6 @@ import { getMinMsg, requiredMsg } from '../../../../strings/validation.common';
 
 interface Props {
   operationId: number;
-  fiscalYear: number | string;
   busy: boolean;
   onSave: (newDonation: CreateDonationDTO, createMore: boolean) => void;
   onCancel: () => void;
@@ -191,7 +190,7 @@ export const DonationCreateDrawer: React.FC<Props> = (props) => {
   const headerEl = (
     <PageHeader
       pageTitle="New donation"
-      subTitle={`Create a donation for the ${props.fiscalYear} fiscal year`}
+      subTitle={`Create a donation received by cheque, stocks or direct deposit`}
       actionButtonIcon={<CloseIcon />}
       actionButtonLabel="Close Drawer"
       onActionButtonClicked={handleCancel}

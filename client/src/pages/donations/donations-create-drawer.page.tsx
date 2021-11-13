@@ -46,7 +46,6 @@ export const DonationsCreateDrawerPage: React.FC = () => {
 
   return (
     <DonationCreateDrawer
-      fiscalYear={fiscalYear}
       busy={busy}
       operationId={operationId}
       onCancel={handleDrawerClosed}
