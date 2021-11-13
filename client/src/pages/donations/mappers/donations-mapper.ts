@@ -173,7 +173,7 @@ function formatPayment(payment: Payment): PaymentSourceLink {
 
     default:
       return {
-        sourceName: 'Unknown',
+        sourceName: 'Other',
       };
   }
 }
