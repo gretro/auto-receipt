@@ -135,15 +135,14 @@ export const DonorInformation: React.FC<Props> = (props) => {
     </>
   );
 
+  const donorName = props.donation?.donor.firstName
+    ? `${props.donation?.donor.lastName}, ${props.donation?.donor.firstName}`
+    : props.donation?.donor.lastName ?? null;
+
   return (
     <>
       <FlowGridCard variant="outlined">
-        <CardHeader
-          title="Donor information"
-          subheader={
-            props.donation?.donor ? `${props.donation?.donor.lastName}, ${props.donation?.donor.firstName}` : null
-          }
-        ></CardHeader>
+        <CardHeader title="Donor information" subheader={donorName}></CardHeader>
         <CardContent>{props.donation?.donor ? content : empty}</CardContent>
         <CardActions disableSpacing>
           <IconButton title="Edit donor information" onClick={handleToggleEdit}>
