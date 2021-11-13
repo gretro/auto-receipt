@@ -89,10 +89,14 @@ export const DonationsPage: React.FC = () => {
     }, 'fetching donations');
   }, [api, fiscalYear, isFiscalYearValid]);
 
-  if ((history.location.state as any)?.reload) {
-    fetchDonationsFromApi();
-    history.replace(appUrls.donations().forFiscalYear(fiscalYear));
-  }
+  const shouldReloadData = (history.location.state as any)?.reload;
+  useEffect(() => {
+    if (shouldReloadData) {
+      fetchDonationsFromApi();
+      window.history.replaceState({}, document.title);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldReloadData]);
 
   const { path } = useRouteMatch();
 

@@ -195,7 +195,7 @@ function getReceiptSentStatus(donation: Donation): ReceiptSentStatus {
   }
 
   if (donation.documents.length > 0) {
-    return donation.donor.email ? 'waiting-to-be-sent' : 'snail-mail';
+    return donation.donor.email && donation.emailReceipt ? 'waiting-to-be-sent' : 'snail-mail';
   }
 
   return 'no-receipt';

@@ -6,12 +6,14 @@ import {
   IconButton,
   makeStyles,
   Theme,
+  Tooltip,
   Typography,
 } from '@material-ui/core';
 import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
 import AnnouncementIcon from '@material-ui/icons/Announcement';
 import EditIcon from '@material-ui/icons/Edit';
 import EmailIcon from '@material-ui/icons/Email';
+import NotificationsPausedIcon from '@material-ui/icons/NotificationsPaused';
 import React, { useState } from 'react';
 import { useApi } from '../../../../../../api/api.hook';
 import { FlowGridCard } from '../../../../../../components/FlowGrid';
@@ -33,6 +35,10 @@ const useStyles = makeStyles<Theme, Props>((theme) => ({
     '& + &': {
       marginTop: theme.spacing(1),
     },
+  },
+  textWithIcon: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -125,7 +131,15 @@ export const DonorInformation: React.FC<Props> = (props) => {
   const content = (
     <>
       <Box className={styles.donorContent}>
-        <Typography>{props.donation?.donor?.email}</Typography>
+        <Typography className={styles.textWithIcon}>
+          {props.donation?.donor?.email}
+          &nbsp;
+          {!props.donation?.emailReceipt && (
+            <Tooltip title="No receipts will be sent to this email address">
+              <NotificationsPausedIcon />
+            </Tooltip>
+          )}
+        </Typography>
       </Box>
       <Box className={styles.donorContent}>
         {mailingAddress.map((line, index) => (
