@@ -10,6 +10,7 @@ import {
   pipeMiddlewares,
   validateBody,
   withAuth,
+  withCORS,
 } from '../../utils/http'
 
 interface CreateChequeViewModel {
@@ -49,6 +50,7 @@ const schema = Joi.object<CreateChequeViewModel>({
 })
 
 export const createCheque: RequestHandler<any> = pipeMiddlewares(
+  withCORS(),
   handleErrors(),
   withAuth(),
   allowMethods('POST'),

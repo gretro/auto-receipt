@@ -2,6 +2,7 @@ import { HttpRequestError } from '../errors/HttpRequestError';
 import { CorrespondenceType } from '../models/correspondence';
 import { DeepPartial } from '../models/deep-partial';
 import { Donation } from '../models/donation';
+import { CreateDonationDTO } from './donation-create.dto';
 import { HttpRequestOptions, makeHttpJsonRequest, makeHttpRequest } from './http.api';
 
 export interface FetchDonationsResponse {
@@ -27,6 +28,16 @@ async function fetchDonation(donationId: string): Promise<Donation> {
   };
 
   const result = await makeHttpJsonRequest<Donation>(requestOptions);
+  return result;
+}
+
+async function createDonation(dto: CreateDonationDTO): Promise<Donation> {
+  const requestOptions: HttpRequestOptions = {
+    urlPath: `createCheque`,
+    method: 'POST',
+  };
+
+  const result = await makeHttpJsonRequest<Donation>(requestOptions, dto);
   return result;
 }
 
@@ -150,6 +161,7 @@ async function bulkDownloadReceipts(toDownload: { donationId: string; documentId
 export const httpApi = {
   fetchDonations,
   fetchDonation,
+  createDonation,
   sendCorrespondence,
   sendCorrespondenceInBulk,
   forceGenerateReceipt,

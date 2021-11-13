@@ -1,5 +1,6 @@
 import { Box, Button, Hidden, ListItemIcon, ListItemText, makeStyles, MenuItem } from '@material-ui/core';
 import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
+import AddIcon from '@material-ui/icons/Add';
 import AnnouncementIcon from '@material-ui/icons/Announcement';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -14,6 +15,7 @@ import { Donation } from '../../models/donation';
 import { downloadBlobFile } from '../../utils/download.utils';
 import { DonationsGrid } from './components/donations-grid/donations-grid';
 import { FiscalYearSelector } from './components/fiscal-year-selector/fiscal-year-selector';
+import { DonationsCreateDrawerPage } from './donations-create-drawer.page';
 import { DonationsDrawerPage } from './donations-drawer.page';
 
 const FISCAL_YEAR_REGEX = /^\d{4}$/;
@@ -87,6 +89,11 @@ export const DonationsPage: React.FC = () => {
     }, 'fetching donations');
   }, [api, fiscalYear, isFiscalYearValid]);
 
+  if ((history.location.state as any)?.reload) {
+    fetchDonationsFromApi();
+    history.replace(appUrls.donations().forFiscalYear(fiscalYear));
+  }
+
   const { path } = useRouteMatch();
 
   useEffect(() => {
@@ -95,6 +102,10 @@ export const DonationsPage: React.FC = () => {
 
   const handleChangeFiscalYear = () => {
     setSelectingFiscalYear(true);
+  };
+
+  const handleNewDonation = () => {
+    history.push(appUrls.donations().createDonation(fiscalYear));
   };
 
   const handleChangeFiscalYearClose = () => {
@@ -249,6 +260,14 @@ export const DonationsPage: React.FC = () => {
   }, [donations, selectionAction]);
 
   const menuItems: React.ReactElement[] = [
+    <Hidden key="actions.newDonation" mdUp>
+      <MenuItem disabled={isLoading} onClick={handleNewDonation}>
+        <ListItemIcon>
+          <AddIcon />
+        </ListItemIcon>
+        <ListItemText>New donation</ListItemText>
+      </MenuItem>
+    </Hidden>,
     <Hidden key="actions.refresh" mdUp>
       <MenuItem disabled={isLoading} onClick={fetchDonationsFromApi}>
         <ListItemIcon>
@@ -330,6 +349,11 @@ export const DonationsPage: React.FC = () => {
                 </Button>
               </Hidden>
               <Hidden smDown>
+                <Button color="primary" variant="contained" startIcon={<AddIcon />} onClick={handleNewDonation}>
+                  New donation
+                </Button>
+              </Hidden>
+              <Hidden smDown>
                 <Button
                   color="primary"
                   variant="contained"
@@ -364,6 +388,9 @@ export const DonationsPage: React.FC = () => {
       />
 
       <Switch>
+        <Route path={`${path}/new`}>
+          <DonationsCreateDrawerPage />
+        </Route>
         <Route path={`${path}/:donationId`}>
           {isLoading ? <></> : <DonationsDrawerPage donations={donations} onDonationUpdated={handleDonationUpdated} />}
         </Route>
