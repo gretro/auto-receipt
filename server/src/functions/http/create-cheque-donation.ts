@@ -43,7 +43,8 @@ const schema = Joi.object<CreateChequeViewModel>({
     .valid(
       PaymentSources.cheque,
       PaymentSources.directDeposit,
-      PaymentSources.stocks
+      PaymentSources.stocks,
+      PaymentSources.unknown
     )
     .required(),
   reason: Joi.string().allow(null),

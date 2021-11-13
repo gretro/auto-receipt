@@ -118,7 +118,7 @@ const currencyFormatter = (params: CellParams) => {
     return params.value;
   }
 
-  const currency: any = params.getValue('donationCurrency' as keyof GridDonation) || 'USD';
+  const currency: any = params.row.donationCurrency || 'USD';
   return formatCurrency(params.value, currency);
 };
 
