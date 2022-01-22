@@ -9,7 +9,7 @@ import {
   MenuItem,
   TextField,
   Theme,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { useFormik } from 'formik';
