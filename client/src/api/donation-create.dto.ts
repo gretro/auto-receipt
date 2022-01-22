@@ -10,5 +10,6 @@ export interface CreateDonationDTO {
   amount: number;
   receiptAmount: number;
   paymentDate: Date | string;
+  reason?: string;
   donor: Donor;
 }

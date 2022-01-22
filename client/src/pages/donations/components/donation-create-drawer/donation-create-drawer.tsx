@@ -9,7 +9,7 @@ import {
   MenuItem,
   TextField,
   Theme,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { useFormik } from 'formik';
@@ -47,6 +47,7 @@ interface FormValues {
   receiptAmount: string;
   paymentDate: string;
   donor: Omit<Donor, 'address'> & Address;
+  reasonForDonation: string;
   createMore: boolean;
 }
 
@@ -104,6 +105,7 @@ const formValuesSchema = Yup.object({
     country: Yup.string().min(2, getMinMsg(2)).required(requiredMsg),
     postalCode: Yup.string().required(requiredMsg),
   }).required(requiredMsg),
+  reasonForDonation: Yup.string().optional(),
 });
 
 export const DonationCreateDrawer: React.FC<Props> = (props) => {
@@ -117,6 +119,7 @@ export const DonationCreateDrawer: React.FC<Props> = (props) => {
       amount: '',
       receiptAmount: '',
       paymentDate: new Date().toISOString().split('T')[0],
+      reasonForDonation: '',
       donor: {
         firstName: '',
         lastName: '',
@@ -144,6 +147,7 @@ export const DonationCreateDrawer: React.FC<Props> = (props) => {
         amount: donationAmount,
         receiptAmount: values.receiptAmount ? parseFloat(values.receiptAmount) : donationAmount,
         paymentDate: new Date(values.paymentDate),
+        reason: values.reasonForDonation || undefined,
         donor: {
           firstName: values.donor.firstName || null,
           lastName: values.donor.lastName,
@@ -289,6 +293,16 @@ export const DonationCreateDrawer: React.FC<Props> = (props) => {
               </MenuItem>
             ))}
           </TextField>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <TextField
+            fullWidth
+            label="Reason for donation"
+            disabled={props.busy}
+            {...formik.getFieldProps('reasonForDonation')}
+            error={!!formik.errors.reasonForDonation}
+            helperText={formik.errors.reasonForDonation}
+          />
         </Grid>
         <Grid item xs={12} sm={4}>
           <TextField
