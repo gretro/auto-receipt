@@ -1,4 +1,4 @@
-import gcloudLog from '@google-cloud/logging-winston'
+import * as gcloudLog from '@google-cloud/logging-winston'
 import config from 'config'
 import winston from 'winston'
 import { consoleFormat } from 'winston-console-format'
