@@ -1,4 +1,4 @@
-import * as config from 'config'
+import config from 'config'
 import { NextFunction, Request, RequestHandler, Response } from 'express'
 import { Schema } from 'joi'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
@@ -7,7 +7,7 @@ import { PayPalIpnVerificationError } from '../errors/PayPalIpnVerificationError
 import { ApiConfig } from '../models/ApiConfig'
 import {
   getAuthConfig,
-  getAuthenticationProvider,
+  getAuthenticationProvider
 } from '../providers/authentication'
 import { logger } from './logging'
 

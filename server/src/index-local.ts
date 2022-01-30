@@ -1,15 +1,15 @@
-import * as bodyParser from 'body-parser'
-import * as express from 'express'
-import * as morgan from 'morgan'
+import bodyParser from 'body-parser'
+import express from 'express'
+import morgan from 'morgan'
 import { launchBulkImport } from './functions/http/bulk-import-donations'
 import { createCheque } from './functions/http/create-cheque-donation'
 import {
   getDonation,
-  listDonations,
+  listDonations
 } from './functions/http/donation-management'
 import {
   bulkExportReceipts,
-  downloadReceipt,
+  downloadReceipt
 } from './functions/http/download-receipt'
 import { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
 import { patchDonation } from './functions/http/patch-donation'

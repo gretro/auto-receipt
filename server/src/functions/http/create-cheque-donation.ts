@@ -1,16 +1,16 @@
 import { Request, RequestHandler, Response } from 'express'
-import * as Joi from 'joi'
+import Joi from 'joi'
 import { DonationType, donationTypeSchema } from '../../models/Donation'
 import { Donor, donorSchema } from '../../models/Donor'
 import { PaymentSource, PaymentSources } from '../../models/Payment'
 import { paymentService } from '../../services/payment-service'
 import {
-  allowMethods,
-  handleErrors,
-  pipeMiddlewares,
-  validateBody,
-  withAuth,
-  withCORS,
+    allowMethods,
+    handleErrors,
+    pipeMiddlewares,
+    validateBody,
+    withAuth,
+    withCORS
 } from '../../utils/http'
 
 interface CreateChequeViewModel {

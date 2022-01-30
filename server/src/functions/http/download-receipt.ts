@@ -1,6 +1,6 @@
-import * as Archiver from 'archiver'
+import Archiver from 'archiver'
 import { Request, RequestHandler, Response } from 'express'
-import * as Joi from 'joi'
+import Joi from 'joi'
 import { donationActivityService } from '../../services/donation-activity-service'
 import {
   allowMethods,
@@ -8,7 +8,7 @@ import {
   pipeMiddlewares,
   validateBody,
   withAuth,
-  withCORS,
+  withCORS
 } from '../../utils/http'
 import { logger } from '../../utils/logging'
 

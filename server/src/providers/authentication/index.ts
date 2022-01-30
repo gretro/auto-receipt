@@ -1,4 +1,4 @@
-import * as config from 'config'
+import config from 'config'
 import { AuthenticationProvider } from './AuthenticationProvider'
 import { jwtAuthProviderFactory, JwtConfig } from './JwtAuthProvider'
 import { noAuthProvider } from './NoAuthProvider'

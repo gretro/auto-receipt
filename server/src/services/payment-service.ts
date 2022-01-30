@@ -1,4 +1,4 @@
-import * as config from 'config'
+import config from 'config'
 import { v4 as createUuid } from 'uuid'
 import { donationsRepository } from '../datastore/donations-repository'
 import { GeneratePdfCommand } from '../models/commands/GeneratePdfCommand'

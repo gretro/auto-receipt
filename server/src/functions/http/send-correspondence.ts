@@ -1,17 +1,17 @@
-import * as Joi from 'joi'
+import Joi from 'joi'
 import { SendEmailCommand } from '../../models/commands/SendEmailCommand'
 import {
-  CorrespondenceType,
-  CorrespondenceTypes,
+    CorrespondenceType,
+    CorrespondenceTypes
 } from '../../models/Correspondence'
 import { publishMessage } from '../../pubsub/service'
 import {
-  allowMethods,
-  handleErrors,
-  pipeMiddlewares,
-  validateBody,
-  withAuth,
-  withCORS,
+    allowMethods,
+    handleErrors,
+    pipeMiddlewares,
+    validateBody,
+    withAuth,
+    withCORS
 } from '../../utils/http'
 
 interface BulkSendCorrespondenceViewModel {

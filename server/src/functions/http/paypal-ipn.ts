@@ -1,5 +1,5 @@
 import axios from 'axios'
-import * as config from 'config'
+import config from 'config'
 import { Request, Response } from 'express'
 import PayPalIpn from 'paypal-ipn-types'
 import { PayPalIpnVerificationError } from '../../errors/PayPalIpnVerificationError'
@@ -8,7 +8,7 @@ import { DonationType } from '../../models/Donation'
 import { PayPalConfig } from '../../models/PayPalConfig'
 import {
   CreatePaymentParams,
-  paymentService,
+  paymentService
 } from '../../services/payment-service'
 import { getAppInfo } from '../../utils/app'
 import { allowMethods, handleErrors, pipeMiddlewares } from '../../utils/http'

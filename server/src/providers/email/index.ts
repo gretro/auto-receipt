@@ -1,4 +1,4 @@
-import * as config from 'config'
+import config from 'config'
 import { EmailProvider } from './EmailProvider'
 import { fakeEmailProvider } from './FakeEmailProvider'
 import { smtpEmailProviderFactory, SmtpOptions } from './SmtpEmailProvider'

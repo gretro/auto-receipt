@@ -1,7 +1,7 @@
-import * as Joi from 'joi'
+import Joi from 'joi'
 import {
-  PaypalPaymentSource,
-  paypalPaymentSourceSchema,
+    PaypalPaymentSource,
+    paypalPaymentSourceSchema
 } from './PaypalPaymentSource'
 
 export const PaymentSources = {
