@@ -163,7 +163,7 @@ export const handleErrors = (): FunctionMiddleware => {
           return
         }
         if (error instanceof PayPalIpnVerificationError) {
-          logger.error(error)
+          logger.error(PayPalIpnVerificationError.name, error)
           sendError(response, 400, '', '')
           return
         }
