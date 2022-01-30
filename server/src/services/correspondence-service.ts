@@ -16,9 +16,9 @@ import { getEmailProvider } from '../providers/email'
 import { EmailAttachment } from '../providers/email/EmailProvider'
 import { getFileProvider } from '../providers/file'
 import {
-    getCurrencyHelper,
-    getDateHelper,
-    handlebarsFactory
+  getCurrencyHelper,
+  getDateHelper,
+  handlebarsFactory,
 } from '../utils/handlebars'
 
 interface EmailContent {

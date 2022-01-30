@@ -5,11 +5,11 @@ import { launchBulkImport } from './functions/http/bulk-import-donations'
 import { createCheque } from './functions/http/create-cheque-donation'
 import {
   getDonation,
-  listDonations
+  listDonations,
 } from './functions/http/donation-management'
 import {
   bulkExportReceipts,
-  downloadReceipt
+  downloadReceipt,
 } from './functions/http/download-receipt'
 import { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
 import { patchDonation } from './functions/http/patch-donation'
@@ -23,9 +23,9 @@ import { logger } from './utils/logging'
 
 const app = express()
 
-app.use(morgan('dev'))
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+app.use(morgan('dev') as any)
+app.use(bodyParser.urlencoded({ extended: true }) as any)
+app.use(bodyParser.json() as any)
 
 app.all('/paypalIpn', paypalIpn)
 app.all('/createCheque', createCheque)

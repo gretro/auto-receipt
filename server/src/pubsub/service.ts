@@ -7,9 +7,9 @@ import { TopicNotFoundError } from '../errors/TopicNotFoundError'
 import { logger } from '../utils/logging'
 import { writeMessageAsJson } from '../utils/pubsub'
 import {
-    PubSubContext,
-    PubSubHandler,
-    PubSubMessage
+  PubSubContext,
+  PubSubHandler,
+  PubSubMessage,
 } from '../utils/pubsub-function'
 import { PubSubSubscription } from './models'
 

@@ -7,7 +7,7 @@ import { PayPalIpnVerificationError } from '../errors/PayPalIpnVerificationError
 import { ApiConfig } from '../models/ApiConfig'
 import {
   getAuthConfig,
-  getAuthenticationProvider
+  getAuthenticationProvider,
 } from '../providers/authentication'
 import { logger } from './logging'
 
