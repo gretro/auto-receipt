@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import Joi from 'joi'
 import { addressSchema } from '../../models/Address'
 import { DeepPartial } from '../../models/DeepPartial'
 import { Donation } from '../../models/Donation'
@@ -10,7 +10,7 @@ import {
   pipeMiddlewares,
   validateBody,
   withAuth,
-  withCORS,
+  withCORS
 } from '../../utils/http'
 
 interface PatchDonationViewModel {

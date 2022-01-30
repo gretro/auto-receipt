@@ -1,9 +1,9 @@
 import { RequestHandler } from 'express'
-import * as Joi from 'joi'
+import Joi from 'joi'
 import {
   BulkImportCommand,
   bulkImportDonationFormatSchema,
-  BulkImportFormat,
+  BulkImportFormat
 } from '../../models/commands/BulkImportCommand'
 import { publishMessage } from '../../pubsub/service'
 import {
@@ -11,7 +11,7 @@ import {
   handleErrors,
   pipeMiddlewares,
   validateBody,
-  withAuth,
+  withAuth
 } from '../../utils/http'
 
 interface LaunchBulkImportViewModel {

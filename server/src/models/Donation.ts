@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import Joi from 'joi'
 import { Correspondence, correspondenceSchema } from './Correspondence'
 import { DocumentMetadata, documentMetadataSchema } from './DocumentMetadata'
 import { Donor, donorSchema } from './Donor'

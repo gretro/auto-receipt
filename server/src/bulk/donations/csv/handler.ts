@@ -1,10 +1,10 @@
-import * as csvParse from 'csv-parse'
+import csvParse from 'csv-parse'
 import { GeneratePdfCommand } from '../../../models/commands/GeneratePdfCommand'
 import { getFileProvider } from '../../../providers/file'
 import { publishMessage } from '../../../pubsub/service'
 import {
   CreatePaymentParams,
-  paymentService,
+  paymentService
 } from '../../../services/payment-service'
 import { logger } from '../../../utils/logging'
 import { BulkImportFormatHandler } from '../BulkImportFormatHandler'

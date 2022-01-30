@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import * as Joi from 'joi'
+import Joi from 'joi'
 import { GeneratePdfCommand } from '../../models/commands/GeneratePdfCommand'
 import { publishMessage } from '../../pubsub/service'
 import {
@@ -8,7 +8,7 @@ import {
   pipeMiddlewares,
   validateBody,
   withAuth,
-  withCORS,
+  withCORS
 } from '../../utils/http'
 
 interface BulkQueuePdfGeneration {

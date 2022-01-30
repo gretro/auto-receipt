@@ -1,6 +1,6 @@
-import * as bodyParser from 'body-parser'
-import * as express from 'express'
-import * as morgan from 'morgan'
+import bodyParser from 'body-parser'
+import express from 'express'
+import morgan from 'morgan'
 import { launchBulkImport } from './functions/http/bulk-import-donations'
 import { createCheque } from './functions/http/create-cheque-donation'
 import {
@@ -23,9 +23,9 @@ import { logger } from './utils/logging'
 
 const app = express()
 
-app.use(morgan('dev'))
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+app.use(morgan('dev') as any)
+app.use(bodyParser.urlencoded({ extended: true }) as any)
+app.use(bodyParser.json() as any)
 
 app.all('/paypalIpn', paypalIpn)
 app.all('/createCheque', createCheque)

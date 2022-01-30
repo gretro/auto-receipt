@@ -9,7 +9,8 @@
     "outDir": "lib",
     "sourceMap": false,
     "target": "es2017",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "esModuleInterop": true
   },
   "compileOnSave": true,
   "include": ["src"]

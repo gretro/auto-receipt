@@ -1,5 +1,5 @@
 import axios from 'axios'
-import * as config from 'config'
+import config from 'config'
 import { Request, Response } from 'express'
 import PayPalIpn from 'paypal-ipn-types'
 import { PayPalIpnVerificationError } from '../../errors/PayPalIpnVerificationError'

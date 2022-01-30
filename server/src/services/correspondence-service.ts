@@ -1,5 +1,5 @@
 import mjml2html = require('mjml')
-import * as config from 'config'
+import config from 'config'
 import { v4 as uuidV4 } from 'uuid'
 import { donationsRepository } from '../datastore/donations-repository'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'

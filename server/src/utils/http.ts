@@ -1,4 +1,4 @@
-import * as config from 'config'
+import config from 'config'
 import { NextFunction, Request, RequestHandler, Response } from 'express'
 import { Schema } from 'joi'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
@@ -163,7 +163,7 @@ export const handleErrors = (): FunctionMiddleware => {
           return
         }
         if (error instanceof PayPalIpnVerificationError) {
-          logger.error(error)
+          logger.error(PayPalIpnVerificationError.name, error)
           sendError(response, 400, '', '')
           return
         }
