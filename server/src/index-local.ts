@@ -14,6 +14,10 @@ import {
 import { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
 import { patchDonation } from './functions/http/patch-donation'
 import { paypalIpn } from './functions/http/paypal-ipn'
+import {
+  getOrDeletePaypalReceiptConfig,
+  upsertPaypalReceiptConfig,
+} from './functions/http/paypal-receipt-config'
 import { sendCorrespondence } from './functions/http/send-correspondence'
 import { bulkImport } from './functions/pubsub/bulk-import'
 import { email } from './functions/pubsub/email'
@@ -37,6 +41,8 @@ app.all('/launchBulkImport', launchBulkImport)
 app.all('/patchDonation', patchDonation)
 app.all('/downloadReceipt', downloadReceipt)
 app.all('/bulkExportReceipts', bulkExportReceipts)
+app.all('/upsertPaypalReceiptConfig', upsertPaypalReceiptConfig)
+app.all('/getOrDeletePaypalReceiptConfig', getOrDeletePaypalReceiptConfig)
 
 async function main(): Promise<void> {
   app.listen(3001, () => {

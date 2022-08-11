@@ -6,6 +6,10 @@ export {
   listDonations,
 } from './functions/http/donation-management'
 export {
+  getOrDeletePaypalReceiptConfig,
+  upsertPaypalReceiptConfig,
+} from './functions/http/paypal-receipt-config'
+export {
   bulkExportReceipts,
   downloadReceipt,
 } from './functions/http/download-receipt'
