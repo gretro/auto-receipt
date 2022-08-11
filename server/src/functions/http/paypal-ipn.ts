@@ -14,6 +14,7 @@ import { getAppInfo } from '../../utils/app'
 import { allowMethods, handleErrors, pipeMiddlewares } from '../../utils/http'
 import { logger } from '../../utils/logging'
 import FormData = require('form-data')
+import { paypalReceiptConfigRepository } from '../../datastore/paypal-receipt-config-repository'
 
 const paypalConfig = config.get<PayPalConfig>('paypal')
 
@@ -125,6 +126,19 @@ async function createPayment(ipnData: PayPalIpn): Promise<void> {
   const amount = parseFloat(ipnData.mc_gross || '')
   const donationType = mapToDonationType(ipnData)
 
+  // Handling special events that alters the receipt amount
+  let receiptAmount = amount
+  if (ipnData.item_number) {
+    const maybeReceiptConfig = await paypalReceiptConfigRepository.findPaypalReceiptConfigByItemId(
+      ipnData.item_number
+    )
+
+    if (maybeReceiptConfig) {
+      receiptAmount =
+        Math.floor(amount * maybeReceiptConfig.receiptAmountFactor * 100) / 100
+    }
+  }
+
   const createPayment: CreatePaymentParams = {
     donor: {
       firstName: ipnData.first_name || '',
@@ -134,7 +148,7 @@ async function createPayment(ipnData: PayPalIpn): Promise<void> {
     },
     currency: ipnData.mc_currency || '',
     amount,
-    receiptAmount: amount,
+    receiptAmount,
     reason: ipnData.item_name || undefined,
     emailReceipt: true,
     paymentDate: ipnData.payment_date || '',

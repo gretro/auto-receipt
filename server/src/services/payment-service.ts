@@ -1,4 +1,5 @@
 import config from 'config'
+import { sumBy } from 'lodash'
 import { v4 as createUuid } from 'uuid'
 import { donationsRepository } from '../datastore/donations-repository'
 import { GeneratePdfCommand } from '../models/commands/GeneratePdfCommand'
@@ -191,6 +192,21 @@ async function triggerReceiptGenerationNextStep(
   donation: Donation,
   preventReceiptGeneration: boolean
 ): Promise<void> {
+  const totalReceiptAmount = sumBy(
+    donation.payments,
+    (payment) => (payment.receiptAmount ?? 0) * 100
+  )
+
+  if (Math.floor(totalReceiptAmount) <= 0) {
+    logger.info(
+      'Donation has a total receipt amount set to 0. No receipt required.',
+      {
+        donationId: donation.id,
+      }
+    )
+    return
+  }
+
   const corrConfig = config.get<CorrespondenceConfig>('correspondence')
   if (!corrConfig.enabled) {
     logger.info('Correspondences are disabled in configuration')

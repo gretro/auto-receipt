@@ -27,3 +27,8 @@ export function getDonationsCollection(): FirebaseFirestore.CollectionReference 
   const store = getStore()
   return store.collection('donations')
 }
+
+export function getPaypalReceiptConfigCollection(): FirebaseFirestore.CollectionReference {
+  const store = getStore()
+  return store.collection('paypal-receipt-configs')
+}
