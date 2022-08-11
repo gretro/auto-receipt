@@ -26,7 +26,7 @@ export interface Payment {
 export const paymentSchema = Joi.object<Payment>({
   amount: Joi.number().positive().required(),
   currency: Joi.string().required().length(3),
-  receiptAmount: Joi.number().positive().required(),
+  receiptAmount: Joi.number().positive().allow(0).required(),
   date: Joi.date().required(),
   source: Joi.string()
     .valid(...Object.keys(PaymentSources))

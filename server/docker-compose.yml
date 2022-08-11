@@ -2,11 +2,14 @@ version: '3.7'
 
 services:
   firestore:
-    build: ./emulators/firestore
+    build: ./emulators
+    command: ['firestore', 'start', '--host-port=0.0.0.0:8080']
     ports:
       - '1865:8080'
 
   pubsub:
-    build: ./emulators/pubsub
+    build: ./emulators
+    command:
+      ['pubsub', 'start', '--project=autoreceipt', '--host-port=0.0.0.0:8080']
     ports:
       - '1866:8080'
