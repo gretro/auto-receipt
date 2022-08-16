@@ -46,7 +46,9 @@ async function isValid(ipnData: any): Promise<boolean> {
     responseType: 'text',
   })
 
-  const isValid = response.data === 'VERIFIED' // other return is INVALID. If it is INVALID it is probably spoofed
+  const resData = String(response.data).trim()
+
+  const isValid = resData === 'VERIFIED' // other return is INVALID. If it is INVALID it is probably spoofed
 
   if (!isValid) {
     logger.info('Paypal IPN validation request failed', {
