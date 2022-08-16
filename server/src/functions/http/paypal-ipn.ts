@@ -1,6 +1,7 @@
 import axios from 'axios'
 import config from 'config'
 import { Request, Response } from 'express'
+import querystring from 'querystring'
 import PayPalIpn from 'paypal-ipn-types'
 import { PayPalIpnVerificationError } from '../../errors/PayPalIpnVerificationError'
 import { Address } from '../../models/Address'
@@ -13,7 +14,6 @@ import {
 import { getAppInfo } from '../../utils/app'
 import { allowMethods, handleErrors, pipeMiddlewares } from '../../utils/http'
 import { logger } from '../../utils/logging'
-import FormData = require('form-data')
 import { paypalReceiptConfigRepository } from '../../datastore/paypal-receipt-config-repository'
 
 const paypalConfig = config.get<PayPalConfig>('paypal')
@@ -25,7 +25,7 @@ const paypalConfig = config.get<PayPalConfig>('paypal')
  * @returns {Promise<boolean>} true if message is valid and can be processed, false if fake
  *
  */
-async function isValid(ipnData: PayPalIpn): Promise<boolean> {
+async function isValid(ipnData: any): Promise<boolean> {
   if (!paypalConfig.validateIpn) {
     logger.warn('PAYPAL IPN NOT VALIDATED')
     return true
@@ -34,22 +34,32 @@ async function isValid(ipnData: PayPalIpn): Promise<boolean> {
   const appInfo = getAppInfo()
   const userAgent = `${appInfo.appName}/${appInfo.version}`
 
-  const formData = new FormData()
-  formData.append('cmd', '_notify-validate')
-  Object.entries(ipnData).forEach(([key, value]) => {
-    formData.append(key, value)
-  })
+  const ipnDataString = querystring.stringify(ipnData)
+  const body = `cmd=_notify-validate&${ipnDataString}`
 
-  const response = await axios.post(paypalConfig.ipnUrl, formData, {
+  const response = await axios.post(paypalConfig.ipnUrl, body, {
     headers: {
       'User-Agent': userAgent,
-      'Content-Length': formData.getLengthSync(),
-      ...formData.getHeaders(),
+      'Content-Length': Buffer.from(body).length,
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
     responseType: 'text',
   })
 
-  return response.data === 'VERIFIED' // other return is INVALID. If it is INVALID it is probably spoofed
+  const isValid = response.data === 'VERIFIED' // other return is INVALID. If it is INVALID it is probably spoofed
+
+  if (!isValid) {
+    logger.info('Paypal IPN validation request failed', {
+      body,
+      response: {
+        body: response.data,
+        status: response.status,
+        statusText: response.statusText,
+      },
+    })
+  }
+
+  return isValid
 }
 
 const messageHandlers: Record<string, (ipnData: PayPalIpn) => Promise<void>> = {
@@ -76,7 +86,7 @@ export const paypalIpn = pipeMiddlewares(
       )
     }
 
-    const valid = await isValid(ipnData)
+    const valid = await isValid(request.body)
     if (!valid) {
       throw new PayPalIpnVerificationError(ipnData)
     }
