@@ -10,6 +10,7 @@ import { Donor } from '../models/Donor'
 import { Payment, PaymentSource } from '../models/Payment'
 import { PaypalPaymentSource } from '../models/PaypalPaymentSource'
 import { publishMessage } from '../pubsub/service'
+import { addTime, HOUR } from '../utils/datetime'
 import { logger } from '../utils/logging'
 
 export interface CreatePaymentParams {
@@ -139,6 +140,10 @@ function mapToDonation(
 ): Donation {
   const paymentDate = getPaymentDate(parameters.paymentDate)
 
+  // Adjusted for Pacific time in Canada. This is done to avoid having the wrong
+  // fiscal year on Dec 31st.
+  const adjustedPaymentDate = addTime(paymentDate, -8 * HOUR)
+
   const donation: Donation = {
     id: donationId,
     externalId: parameters.externalId || null,
@@ -147,7 +152,7 @@ function mapToDonation(
     emailReceipt: parameters.emailReceipt,
     fiscalYear: parameters.overrideFiscalYear
       ? parameters.overrideFiscalYear
-      : paymentDate.getFullYear(),
+      : adjustedPaymentDate.getFullYear(),
     type: parameters.type,
     payments: [mapToPayment(parameters)],
     correspondences: [],
