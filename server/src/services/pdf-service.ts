@@ -81,7 +81,8 @@ function mapDonationToReceiptInfo(
  */
 async function buildReceiptNumber(donation: Donation): Promise<string> {
   const lastNamePart = donation.donor.lastName
-    .replace(/\s/g, '')
+    .replace(/[\s\/]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .substring(0, 3)
     .padEnd(3, 'X')
     .toUpperCase()
@@ -92,7 +93,8 @@ async function buildReceiptNumber(donation: Donation): Promise<string> {
     donation.donor.firstName || donation.donor.lastName.substring(3)
 
   const firstNamePart = firstName
-    .replace(/\s/g, '')
+    .replace(/[\s\/]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .substring(0, 2)
     .padStart(2, 'X')
     .toUpperCase()
@@ -102,9 +104,9 @@ async function buildReceiptNumber(donation: Donation): Promise<string> {
     .map(() => getRandomChar())
     .join('')
 
-  const receiptNumberPrefix = `${lastNamePart}${firstNamePart}${donation.fiscalYear}-${randomChars}`
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f\/]/g, '')
+  const receiptNumberPrefix = `${lastNamePart}${firstNamePart}${donation.fiscalYear}-${randomChars}`.normalize(
+    'NFD'
+  )
 
   const indices = donation.documents
     .filter((doc) => doc.id.startsWith(receiptNumberPrefix))
