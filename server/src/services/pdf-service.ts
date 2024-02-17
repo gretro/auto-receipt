@@ -81,27 +81,32 @@ function mapDonationToReceiptInfo(
  */
 async function buildReceiptNumber(donation: Donation): Promise<string> {
   const lastNamePart = donation.donor.lastName
-    .replace(/\s/g, '')
-    .substr(0, 3)
+    .replace(/[\s\/]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
+    .substring(0, 3)
     .padEnd(3, 'X')
     .toUpperCase()
 
   // Some donations are made by companies. This means they have do not have a first name.
   // In this case, we use the continuation of the last name field
   const firstName =
-    donation.donor.firstName || donation.donor.lastName.substr(3)
+    donation.donor.firstName || donation.donor.lastName.substring(3)
 
   const firstNamePart = firstName
-    .replace(/\s/g, '')
-    .substr(0, 2)
+    .replace(/[\s\/]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
+    .substring(0, 2)
     .padStart(2, 'X')
     .toUpperCase()
 
-  const randomChars = `${getRandomChar()}${getRandomChar()}${getRandomChar()}`
+  const randomChars = new Array(3)
+    .fill(null)
+    .map(() => getRandomChar())
+    .join('')
 
-  const receiptNumberPrefix = `${lastNamePart}${firstNamePart}${donation.fiscalYear}-${randomChars}`
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+  const receiptNumberPrefix = `${lastNamePart}${firstNamePart}${donation.fiscalYear}-${randomChars}`.normalize(
+    'NFD'
+  )
 
   const indices = donation.documents
     .filter((doc) => doc.id.startsWith(receiptNumberPrefix))
