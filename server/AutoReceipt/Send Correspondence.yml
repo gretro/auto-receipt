@@ -1,11 +1,11 @@
 info:
-  name: Queue PDF Generation
+  name: Send Correspondence
   type: http
-  seq: 2
+  seq: 5
 
 http:
   method: POST
-  url: "{{domain}}/generatePdfReceipt"
+  url: "{{domain}}/sendCorrespondence"
   headers:
     - name: Content-Type
       value: application/json
@@ -15,10 +15,10 @@ http:
     type: json
     data: |-
       {
-        "toGenerate": [
+        "toSend": [
           {
             "donationId": "e874df07-c682-405a-9437-c69986a86aaf",
-            "sendEmail": true
+            "correspondenceType": "thank-you"
           }
         ]
       }

@@ -1,7 +1,7 @@
 info:
-  name: Create a one-time donation
+  name: Create a one-time donation (No addr)
   type: http
-  seq: 1
+  seq: 7
 
 http:
   method: POST
@@ -26,15 +26,8 @@ http:
         "donor": {
           "firstName": "René",
           "lastName": "Carignan",
-          "email": "gabriel.lemire@gmail.com",
-          "address": {
-            "line1": "55 rue de la Vigne",
-            "line2": null,
-            "city": "Saint-Jean-sur-Richelieu",
-            "state": "QC",
-            "postalCode": "J7J 7K5",
-            "country": "Canada"
-          }
+          "email": null,
+          "address": null
         }
       }
   auth: inherit

@@ -1,0 +1,25 @@
+info:
+  name: Download receipt
+  type: http
+  seq: 8
+
+http:
+  method: GET
+  url: "{{domain}}/downloadReceipt?donationId=5af47f7b-4a11-492c-aee6-71c87052bb57&documentId=CARRE2025-RGW001"
+  headers:
+    - name: Origin
+      value: http://localhost:3000
+  params:
+    - name: donationId
+      value: 5af47f7b-4a11-492c-aee6-71c87052bb57
+      type: query
+    - name: documentId
+      value: CARRE2025-RGW001
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
