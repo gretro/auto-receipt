@@ -30,7 +30,7 @@
     "@google-cloud/pubsub": "^2.18.5",
     "@google-cloud/storage": "^5.18.1",
     "archiver": "^5.3.0",
-    "axios": "^0.25.0",
+    "axios": "^1.13.0",
     "chrome-aws-lambda": "^10.1.0",
     "config": "^4.2.0",
     "csv-parse": "^4.15.1",
