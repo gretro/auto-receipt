@@ -9,8 +9,9 @@
 
 1. Make sure the dependent services are up and running (see below)
 2. Open a Terminal and navigate to the `server` directory
-3. Run `npm install`
-4. Run `npm start`
+3. Run `npm run prepare` to install a working browser
+4. Run `npm install`
+5. Run `npm start`
 
 ### Dependent services
 

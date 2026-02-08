@@ -4,7 +4,7 @@ import { getFileProvider } from '../../../providers/file'
 import { publishMessage } from '../../../pubsub/service'
 import {
   CreatePaymentParams,
-  paymentService
+  paymentService,
 } from '../../../services/payment-service'
 import { logger } from '../../../utils/logging'
 import { BulkImportFormatHandler } from '../BulkImportFormatHandler'
@@ -47,7 +47,7 @@ export const donationCsvHandler: BulkImportFormatHandler = async (
 async function parseCsvData(filename: string): Promise<any[]> {
   const fileProvider = await getFileProvider()
   const fileStream = fileProvider.loadTemp(filename)
-  const parserStream = csvParse({
+  const parserStream = csvParse.parse({
     delimiter: ',',
     cast: false,
     columns: true,

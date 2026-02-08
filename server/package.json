@@ -4,6 +4,7 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
+    "prepare": "npx @puppeteer/browsers install chrome",
     "lint": "eslint src/**/*.ts",
     "clean": "rimraf lib",
     "clean:data": "rimraf temp-docs && rimraf logs",
@@ -42,12 +43,14 @@
     "lodash": "^4.17.23",
     "mjml": "^4.18.0",
     "nodemailer": "^8.0.1",
-    "puppeteer-core": "^10.1.0",
+    "puppeteer-core": "^24.37.2",
     "uuid": "^13.0.0",
     "winston": "^3.19.0",
     "winston-console-format": "^1.0.8"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.3",
+    "@puppeteer/browsers": "^2.12.0",
     "@types/archiver": "^7.0.0",
     "@types/config": "^3.3.5",
     "@types/express": "^4.17.13",
@@ -57,7 +60,6 @@
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.0.0",
     "@types/nodemailer": "^7.0.9",
-    "@eslint/eslintrc": "^3.3.3",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
     "body-parser": "^1.19.1",
@@ -71,7 +73,7 @@
     "npm-run-all": "^4.1.5",
     "paypal-ipn-types": "^1.0.4",
     "prettier": "^3.8.1",
-    "puppeteer": "^10.1.0",
+    "puppeteer": "^24.37.2",
     "rimraf": "^6.1.2",
     "typescript": "^5.7.3"
   },

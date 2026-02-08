@@ -1,11 +1,15 @@
-import chromium from 'chrome-aws-lambda'
+import {
+  Browser as BrowserEnum,
+  getInstalledBrowsers,
+} from '@puppeteer/browsers'
 import config from 'config'
-import { Browser } from 'puppeteer/lib/cjs/puppeteer/api-docs-entry'
+import puppeteer, { Browser } from 'puppeteer-core'
 import { donationsRepository } from '../datastore/donations-repository'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
 import { PdfGenerationError } from '../errors/PdfGenerationError'
 import { Donation } from '../models/Donation'
 import { ReceiptInfo } from '../models/ReceiptInfo'
+import { projectPath } from '../project-path'
 import { logger } from '../utils/logging'
 import { localeService } from './locale-service'
 
@@ -151,7 +155,7 @@ let slotId = 1
 async function generatePdfFromHtml(htmlContent: string): Promise<Buffer> {
   let browser: Browser | undefined = undefined
   let browserId: number | undefined = undefined
-  let pdf: Buffer | undefined = undefined
+  let pdf: Uint8Array | undefined = undefined
 
   try {
     logger.info('Launching Puppeteer and Chromium')
@@ -188,7 +192,7 @@ async function generatePdfFromHtml(htmlContent: string): Promise<Buffer> {
     }
   }
 
-  return pdf
+  return Buffer.from(pdf)
 }
 
 async function randomDelay(minSecs: number, maxSecs: number): Promise<void> {
@@ -213,11 +217,20 @@ async function launchBrowser(): Promise<{
   const browserId = slotId++
   BROWSER_SLOTS.push(browserId)
 
-  const browser: Browser = await (chromium.puppeteer as any).launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath,
+  // TODO: Determine how this will work when running in a container
+  const browsers = await getInstalledBrowsers({ cacheDir: projectPath })
+  const chrome = browsers.find((b) => b.browser === BrowserEnum.CHROME)
+  if (!chrome) {
+    throw new Error('Chrome not found')
+  }
+
+  logger.info('Chrome found', { chrome })
+
+  const browser = await puppeteer.launch({
     headless: true,
+    browser: 'chrome',
+    executablePath: chrome.executablePath,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   })
 
   return { browserId, browser }
