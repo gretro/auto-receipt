@@ -148,9 +148,8 @@ async function getEmailContent(
   const mjml = buildMjml(template, donation)
   const html = buildHtml(mjml)
 
-  const correspondenceConfig = config.get<CorrespondenceConfig>(
-    'correspondence'
-  )
+  const correspondenceConfig =
+    config.get<CorrespondenceConfig>('correspondence')
   const subject = correspondenceConfig[type].subject || 'Merci / Thank you'
 
   return {

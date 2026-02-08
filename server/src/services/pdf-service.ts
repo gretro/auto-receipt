@@ -28,30 +28,27 @@ function mapDonationToReceiptInfo(
   receiptNumber: string
 ): ReceiptInfo {
   const lastPayment = donation.payments[donation.payments.length - 1]
-  const {
-    donationAmount,
-    receiptAmount,
-    donationCurrency,
-  } = donation.payments.reduce(
-    (acc, value) => {
-      acc.donationAmount += value.amount
-      acc.receiptAmount += value.receiptAmount
+  const { donationAmount, receiptAmount, donationCurrency } =
+    donation.payments.reduce(
+      (acc, value) => {
+        acc.donationAmount += value.amount
+        acc.receiptAmount += value.receiptAmount
 
-      if (acc.donationCurrency && acc.donationCurrency !== value.currency) {
-        logger.warn('Donations received in multiple currencies', {
-          donationId: donation.id,
-        })
+        if (acc.donationCurrency && acc.donationCurrency !== value.currency) {
+          logger.warn('Donations received in multiple currencies', {
+            donationId: donation.id,
+          })
+        }
+
+        acc.donationCurrency = value.currency
+        return acc
+      },
+      {
+        donationAmount: 0,
+        receiptAmount: 0,
+        donationCurrency: '',
       }
-
-      acc.donationCurrency = value.currency
-      return acc
-    },
-    {
-      donationAmount: 0,
-      receiptAmount: 0,
-      donationCurrency: '',
-    }
-  )
+    )
 
   const receiptInfo: ReceiptInfo = {
     cultures: localeService.getLocales(),
@@ -104,9 +101,10 @@ async function buildReceiptNumber(donation: Donation): Promise<string> {
     .map(() => getRandomChar())
     .join('')
 
-  const receiptNumberPrefix = `${lastNamePart}${firstNamePart}${donation.fiscalYear}-${randomChars}`.normalize(
-    'NFD'
-  )
+  const receiptNumberPrefix =
+    `${lastNamePart}${firstNamePart}${donation.fiscalYear}-${randomChars}`.normalize(
+      'NFD'
+    )
 
   const indices = donation.documents
     .filter((doc) => doc.id.startsWith(receiptNumberPrefix))

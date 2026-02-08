@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Timestamp } from '@google-cloud/firestore'
 
 export function mapTimestampToDate<T extends Record<string, any>>(

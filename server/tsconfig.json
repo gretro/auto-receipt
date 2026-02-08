@@ -10,7 +10,8 @@
     "sourceMap": false,
     "target": "es2017",
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
   "compileOnSave": true,
   "include": ["src"]
