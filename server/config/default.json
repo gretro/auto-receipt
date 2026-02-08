@@ -65,7 +65,16 @@
       }
     },
     "email": {
-      "provider": "fake"
+      "provider": "smtp",
+      "smtp": {
+        "host": "localhost",
+        "port": 6025,
+        "secure": false,
+        "authUsername": "user",
+        "authPassword": "pass",
+        "from": "noreply@example.com",
+        "replyTo": "noreply@example.com"
+      }
     },
     "authentication": {
       "provider": "no-auth",

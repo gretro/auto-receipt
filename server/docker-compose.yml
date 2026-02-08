@@ -11,3 +11,11 @@ services:
       ['pubsub', 'start', '--project=autoreceipt', '--host-port=0.0.0.0:8080']
     ports:
       - '1866:8080'
+
+  smtp:
+    image: rnwood/smtp4dev:3.12.0-ci20260208134
+    ports:
+      - 6025:25
+      - 6080:80
+    volumes:
+      - "/smtp4dev"

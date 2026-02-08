@@ -21,6 +21,10 @@ The application depends on some services. To facilitate development, those have 
 
 Everything should start running. Creating the Docker image for the first time may take a few minutes however.
 
+#### View emails
+
+Open a browser to http://localhost:6080
+
 ## Making an HTTP request
 
 We use Bruno to setup the supported endpoints. Locally, no authentication is required. You can import the `AutoReceipt` collection.
