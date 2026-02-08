@@ -41,7 +41,7 @@
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
-    "mjml": "^4.8.1",
+    "mjml": "^4.18.0",
     "nodemailer": "^6.4.17",
     "puppeteer-core": "^10.1.0",
     "uuid": "^13.0.0",
