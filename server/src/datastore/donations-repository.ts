@@ -151,7 +151,7 @@ async function updateDonation(
     value: donation,
   }
 
-  await docRef.update(wrappedDocument)
+  await docRef.set(wrappedDocument)
 
   const updatedDonation = (await getDonationById(donation.id)) as Donation
   return updatedDonation

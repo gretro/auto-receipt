@@ -1,0 +1,16 @@
+opencollection: 1.0.0
+
+info:
+  name: AutoReceipt
+
+request:
+  auth:
+    type: apikey
+    key: x-api-token
+    value: "{{apiToken}}"
+    placement: header
+bundled: false
+extensions:
+  ignore:
+    - node_modules
+    - .git

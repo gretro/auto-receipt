@@ -1,0 +1,42 @@
+info:
+  name: Create a one-time donation
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{domain}}/createCheque"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+      	"donationType": "one-time",
+      	"emailReceipt": true,
+      	"currency": "CAD",
+      	"amount": 150,
+      	"receiptAmount": 125,
+      	"paymentDate": "2020-01-25T15:28:37Z",
+      	"donor": {
+      		"firstName": "René",
+      		"lastName": "Carignan",
+      		"email": "bolid95387@eroyal.net",
+      		"address": {
+      			"line1": "55 rue de la Vigne",
+      			"line2": null,
+      			"city": "Saint-Jean-sur-Richelieu",
+      			"state": "QC",
+      			"postalCode": "J7J 7K5",
+      			"country": "Canada"
+      		}
+      	}
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,25 @@
+info:
+  name: Queue PDF Generation
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{domain}}/generatePdfReceipt"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+      	"donationId": "44383d28-f3b3-44c5-8799-42f248c4fdc2",
+      	"sendEmail": false
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
