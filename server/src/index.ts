@@ -9,6 +9,7 @@ import { bulkImport } from './functions/pubsub/bulk-import'
 import { email } from './functions/pubsub/email'
 import { pdf } from './functions/pubsub/pdf-receipt'
 import { subscribe } from './pubsub/service'
+import { pdfService } from './services/pdf-service'
 import { logger } from './utils/logging'
 
 const app = express()
@@ -24,7 +25,9 @@ registerPaypalRoutes(app)
 app.use(errorHandlerMiddleware)
 
 async function main(): Promise<void> {
-  app.listen(3001, () => {
+  await pdfService.initialize()
+
+  const server = app.listen(3001, () => {
     logger.info('Listening on port 3001')
   })
 
@@ -33,9 +36,25 @@ async function main(): Promise<void> {
     bulkImport,
     email,
   })
+
+  async function shutdown(signal: string): Promise<void> {
+    logger.info(`Received ${signal}, shutting down gracefully...`)
+
+    server.close(() => {
+      logger.info('HTTP server closed')
+    })
+
+    await pdfService.dispose()
+    logger.info('Shutdown complete')
+    process.exit(0)
+  }
+
+  process.on('SIGTERM', () => shutdown('SIGTERM'))
+  process.on('SIGINT', () => shutdown('SIGINT'))
 }
 
 main().catch((err) => {
   logger.error('Error while running server', err)
+  pdfService.dispose()
   process.exit(1)
 })

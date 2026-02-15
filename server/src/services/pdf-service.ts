@@ -3,7 +3,7 @@ import {
   getInstalledBrowsers,
 } from '@puppeteer/browsers'
 import config from 'config'
-import puppeteer, { Browser } from 'puppeteer-core'
+import puppeteer, { Browser, Page } from 'puppeteer-core'
 import { donationsRepository } from '../datastore/donations-repository'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
 import { PdfGenerationError } from '../errors/PdfGenerationError'
@@ -12,6 +12,92 @@ import { ReceiptInfo } from '../models/ReceiptInfo'
 import { projectPath } from '../project-path'
 import { logger } from '../utils/logging'
 import { localeService } from './locale-service'
+
+let initialized = false
+let browserPromise: Promise<Browser> | undefined = undefined
+const MAX_BROWSERS = config.get<number>('chromium.maxInstances')
+let WORKER_SLOTS: number[] = []
+let slotId = 1
+
+async function initialize(): Promise<void> {
+  if (initialized) {
+    return
+  }
+
+  initialized = true
+  logger.info('Initializing PDF service')
+
+  const browsers = await getInstalledBrowsers({ cacheDir: projectPath })
+  const chrome = browsers.find((b) => b.browser === BrowserEnum.CHROME)
+  if (!chrome) {
+    throw new Error('Chrome not found')
+  }
+
+  logger.info('Chrome found', { chrome })
+
+  browserPromise = puppeteer.launch({
+    headless: true,
+    browser: 'chrome',
+    executablePath: chrome.executablePath,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  })
+
+  await browserPromise
+
+  logger.info('PDF service initialized')
+}
+
+async function dispose(): Promise<void> {
+  if (browserPromise) {
+    const browser = await browserPromise
+    await browser.close()
+    browserPromise = undefined
+    WORKER_SLOTS = []
+  }
+
+  initialized = false
+}
+
+async function randomDelay(minSecs: number, maxSecs: number): Promise<void> {
+  const duration =
+    (((Math.random() * 100) % (maxSecs - minSecs)) + minSecs) * 1000
+  return new Promise((resolve) => setTimeout(resolve, duration))
+}
+
+async function waitForRoom(): Promise<void> {
+  while (WORKER_SLOTS.length >= MAX_BROWSERS) {
+    logger.debug('Waiting for a browser slot to become available...')
+    await randomDelay(1, 5)
+  }
+}
+
+interface Worker {
+  workerId: number
+  page: Page
+}
+
+async function acquireWorker(): Promise<Worker> {
+  logger.info('Acquiring worker slot', {
+    browser: browserPromise,
+  })
+
+  await waitForRoom()
+
+  if (!browserPromise) {
+    throw new Error('Browser not initialized')
+  }
+
+  const workerId = slotId++
+  WORKER_SLOTS.push(workerId)
+
+  const browser = await browserPromise
+  const page = await browser.newPage()
+
+  return {
+    workerId,
+    page,
+  }
+}
 
 async function getReceiptInfo(donationId: string): Promise<ReceiptInfo> {
   logger.info('Retrieving donation', { donationId })
@@ -148,22 +234,16 @@ function getRandomChar(): string {
   return char
 }
 
-const MAX_BROWSERS = config.get<number>('chromium.maxInstances')
-let BROWSER_SLOTS: number[] = []
-let slotId = 1
-
 async function generatePdfFromHtml(htmlContent: string): Promise<Buffer> {
-  let browser: Browser | undefined = undefined
-  let browserId: number | undefined = undefined
+  let page: Page | undefined = undefined
+  let workerId: number | undefined = undefined
   let pdf: Uint8Array | undefined = undefined
 
   try {
-    logger.info('Launching Puppeteer and Chromium')
-    const browserInfo = await launchBrowser()
-    browserId = browserInfo.browserId
-    browser = browserInfo.browser
+    const worker = await acquireWorker()
+    page = worker.page
+    workerId = worker.workerId
 
-    const page = await browser.newPage()
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' })
 
     logger.info('Exporting as PDF')
@@ -183,60 +263,21 @@ async function generatePdfFromHtml(htmlContent: string): Promise<Buffer> {
   } catch (err) {
     throw new PdfGenerationError(err)
   } finally {
-    if (browser) {
-      await browser.close()
+    if (page) {
+      await page.close()
     }
 
-    if (browserId) {
-      BROWSER_SLOTS = BROWSER_SLOTS.filter((slot) => slot !== browserId)
+    if (workerId) {
+      WORKER_SLOTS = WORKER_SLOTS.filter((slot) => slot !== workerId)
     }
   }
 
   return Buffer.from(pdf)
 }
 
-async function randomDelay(minSecs: number, maxSecs: number): Promise<void> {
-  const duration =
-    (((Math.random() * 100) % (maxSecs - minSecs)) + minSecs) * 1000
-  return new Promise((resolve) => setTimeout(resolve, duration))
-}
-
-async function waitForRoom(): Promise<void> {
-  while (BROWSER_SLOTS.length >= MAX_BROWSERS) {
-    logger.debug('Waiting for a browser slot to become available...')
-    await randomDelay(1, 5)
-  }
-}
-
-async function launchBrowser(): Promise<{
-  browserId: number
-  browser: Browser
-}> {
-  await waitForRoom()
-
-  const browserId = slotId++
-  BROWSER_SLOTS.push(browserId)
-
-  // TODO: Determine how this will work when running in a container
-  const browsers = await getInstalledBrowsers({ cacheDir: projectPath })
-  const chrome = browsers.find((b) => b.browser === BrowserEnum.CHROME)
-  if (!chrome) {
-    throw new Error('Chrome not found')
-  }
-
-  logger.info('Chrome found', { chrome })
-
-  const browser = await puppeteer.launch({
-    headless: true,
-    browser: 'chrome',
-    executablePath: chrome.executablePath,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  })
-
-  return { browserId, browser }
-}
-
 export const pdfService = {
+  initialize,
+  dispose,
   getReceiptInfo,
   generatePdfFromHtml,
 }

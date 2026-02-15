@@ -19,8 +19,6 @@ const corsConfig = config.get<CorsConfig>('cors')
 
 export const corsMiddleware = cors({
   origin: (requestOrigin, callback) => {
-    logger.info('CORS request', { requestOrigin, corsConfig })
-
     if (!corsConfig.enabled || !requestOrigin) {
       callback(null, false)
       return
@@ -40,9 +38,13 @@ export const authMiddleware = async (
   response: Response,
   next: NextFunction
 ): Promise<void> => {
-  logger.info('Authenticating request', { url: request.url })
   const authConfig = getAuthConfig()
   const authProvider = getAuthenticationProvider()
+
+  logger.info('Authenticating request', {
+    url: request.url,
+    provider: authConfig.provider,
+  })
 
   try {
     const user = await authProvider.authenticateRequest(request)
