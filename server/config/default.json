@@ -3,7 +3,7 @@
     "logLevel": "info",
     "console": true,
     "gcloud": false,
-    "file": true
+    "file": false
   },
   "firestore": {
     "host": "localhost",

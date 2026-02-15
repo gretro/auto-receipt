@@ -4,18 +4,16 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "prepare": "npx @puppeteer/browsers install chrome",
+    "puppeteer:install": "npx @puppeteer/browsers install chrome",
     "lint": "eslint src/**/*.ts",
     "clean": "rimraf lib",
     "clean:data": "rimraf temp-docs && rimraf logs",
     "prebuild": "npm run clean",
     "build": "tsc --sourceMap",
-    "build:watch": "tsc --watch --incremental --sourceMap",
     "prebuild:prd": "npm run clean",
     "build:prd": "npm run lint && tsc",
-    "serve": "node --icu-data-dir=node_modules/full-icu -r dotenv/config --inspect lib/index.js",
-    "serve:watch": "nodemon --icu-data-dir=node_modules/full-icu -r dotenv/config --inspect lib/index.js",
-    "start": "npm run build && run-p build:watch serve:watch"
+    "serve": "npm run build && node --icu-data-dir=node_modules/full-icu lib/index.js",
+    "start": "docker compose up --watch --build"
   },
   "author": {
     "name": "Gabriel Lemire"
@@ -71,8 +69,6 @@
     "eslint-plugin-prettier": "^5.5.5",
     "express": "^5.2.1",
     "morgan": "^1.10.1",
-    "nodemon": "^3.1.11",
-    "npm-run-all": "^4.1.5",
     "paypal-ipn-types": "^1.0.4",
     "prettier": "^3.8.1",
     "rimraf": "^6.1.2",

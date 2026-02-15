@@ -1,0 +1,16 @@
+node_modules
+lib
+chrome
+logs
+temp
+temp-docs
+.env
+.env.*
+*.log
+.git
+.vscode
+.gitignore
+.prettierrc
+README.md
+nodemon.json
+docker-compose.yml

@@ -1,4 +1,36 @@
 services:
+  server:
+    build: .
+    ports:
+      - '3001:3001'
+    environment:
+      - NODE_ENV=development
+      - FIRESTORE_HOST=firestore
+      - FIRESTORE_PORT=8080
+      - PUBSUB_API_ENDPOINT=http://pubsub:8080
+      - SMTP_HOST=smtp
+      - SMTP_PORT=25
+    depends_on:
+      - firestore
+      - pubsub
+      - smtp
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./src
+          target: /app/src
+        - action: sync+restart
+          path: ./config
+          target: /app/config
+        - action: sync+restart
+          path: ./templates
+          target: /app/templates
+        - action: sync+restart
+          path: ./translations
+          target: /app/translations
+        - action: rebuild
+          path: ./package.json
+
   firestore:
     build: ./emulators
     command: ['firestore', 'start', '--host-port=0.0.0.0:8080']

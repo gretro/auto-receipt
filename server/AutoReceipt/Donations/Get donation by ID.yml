@@ -8,7 +8,7 @@ http:
   url: "{{domain}}/api/donations/:donationId"
   params:
     - name: donationId
-      value: 303549e5-dba6-4bc4-b407-6d704bbbaf83
+      value: 6d46dbf7-e6fc-403f-82a9-6315b73d040c
       type: path
   auth: inherit
 

@@ -1,7 +1,18 @@
 {
+  "firestore": {
+    "host": "FIRESTORE_HOST",
+    "port": "FIRESTORE_PORT"
+  },
+  "pubsub": {
+    "client": {
+      "apiEndpoint": "PUBSUB_API_ENDPOINT"
+    }
+  },
   "providers": {
     "email": {
       "smtp": {
+        "host": "SMTP_HOST",
+        "port": "SMTP_PORT",
         "authUsername": "SMTP_USERNAME",
         "authPassword": "SMTP_PASSWORD",
         "from": "EMAIL_FROM",

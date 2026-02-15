@@ -77,10 +77,6 @@ interface Worker {
 }
 
 async function acquireWorker(): Promise<Worker> {
-  logger.info('Acquiring worker slot', {
-    browser: browserPromise,
-  })
-
   await waitForRoom()
 
   if (!browserPromise) {
@@ -89,6 +85,10 @@ async function acquireWorker(): Promise<Worker> {
 
   const workerId = slotId++
   WORKER_SLOTS.push(workerId)
+
+  logger.info('Acquiring worker slot', {
+    workerId,
+  })
 
   const browser = await browserPromise
   const page = await browser.newPage()
