@@ -2,14 +2,12 @@
 
 # dependencies
 /node_modules
-/.pnp
-.pnp.js
 
 # testing
 /coverage
 
 # production
-/build
+/dist
 
 # secrets
 /secrets
@@ -18,6 +16,7 @@
 .firebaserc
 firebase.json
 *.cache
+public/config.json
 
 # misc
 .env

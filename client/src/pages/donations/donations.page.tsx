@@ -95,7 +95,6 @@ export const DonationsPage: React.FC = () => {
       fetchDonationsFromApi();
       window.history.replaceState({}, document.title);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldReloadData]);
 
   const { path } = useRouteMatch();

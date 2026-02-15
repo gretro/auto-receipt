@@ -170,7 +170,6 @@ export const DonationCreateDrawer: React.FC<Props> = (props) => {
 
   React.useEffect(() => {
     formik.resetForm({ values: { ...formik.initialValues, createMore: formik.values.createMore } });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.operationId]);
 
   const handleCancel = () => {

@@ -25,7 +25,7 @@ interface Props {
   canSendByEmail: boolean;
 }
 
-const useStyles = makeStyles<Theme, Props>((theme) => ({
+const useStyles = makeStyles<Theme, Props>(() => ({
   noContentContainer: {
     textAlign: 'center',
   },

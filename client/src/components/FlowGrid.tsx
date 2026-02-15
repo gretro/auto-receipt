@@ -6,7 +6,7 @@ interface Props {
   spacing: number;
 }
 
-const useStyles = makeStyles<Theme, Props>((theme) => ({
+const useStyles = makeStyles<Theme, Props>(() => ({
   flowGrid: (props) => ({
     display: 'grid',
     gridTemplateColumns: new Array(props.columns).fill('1fr').join(' '),
@@ -32,7 +32,7 @@ export const FlowGridItem: React.FC = ({ children }) => {
   return <Box component="li">{children}</Box>;
 };
 
-const useCardStyles = makeStyles<Theme, CardProps>((theme) => ({
+const useCardStyles = makeStyles<Theme, CardProps>(() => ({
   card: {
     display: 'grid',
     height: '100%',
