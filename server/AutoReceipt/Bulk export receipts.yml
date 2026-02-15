@@ -1,7 +1,7 @@
 info:
   name: Bulk export receipts
   type: http
-  seq: 9
+  seq: 6
 
 http:
   method: POST

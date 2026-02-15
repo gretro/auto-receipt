@@ -1,23 +1,26 @@
 info:
   name: Patch donation
   type: http
-  seq: 6
+  seq: 4
 
 http:
   method: PATCH
-  url: '{{domain}}/patchDonation'
+  url: "{{domain}}/api/donations/:id"
   headers:
     - name: Content-Type
       value: application/json
     - name: Origin
       value: http://localhost:3000
+  params:
+    - name: id
+      value: 303549e5-dba6-4bc4-b407-6d704bbbaf83
+      type: path
   body:
     type: json
     data: |-
       {
         "donation": {
-          "id": "5af47f7b-4a11-492c-aee6-71c87052bb57",
-          "fiscalYear": 2025,
+          "fiscalYear": 2026,
           "donor": {
             "firstName": "Renée",
             "lastName": "Dupont",

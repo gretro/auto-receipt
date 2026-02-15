@@ -1,17 +1,11 @@
+import { Request, Response } from 'express'
 import Joi from 'joi'
 import { addressSchema } from '../../models/Address'
 import { DeepPartial } from '../../models/DeepPartial'
 import { Donation } from '../../models/Donation'
 import { Donor } from '../../models/Donor'
 import { donationsService } from '../../services/donation-service'
-import {
-  allowMethods,
-  handleErrors,
-  pipeMiddlewares,
-  validateBody,
-  withAuth,
-  withCORS
-} from '../../utils/http'
+import { getValidatedData } from '../../utils/validation'
 
 interface PatchDonationViewModel {
   donation: DeepPartial<Donation>
@@ -20,7 +14,7 @@ interface PatchDonationViewModel {
 
 const patchDonationSchema = Joi.object<PatchDonationViewModel>({
   donation: Joi.object<Donation>({
-    id: Joi.string().required(),
+    id: Joi.forbidden(),
     externalId: Joi.forbidden(),
     created: Joi.forbidden(),
     fiscalYear: Joi.number().optional(),
@@ -41,26 +35,21 @@ const patchDonationSchema = Joi.object<PatchDonationViewModel>({
   generateReceipt: Joi.boolean().required(),
 })
 
-export const patchDonation = pipeMiddlewares(
-  withCORS(),
-  handleErrors(),
-  withAuth(),
-  allowMethods('PATCH'),
-  validateBody(patchDonationSchema)
-)(
-  async (req, res): Promise<void> => {
-    const donationPatch: PatchDonationViewModel = req.body
-    if (!donationPatch || !donationPatch.donation?.id) {
-      res.sendStatus(400)
-      return
-    }
+export const patchDonationHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const donationId = getValidatedData(Joi.string().required(), req.params.id)
+  const donationPatch = getValidatedData(
+    patchDonationSchema.required(),
+    req.body
+  )
 
-    const patchedDonation = await donationsService.patchDonation(
-      donationPatch.donation.id,
-      donationPatch.donation,
-      donationPatch.generateReceipt
-    )
+  const patchedDonation = await donationsService.patchDonation(
+    donationId,
+    donationPatch.donation,
+    donationPatch.generateReceipt
+  )
 
-    res.status(200).send(patchedDonation)
-  }
-)
+  res.status(200).send(patchedDonation)
+}

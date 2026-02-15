@@ -1,7 +1,7 @@
 info:
   name: Download receipt
   type: http
-  seq: 8
+  seq: 5
 
 http:
   method: GET

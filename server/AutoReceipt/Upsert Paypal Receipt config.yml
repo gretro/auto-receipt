@@ -1,7 +1,7 @@
 info:
   name: Upsert Paypal Receipt config
   type: http
-  seq: 10
+  seq: 7
 
 http:
   method: PUT

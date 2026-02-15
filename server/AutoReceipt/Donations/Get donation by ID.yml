@@ -1,18 +1,18 @@
 info:
   name: Get donation by ID
   type: http
-  seq: 4
+  seq: 3
 
 http:
   method: GET
-  url: "{{domain}}/getDonation?id=5af47f7b-4a11-492c-aee6-71c87052bb57"
+  url: "{{domain}}/api/donations/:donationId"
   headers:
     - name: Origin
       value: http://localhost:3000
   params:
-    - name: id
-      value: 5af47f7b-4a11-492c-aee6-71c87052bb57
-      type: query
+    - name: donationId
+      value: 303549e5-dba6-4bc4-b407-6d704bbbaf83
+      type: path
   auth: inherit
 
 settings:

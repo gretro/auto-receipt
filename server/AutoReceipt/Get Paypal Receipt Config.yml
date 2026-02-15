@@ -1,7 +1,7 @@
 info:
   name: Get Paypal Receipt Config
   type: http
-  seq: 11
+  seq: 8
 
 http:
   method: GET

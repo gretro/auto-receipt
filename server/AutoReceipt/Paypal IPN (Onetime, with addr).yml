@@ -1,11 +1,11 @@
 info:
   name: Paypal IPN (Onetime, with addr)
   type: http
-  seq: 14
+  seq: 11
 
 http:
   method: POST
-  url: '{{domain}}/paypalIpn'
+  url: "{{domain}}/paypalIpn"
   headers:
     - name: Origin
       value: http://localhost:3000
@@ -13,91 +13,91 @@ http:
     type: form-urlencoded
     data:
       - name: mc_gross
-        value: '65.00'
+        value: "65.00"
       - name: protection_eligibility
-        value: 'Eligible'
+        value: Eligible
       - name: address_status
-        value: 'unconfirmed'
+        value: unconfirmed
       - name: payer_id
-        value: 'DAXN73JHVA5WE'
+        value: DAXN73JHVA5WE
       - name: address_street
-        value: "12 rue de l'énergie"
+        value: 12 rue de l'énergie
       - name: payment_date
-        value: '18:01:07 Dec 30, 2021 PST'
+        value: 18:01:07 Dec 30, 2021 PST
       - name: payment_status
-        value: 'Completed'
+        value: Completed
       - name: charset
-        value: 'UTF-8'
+        value: UTF-8
       - name: address_zip
-        value: 'A9A9A9'
+        value: A9A9A9
       - name: first_name
-        value: 'Eugène'
+        value: Eugène
       - name: mc_fee
-        value: '2.19'
+        value: "2.19"
       - name: address_country_code
-        value: 'CA'
+        value: CA
       - name: address_name
-        value: 'Eugène Désillet'
+        value: Eugène Désillet
       - name: notify_version
-        value: '3.9'
+        value: "3.9"
       - name: custom
-        value: ''
+        value: ""
       - name: payer_status
-        value: 'unverified'
+        value: unverified
       - name: business
-        value: 'info-facilitator@charity.org'
+        value: info-facilitator@charity.org
       - name: address_country
-        value: 'Canada'
+        value: Canada
       - name: address_city
-        value: 'Énergiville'
+        value: Énergiville
       - name: quantity
-        value: '1'
+        value: "1"
       - name: verify_sign
-        value: 'AB0IXQPOVdh5Gu2eRf6GJJdsmylmAqsb2xDf5yQiRIwIZBFb-JSzsVtX'
+        value: AB0IXQPOVdh5Gu2eRf6GJJdsmylmAqsb2xDf5yQiRIwIZBFb-JSzsVtX
       - name: payer_email
-        value: 'dkashjdlkaj@donor.org'
+        value: dkashjdlkaj@donor.org
       - name: txn_id
-        value: '77F47140D9708063U'
+        value: 77F47140D9708063U
       - name: payment_type
-        value: 'instant'
+        value: instant
       - name: last_name
-        value: 'Désillet'
+        value: Désillet
       - name: address_state
-        value: 'QC'
+        value: QC
       - name: receiver_email
-        value: 'info-facilitator@charity.org'
+        value: info-facilitator@charity.org
       - name: payment_fee
-        value: ''
+        value: ""
       - name: shipping_discount
-        value: '0.00'
+        value: "0.00"
       - name: insurance_amount
-        value: '0.00'
+        value: "0.00"
       - name: receiver_id
-        value: '9D4WHYF9CR2Z2'
+        value: 9D4WHYF9CR2Z2
       - name: txn_type
-        value: 'web_accept'
+        value: web_accept
       - name: item_name
-        value: ''
+        value: ""
       - name: discount
-        value: '0.00'
+        value: "0.00"
       - name: mc_currency
-        value: 'CAD'
+        value: CAD
       - name: item_number
-        value: ''
+        value: ""
       - name: residence_country
-        value: 'CA'
+        value: CA
       - name: test_ipn
-        value: '1'
+        value: "1"
       - name: receipt_id
-        value: '2869-4224-4205-7065'
+        value: 2869-4224-4205-7065
       - name: shipping_method
-        value: 'Default'
+        value: Default
       - name: transaction_subject
-        value: ''
+        value: ""
       - name: payment_gross
-        value: ''
+        value: ""
       - name: ipn_track_id
-        value: 'e46426182c296'
+        value: e46426182c296
   auth: inherit
 
 settings:
