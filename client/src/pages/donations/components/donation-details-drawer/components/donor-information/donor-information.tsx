@@ -151,7 +151,7 @@ export const DonorInformation: React.FC<Props> = (props) => {
 
   const donorName = props.donation?.donor.firstName
     ? `${props.donation?.donor.lastName}, ${props.donation?.donor.firstName}`
-    : props.donation?.donor.lastName ?? null;
+    : (props.donation?.donor.lastName ?? null);
 
   return (
     <>
