@@ -9,7 +9,6 @@ const localAppConfig = {
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
-    // Set NODE_ENV in the inline script for production builds
     {
       name: 'html-process-env',
       transformIndexHtml(html) {
@@ -18,9 +17,15 @@ export default defineConfig(({ mode }) => ({
     },
   ],
   define: {
-    // Dependencies like Firebase reference process.env; define it for the browser.
     'process.env': {},
     'process.env.NODE_ENV': JSON.stringify(mode),
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => (id.includes('node_modules') ? 'vendor' : undefined),
+      },
+    },
   },
   server: {
     port: 3000,
