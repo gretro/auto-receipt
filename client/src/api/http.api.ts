@@ -11,7 +11,7 @@ export async function makeHttpRequest(requestOptions: HttpRequestOptions, body?:
   const url = `${getAppConfig().apiUrl}${requestOptions.urlPath}`;
   const idToken = await getAuth().currentUser?.getIdToken();
 
-  const headers = {
+  const headers: Record<string, string> = {
     Authorization: `Bearer ${idToken}`,
     Accept: 'application/json',
   };
