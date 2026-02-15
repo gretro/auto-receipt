@@ -1,0 +1,31 @@
+info:
+  name: Bulk export receipts
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{domain}}/api/tasks/export-receipts"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Origin
+      value: http://localhost:3000
+  body:
+    type: json
+    data: |-
+      {
+        "receipts": [
+          {
+            "donationId": "303549e5-dba6-4bc4-b407-6d704bbbaf83",
+            "documentId": "DUPRE2026-UUB001"
+          }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

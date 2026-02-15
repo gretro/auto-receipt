@@ -1,17 +1,10 @@
-import { Request, RequestHandler, Response } from 'express'
+import { RequestHandler } from 'express'
 import Joi from 'joi'
 import { DonationType, donationTypeSchema } from '../../models/Donation'
 import { Donor, donorSchema } from '../../models/Donor'
 import { PaymentSource, PaymentSources } from '../../models/Payment'
 import { paymentService } from '../../services/payment-service'
-import {
-  allowMethods,
-  handleErrors,
-  pipeMiddlewares,
-  validateBody,
-  withAuth,
-  withCORS,
-} from '../../utils/http'
+import { getValidatedData } from '../../utils/validation'
 
 interface CreateChequeViewModel {
   donationType: DonationType
@@ -50,29 +43,21 @@ const schema = Joi.object<CreateChequeViewModel>({
   reason: Joi.string().allow(null),
 })
 
-export const createCheque: RequestHandler<any> = pipeMiddlewares(
-  withCORS(),
-  handleErrors(),
-  withAuth(),
-  allowMethods('POST'),
-  validateBody(schema)
-)(
-  async (req: Request<any>, res: Response): Promise<void> => {
-    const body: CreateChequeViewModel = req.body
+export const createDonationHandler: RequestHandler = async (req, res) => {
+  const body = getValidatedData(schema.required(), req.body)
 
-    const donation = await paymentService.createPayment({
-      source: body.source,
-      type: body.donationType,
-      externalId: body.donationId,
-      donor: body.donor,
-      emailReceipt: body.emailReceipt,
-      currency: body.currency,
-      amount: body.amount,
-      receiptAmount: body.receiptAmount,
-      paymentDate: body.paymentDate,
-      reason: body.reason || undefined,
-    })
+  const donation = await paymentService.createPayment({
+    source: body.source,
+    type: body.donationType,
+    externalId: body.donationId,
+    donor: body.donor,
+    emailReceipt: body.emailReceipt,
+    currency: body.currency,
+    amount: body.amount,
+    receiptAmount: body.receiptAmount,
+    paymentDate: body.paymentDate,
+    reason: body.reason || undefined,
+  })
 
-    res.status(201).send(donation)
-  }
-)
+  res.status(201).send(donation)
+}

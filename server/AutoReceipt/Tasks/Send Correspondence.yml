@@ -1,11 +1,11 @@
 info:
   name: Send Correspondence
   type: http
-  seq: 3
+  seq: 1
 
 http:
   method: POST
-  url: "{{domain}}/sendCorrespondence"
+  url: "{{domain}}/api/tasks/send-correspondences"
   headers:
     - name: Content-Type
       value: application/json

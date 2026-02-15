@@ -5,7 +5,7 @@ info:
 
 http:
   method: POST
-  url: "{{domain}}/createCheque"
+  url: "{{domain}}/api/donations"
   headers:
     - name: Content-Type
       value: application/json

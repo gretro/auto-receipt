@@ -1,3 +1,4 @@
+import { RequestHandler } from 'express'
 import Joi from 'joi'
 import { SendEmailCommand } from '../../models/commands/SendEmailCommand'
 import {
@@ -5,14 +6,7 @@ import {
   CorrespondenceTypes,
 } from '../../models/Correspondence'
 import { publishMessage } from '../../pubsub/service'
-import {
-  allowMethods,
-  handleErrors,
-  pipeMiddlewares,
-  validateBody,
-  withAuth,
-  withCORS,
-} from '../../utils/http'
+import { getValidatedData } from '../../utils/validation'
 
 interface BulkSendCorrespondenceViewModel {
   toSend: SendCorrespondenceViewModel[]
@@ -37,14 +31,14 @@ const requestSchema = Joi.object<BulkSendCorrespondenceViewModel>({
     .required(),
 })
 
-export const sendCorrespondence = pipeMiddlewares(
-  withCORS(),
-  handleErrors(),
-  withAuth(),
-  allowMethods('POST'),
-  validateBody(requestSchema)
-)(async (req, res) => {
-  const viewModel: BulkSendCorrespondenceViewModel = req.body
+export const createSendCorrespondencesTaskHandler: RequestHandler = async (
+  req,
+  res
+) => {
+  const viewModel: BulkSendCorrespondenceViewModel = getValidatedData(
+    requestSchema.required(),
+    req.body
+  )
 
   const promises = viewModel.toSend.map(async (toSend) => {
     const command: SendEmailCommand = {
@@ -56,4 +50,4 @@ export const sendCorrespondence = pipeMiddlewares(
   await Promise.all(promises)
 
   res.sendStatus(201)
-})
+}

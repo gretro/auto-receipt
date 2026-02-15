@@ -44,7 +44,7 @@
     "showError": true
   },
   "paypal": {
-    "validateIpn": true,
+    "validateIpn": false,
     "ipnUrl": "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr"
   },
   "locales": [

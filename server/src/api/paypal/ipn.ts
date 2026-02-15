@@ -1,7 +1,8 @@
 import axios from 'axios'
 import config from 'config'
-import { Request, Response } from 'express'
+import { RequestHandler } from 'express'
 import PayPalIpn from 'paypal-ipn-types'
+import { paypalReceiptConfigRepository } from '../../datastore/paypal-receipt-config-repository'
 import { PayPalIpnVerificationError } from '../../errors/PayPalIpnVerificationError'
 import { Address } from '../../models/Address'
 import { DonationType } from '../../models/Donation'
@@ -11,10 +12,8 @@ import {
   paymentService,
 } from '../../services/payment-service'
 import { getAppInfo } from '../../utils/app'
-import { allowMethods, handleErrors, pipeMiddlewares } from '../../utils/http'
 import { logger } from '../../utils/logging'
 import FormData = require('form-data')
-import { paypalReceiptConfigRepository } from '../../datastore/paypal-receipt-config-repository'
 
 const paypalConfig = config.get<PayPalConfig>('paypal')
 
@@ -77,43 +76,38 @@ const messageHandlers: Record<string, (ipnData: PayPalIpn) => Promise<void>> = {
  *
  * @see https://developer.paypal.com/docs/classic/products/instant-payment-notification/
  */
-export const paypalIpn = pipeMiddlewares(
-  handleErrors(),
-  allowMethods('POST')
-)(
-  async (request: Request<any>, response: Response): Promise<void> => {
-    const ipnData = request.body as PayPalIpn
-    logger.info('Received PayPal IPN notification')
+export const paypalIPNHandler: RequestHandler = async (req, res) => {
+  const ipnData = req.body as PayPalIpn
+  logger.info('Received PayPal IPN notification')
 
-    if (ipnData.charset.toLowerCase() !== 'utf-8') {
-      logger.warn(
-        `Received IPN notification in ${ipnData.charset} encoding. Make sure you change this to UTF-8. Otherwise, this could cause issues (http://jlchereau.blogspot.com/2006/10/paypal-ipn-with-utf8.html)`
+  if (ipnData.charset.toLowerCase() !== 'utf-8') {
+    logger.warn(
+      `Received IPN notification in ${ipnData.charset} encoding. Make sure you change this to UTF-8. Otherwise, this could cause issues (http://jlchereau.blogspot.com/2006/10/paypal-ipn-with-utf8.html)`
+    )
+  }
+
+  const valid = await isValid(ipnData)
+  if (!valid) {
+    throw new PayPalIpnVerificationError(ipnData)
+  }
+
+  if (shouldProcessPayment(ipnData)) {
+    logger.info('Payment will be processed')
+
+    const handler = messageHandlers[ipnData.txn_type]
+    if (handler) {
+      await handler(ipnData)
+    } else {
+      logger.info(
+        `Received transaction of type ${ipnData.txn_type} and did not have an action to take`
       )
     }
-
-    const valid = await isValid(ipnData)
-    if (!valid) {
-      throw new PayPalIpnVerificationError(ipnData)
-    }
-
-    if (shouldProcessPayment(ipnData)) {
-      logger.info('Payment will be processed')
-
-      const handler = messageHandlers[ipnData.txn_type]
-      if (handler) {
-        await handler(ipnData)
-      } else {
-        logger.info(
-          `Received transaction of type ${ipnData.txn_type} and did not have an action to take`
-        )
-      }
-    } else {
-      logger.info('Payment was ignored')
-    }
-
-    response.status(200).send().end()
+  } else {
+    logger.info('Payment was ignored')
   }
-)
+
+  res.status(200).send().end()
+}
 
 function shouldProcessPayment(ipnData: PayPalIpn): boolean {
   if (!paypalConfig.minFiscalYear) {
@@ -144,9 +138,10 @@ async function createPayment(ipnData: PayPalIpn): Promise<void> {
   // Handling special events that alters the receipt amount
   let receiptAmount = amount
   if (ipnData.item_number) {
-    const maybeReceiptConfig = await paypalReceiptConfigRepository.findPaypalReceiptConfigByItemId(
-      ipnData.item_number
-    )
+    const maybeReceiptConfig =
+      await paypalReceiptConfigRepository.findPaypalReceiptConfigByItemId(
+        ipnData.item_number
+      )
 
     if (maybeReceiptConfig) {
       receiptAmount =

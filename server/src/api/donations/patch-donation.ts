@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { RequestHandler } from 'express'
 import Joi from 'joi'
 import { addressSchema } from '../../models/Address'
 import { DeepPartial } from '../../models/DeepPartial'
@@ -35,9 +35,9 @@ const patchDonationSchema = Joi.object<PatchDonationViewModel>({
   generateReceipt: Joi.boolean().required(),
 })
 
-export const patchDonationHandler = async (
-  req: Request,
-  res: Response
+export const patchDonationHandler: RequestHandler = async (
+  req,
+  res
 ): Promise<void> => {
   const donationId = getValidatedData(Joi.string().required(), req.params.id)
   const donationPatch = getValidatedData(

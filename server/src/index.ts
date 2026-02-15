@@ -3,19 +3,12 @@ import express from 'express'
 import morgan from 'morgan'
 import { registerDonationsRoutes } from './api/donations'
 import { errorHandlerMiddleware } from './api/middlewares'
-import { launchBulkImport } from './functions/http/bulk-import-donations'
-import { createCheque } from './functions/http/create-cheque-donation'
-import {
-  bulkExportReceipts,
-  downloadReceipt,
-} from './functions/http/download-receipt'
-import { generatePdfReceipt } from './functions/http/generate-pdf-receipt'
-import { paypalIpn } from './functions/http/paypal-ipn'
+import { registerPaypalRoutes } from './api/paypal'
+import { registerTasksRoutes } from './api/tasks'
 import {
   getOrDeletePaypalReceiptConfig,
   upsertPaypalReceiptConfig,
 } from './functions/http/paypal-receipt-config'
-import { sendCorrespondence } from './functions/http/send-correspondence'
 import { bulkImport } from './functions/pubsub/bulk-import'
 import { email } from './functions/pubsub/email'
 import { pdf } from './functions/pubsub/pdf-receipt'
@@ -29,14 +22,9 @@ app.use(bodyParser.urlencoded({ extended: true }) as any)
 app.use(bodyParser.json() as any)
 
 registerDonationsRoutes(app)
+registerTasksRoutes(app)
+registerPaypalRoutes(app)
 
-app.all('/paypalIpn', paypalIpn)
-app.all('/createCheque', createCheque)
-app.all('/generatePdfReceipt', generatePdfReceipt)
-app.all('/sendCorrespondence', sendCorrespondence)
-app.all('/launchBulkImport', launchBulkImport)
-app.all('/downloadReceipt', downloadReceipt)
-app.all('/bulkExportReceipts', bulkExportReceipts)
 app.all('/upsertPaypalReceiptConfig', upsertPaypalReceiptConfig)
 app.all('/getOrDeletePaypalReceiptConfig', getOrDeletePaypalReceiptConfig)
 

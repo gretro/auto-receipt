@@ -1,23 +1,20 @@
 info:
-  name: Upsert Paypal Receipt config
+  name: Get Paypal Receipt Config
   type: http
-  seq: 7
+  seq: 1
 
 http:
-  method: PUT
-  url: "{{domain}}/upsertPaypalReceiptConfig"
+  method: GET
+  url: "{{domain}}/api/paypal/config/:id"
   headers:
     - name: Content-Type
       value: application/json
     - name: Origin
       value: http://localhost:3000
-  body:
-    type: json
-    data: |-
-      {
-        "paypalItemId": "EVENT-01",
-        "receiptAmountFactor": 0
-      }
+  params:
+    - name: id
+      value: EVENT-01
+      type: path
   auth: inherit
 
 settings:

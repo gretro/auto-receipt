@@ -85,7 +85,10 @@ export const errorHandlerMiddleware = (
   if (err instanceof InvalidEntityError) {
     response.status(400).json({
       message: 'Validation failed',
-      validationResults: err.validationResults,
+      errors: err.validationResults.error?.details?.map((detail) => ({
+        message: detail.message,
+        path: detail.path,
+      })),
     })
     return
   }

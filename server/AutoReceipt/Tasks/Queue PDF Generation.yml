@@ -1,11 +1,11 @@
 info:
-  name: Bulk export receipts
+  name: Queue PDF Generation
   type: http
-  seq: 6
+  seq: 1
 
 http:
   method: POST
-  url: "{{domain}}/bulkExportReceipts"
+  url: 03{{domain}}/api/tasks/generate-pdf-receipts
   headers:
     - name: Content-Type
       value: application/json
@@ -15,10 +15,10 @@ http:
     type: json
     data: |-
       {
-        "receipts": [
+        "toGenerate": [
           {
-            "donationId": "24691608-755f-4f70-bec6-1e75cc42fa9a",
-            "documentId": "CARRE2026-D1F001"
+            "donationId": "e874df07-c682-405a-9437-c69986a86aaf",
+            "sendEmail": true
           }
         ]
       }

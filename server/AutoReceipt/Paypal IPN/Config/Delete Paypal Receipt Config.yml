@@ -1,11 +1,11 @@
 info:
-  name: Get Paypal Receipt Config
+  name: Delete Paypal Receipt Config
   type: http
-  seq: 8
+  seq: 1
 
 http:
-  method: GET
-  url: "{{domain}}/getOrDeletePaypalReceiptConfig?id=EVENT-01"
+  method: DELETE
+  url: "{{domain}}/api/paypal/config/:id"
   headers:
     - name: Content-Type
       value: application/json
@@ -14,7 +14,7 @@ http:
   params:
     - name: id
       value: EVENT-01
-      type: query
+      type: path
   auth: inherit
 
 settings:

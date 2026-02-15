@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { RequestHandler } from 'express'
 import Joi from 'joi'
 import { donationsRepository } from '../../datastore/donations-repository'
 import { Donation } from '../../models/Donation'
@@ -10,9 +10,9 @@ interface DonationListingViewModel {
   donations: Donation[]
 }
 
-export const listDonationsHandler = async (
-  req: Request,
-  res: Response
+export const listDonationsHandler: RequestHandler = async (
+  req,
+  res
 ): Promise<void> => {
   const fiscalYear = getValidatedParam(
     Joi.number().integer().positive().required(),

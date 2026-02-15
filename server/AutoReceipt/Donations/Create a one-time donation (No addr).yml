@@ -1,11 +1,11 @@
 info:
   name: Create a one-time donation (No addr)
   type: http
-  seq: 4
+  seq: 2
 
 http:
   method: POST
-  url: "{{domain}}/createCheque"
+  url: "{{domain}}/api/donations"
   headers:
     - name: Content-Type
       value: application/json

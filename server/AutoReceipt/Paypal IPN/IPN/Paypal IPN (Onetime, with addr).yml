@@ -1,11 +1,11 @@
 info:
-  name: Paypal IPN (Onetime, no addr)
+  name: Paypal IPN (Onetime, with addr)
   type: http
-  seq: 10
+  seq: 2
 
 http:
   method: POST
-  url: "{{domain}}/paypalIpn"
+  url: "{{domain}}/api/paypal/ipn"
   headers:
     - name: Origin
       value: http://localhost:3000
@@ -13,21 +13,31 @@ http:
     type: form-urlencoded
     data:
       - name: mc_gross
-        value: "45.00"
+        value: "65.00"
       - name: protection_eligibility
         value: Eligible
+      - name: address_status
+        value: unconfirmed
       - name: payer_id
-        value: 53HPM676R3AAN
+        value: DAXN73JHVA5WE
+      - name: address_street
+        value: 12 rue de l'énergie
       - name: payment_date
         value: 18:01:07 Dec 30, 2021 PST
       - name: payment_status
         value: Completed
       - name: charset
         value: UTF-8
+      - name: address_zip
+        value: A9A9A9
       - name: first_name
         value: Eugène
       - name: mc_fee
-        value: "1.61"
+        value: "2.19"
+      - name: address_country_code
+        value: CA
+      - name: address_name
+        value: Eugène Désillet
       - name: notify_version
         value: "3.9"
       - name: custom
@@ -36,28 +46,34 @@ http:
         value: unverified
       - name: business
         value: info-facilitator@charity.org
+      - name: address_country
+        value: Canada
+      - name: address_city
+        value: Énergiville
       - name: quantity
         value: "1"
       - name: verify_sign
-        value: AgoAQ2ZHoIPwwLEUPPpJuDLuDAXOAbp8Xo-O4g0YsKAQarSaVF7FTRVf
+        value: AB0IXQPOVdh5Gu2eRf6GJJdsmylmAqsb2xDf5yQiRIwIZBFb-JSzsVtX
       - name: payer_email
-        value: alhsdlkajsdas@donor.org
+        value: dkashjdlkaj@donor.org
       - name: txn_id
-        value: 70Y5887330010544E
+        value: 77F47140D9708063U
       - name: payment_type
         value: instant
       - name: last_name
-        value: Tremblay
+        value: Désillet
+      - name: address_state
+        value: QC
       - name: receiver_email
         value: info-facilitator@charity.org
       - name: payment_fee
         value: ""
       - name: shipping_discount
         value: "0.00"
-      - name: receiver_id
-        value: 9D4WHYF9CR2Z2
       - name: insurance_amount
         value: "0.00"
+      - name: receiver_id
+        value: 9D4WHYF9CR2Z2
       - name: txn_type
         value: web_accept
       - name: item_name
@@ -73,7 +89,7 @@ http:
       - name: test_ipn
         value: "1"
       - name: receipt_id
-        value: 4403-2913-2578-7455
+        value: 2869-4224-4205-7065
       - name: shipping_method
         value: Default
       - name: transaction_subject
@@ -81,7 +97,7 @@ http:
       - name: payment_gross
         value: ""
       - name: ipn_track_id
-        value: 9b77780c92187
+        value: e46426182c296
   auth: inherit
 
 settings:

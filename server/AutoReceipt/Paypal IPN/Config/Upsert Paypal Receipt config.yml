@@ -1,11 +1,11 @@
 info:
-  name: Queue PDF Generation
+  name: Upsert Paypal Receipt config
   type: http
-  seq: 2
+  seq: 1
 
 http:
-  method: POST
-  url: "{{domain}}/generatePdfReceipt"
+  method: PUT
+  url: "{{domain}}/api/paypal/config"
   headers:
     - name: Content-Type
       value: application/json
@@ -15,12 +15,8 @@ http:
     type: json
     data: |-
       {
-        "toGenerate": [
-          {
-            "donationId": "e874df07-c682-405a-9437-c69986a86aaf",
-            "sendEmail": true
-          }
-        ]
+        "paypalItemId": "EVENT-01",
+        "receiptAmountFactor": 0
       }
   auth: inherit
 
