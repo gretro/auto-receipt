@@ -13,7 +13,7 @@ export interface FetchDonationsResponse {
 
 async function fetchDonations(fiscalYear: string): Promise<FetchDonationsResponse> {
   const requestOptions: HttpRequestOptions = {
-    urlPath: `listDonations?year=${fiscalYear}`,
+    urlPath: `api/donations/years/${fiscalYear}`,
     method: 'GET',
   };
 
@@ -23,7 +23,7 @@ async function fetchDonations(fiscalYear: string): Promise<FetchDonationsRespons
 
 async function fetchDonation(donationId: string): Promise<Donation> {
   const requestOptions: HttpRequestOptions = {
-    urlPath: `getDonation?id=${donationId}`,
+    urlPath: `api/donations/${donationId}`,
     method: 'GET',
   };
 
@@ -33,7 +33,7 @@ async function fetchDonation(donationId: string): Promise<Donation> {
 
 async function createDonation(dto: CreateDonationDTO): Promise<Donation> {
   const requestOptions: HttpRequestOptions = {
-    urlPath: `createCheque`,
+    urlPath: `api/donations`,
     method: 'POST',
   };
 
@@ -43,7 +43,7 @@ async function createDonation(dto: CreateDonationDTO): Promise<Donation> {
 
 async function sendCorrespondence(donationId: string, correspondenceType: CorrespondenceType): Promise<Donation> {
   const requestOptions: HttpRequestOptions = {
-    urlPath: `sendCorrespondence`,
+    urlPath: `api/tasks/send-correspondences`,
     method: 'POST',
   };
 
@@ -67,7 +67,7 @@ async function sendCorrespondence(donationId: string, correspondenceType: Corres
 
 async function sendCorrespondenceInBulk(donationIds: string[], correspondenceType: CorrespondenceType): Promise<void> {
   const requestOptions: HttpRequestOptions = {
-    urlPath: `sendCorrespondence`,
+    urlPath: `api/tasks/send-correspondences`,
     method: 'POST',
   };
 
@@ -86,7 +86,7 @@ async function sendCorrespondenceInBulk(donationIds: string[], correspondenceTyp
 
 async function forceGenerateReceipt(toGenerate: { donationId: string; sendEmail: boolean }[]): Promise<void> {
   const requestOptions: HttpRequestOptions = {
-    urlPath: `generatePdfReceipt`,
+    urlPath: `api/tasks/generate-pdf-receipts`,
     method: 'POST',
   };
 
@@ -106,15 +106,12 @@ async function patchDonation(
   generateReceipt: boolean,
 ): Promise<Donation> {
   const requestOptions: HttpRequestOptions = {
-    urlPath: 'patchDonation',
+    urlPath: `api/donations/${donationId}`,
     method: 'PATCH',
   };
 
   const request = {
-    donation: {
-      ...donationPatch,
-      id: donationId,
-    },
+    donation: donationPatch,
     generateReceipt,
   };
 
@@ -124,7 +121,7 @@ async function patchDonation(
 
 async function downloadReceipt(donationId: string, documentId: string): Promise<ArrayBuffer> {
   const requestOptions: HttpRequestOptions = {
-    urlPath: `downloadReceipt?donationId=${donationId}&documentId=${documentId}`,
+    urlPath: `api/donations/${donationId}/documents/${documentId}`,
     method: 'GET',
   };
 
@@ -140,7 +137,7 @@ async function downloadReceipt(donationId: string, documentId: string): Promise<
 
 async function bulkDownloadReceipts(toDownload: { donationId: string; documentId: string }[]): Promise<ArrayBuffer> {
   const requestOptions: HttpRequestOptions = {
-    urlPath: `bulkExportReceipts`,
+    urlPath: `api/tasks/bulk-export-receipts`,
     method: 'POST',
   };
 

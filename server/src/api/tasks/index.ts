@@ -11,6 +11,7 @@ export function registerTasksRoutes(app: Application): void {
   router.use(corsMiddleware)
   router.use(authMiddleware)
 
+  router.options('/{*path}', corsMiddleware)
   router.post('/bulk-import', createBulkImportTaskHandler)
   router.post('/generate-pdf-receipts', createGeneratePdfReceiptsTaskHandler)
   router.post('/send-correspondences', createSendCorrespondencesTaskHandler)

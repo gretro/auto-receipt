@@ -9,8 +9,6 @@ http:
   headers:
     - name: Content-Type
       value: application/json
-    - name: Origin
-      value: http://localhost:3000
   body:
     type: json
     data: |-

@@ -5,10 +5,6 @@ import { registerDonationsRoutes } from './api/donations'
 import { errorHandlerMiddleware } from './api/middlewares'
 import { registerPaypalRoutes } from './api/paypal'
 import { registerTasksRoutes } from './api/tasks'
-import {
-  getOrDeletePaypalReceiptConfig,
-  upsertPaypalReceiptConfig,
-} from './functions/http/paypal-receipt-config'
 import { bulkImport } from './functions/pubsub/bulk-import'
 import { email } from './functions/pubsub/email'
 import { pdf } from './functions/pubsub/pdf-receipt'
@@ -24,9 +20,6 @@ app.use(bodyParser.json() as any)
 registerDonationsRoutes(app)
 registerTasksRoutes(app)
 registerPaypalRoutes(app)
-
-app.all('/upsertPaypalReceiptConfig', upsertPaypalReceiptConfig)
-app.all('/getOrDeletePaypalReceiptConfig', getOrDeletePaypalReceiptConfig)
 
 app.use(errorHandlerMiddleware)
 

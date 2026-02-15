@@ -6,9 +6,6 @@ info:
 http:
   method: POST
   url: "{{domain}}/api/paypal/ipn"
-  headers:
-    - name: Origin
-      value: http://localhost:3000
   body:
     type: form-urlencoded
     data:

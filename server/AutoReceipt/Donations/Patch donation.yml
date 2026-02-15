@@ -9,8 +9,6 @@ http:
   headers:
     - name: Content-Type
       value: application/json
-    - name: Origin
-      value: http://localhost:3000
   params:
     - name: id
       value: 303549e5-dba6-4bc4-b407-6d704bbbaf83

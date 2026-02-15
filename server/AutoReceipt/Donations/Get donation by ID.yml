@@ -6,9 +6,6 @@ info:
 http:
   method: GET
   url: "{{domain}}/api/donations/:donationId"
-  headers:
-    - name: Origin
-      value: http://localhost:3000
   params:
     - name: donationId
       value: 303549e5-dba6-4bc4-b407-6d704bbbaf83

@@ -6,9 +6,6 @@ info:
 http:
   method: GET
   url: "{{domain}}/api/donations/years/:fiscalYear"
-  headers:
-    - name: Origin
-      value: http://localhost:3000
   params:
     - name: fiscalYear
       value: "2026"

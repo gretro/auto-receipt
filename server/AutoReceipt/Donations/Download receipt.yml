@@ -6,9 +6,6 @@ info:
 http:
   method: GET
   url: "{{domain}}/api/donations/:donationId/documents/:documentId"
-  headers:
-    - name: Origin
-      value: http://localhost:3000
   params:
     - name: documentId
       value: LEMGA2026-SVK001

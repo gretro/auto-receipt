@@ -50,7 +50,7 @@ async function deletePaypalReceiptConfigByItemId(
   const docRef = db.doc(itemId)
 
   await docRef.delete({
-    exists: true,
+    exists: false,
   })
 }
 

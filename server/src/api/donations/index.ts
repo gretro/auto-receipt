@@ -13,7 +13,8 @@ export function registerDonationsRoutes(app: Application): void {
   router.use(corsMiddleware)
   router.use(authMiddleware)
 
-  // handleErrors wraps each handler to catch async errors and call next(err)
+  // Explicit OPTIONS for preflight (cors docs recommend when CORS isn't app-wide)
+  router.options('/{*path}', corsMiddleware)
   router.get('/years/:year', listDonationsHandler)
   router.get('/:id', getDonationByIdHandler)
   router.get('/:id/documents/:documentId', downloadDocumentHandler)

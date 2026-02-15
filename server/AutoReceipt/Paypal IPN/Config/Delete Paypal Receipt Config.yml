@@ -6,11 +6,6 @@ info:
 http:
   method: DELETE
   url: "{{domain}}/api/paypal/config/:id"
-  headers:
-    - name: Content-Type
-      value: application/json
-    - name: Origin
-      value: http://localhost:3000
   params:
     - name: id
       value: EVENT-01
