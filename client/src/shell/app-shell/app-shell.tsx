@@ -1,5 +1,5 @@
 import { AppBar, Box, makeStyles, Paper, Theme, Toolbar, Typography } from '@material-ui/core';
-import firebase from 'firebase/app';
+import { getAuth, signOut } from 'firebase/auth';
 import React, { useContext, useState } from 'react';
 import { BrowserRouter, Link } from 'react-router-dom';
 import { authContext } from '../../context/auth.context';
@@ -52,7 +52,7 @@ export const AppShell: React.FC = () => {
 
   const handleLogOut = async () => {
     try {
-      await firebase.auth().signOut();
+      await signOut(getAuth());
     } catch (err) {
       console.error('Unable to log out', err);
       window.location.href = 'https://google.ca';

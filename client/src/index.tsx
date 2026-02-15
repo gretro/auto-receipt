@@ -1,7 +1,7 @@
 import 'firebase/analytics';
-import firebase from 'firebase/app';
+import { getAnalytics } from 'firebase/analytics';
+import { initializeApp } from 'firebase/app';
 import 'firebase/auth';
-import React from 'react';
 import ReactDOM from 'react-dom';
 import { App } from './App';
 import { AppConfig, setAppConfig } from './app-config';
@@ -17,13 +17,13 @@ fetch('/config.json')
   .then((appConfig: AppConfig) => {
     setAppConfig(appConfig);
 
-    firebase.initializeApp(appConfig.firebase);
-    firebase.analytics();
+    initializeApp(appConfig.firebase);
+    getAnalytics();
 
     ReactDOM.render(
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>,
+      <App />,
+      // <React.StrictMode>
+      // </React.StrictMode>,
       document.getElementById('root'),
     );
   })

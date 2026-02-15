@@ -44,6 +44,7 @@ export function useApi(): ApiHook {
         notifications.dispatch({ type: 'clear-notification' });
       }
     } catch (error) {
+      console.error('Error making API request', error);
       notifications.dispatch({
         type: 'show-notification',
         payload: {

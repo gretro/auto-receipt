@@ -1,5 +1,5 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@material-ui/core';
-import firebase from 'firebase/app';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useContext, useState } from 'react';
 import { notificationContext } from '../../context/notification.context';
 
@@ -37,7 +37,7 @@ export const AuthenticationShell: React.FC = () => {
     notifications.dispatch({ type: 'clear-notification' });
 
     try {
-      const userCredentials = await firebase.auth().signInWithEmailAndPassword(state.username, state.password);
+      const userCredentials = await signInWithEmailAndPassword(getAuth(), state.username, state.password);
       console.log('User credentials received', userCredentials);
     } catch (err) {
       console.error('Error authenticating', err);
