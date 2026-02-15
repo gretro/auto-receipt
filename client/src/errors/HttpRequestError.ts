@@ -4,6 +4,6 @@ export class HttpRequestError extends Error {
     private httpResponse: Response,
   ) {
     super(message);
-    Error.captureStackTrace(this, HttpRequestError);
+    this.name = 'HttpRequestError';
   }
 }
