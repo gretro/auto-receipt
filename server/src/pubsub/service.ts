@@ -71,9 +71,18 @@ export async function publishMessage(
 ): Promise<void> {
   const topic = await getTopicByKey(topicKey)
 
-  await topic.publishMessage({
-    json: message,
-  })
+  try {
+    await topic.publishMessage({
+      json: message,
+    })
+  } catch (error) {
+    const client = getClient()
+    logger.error('Error publishing message', {
+      error,
+      config: await client.getClientConfig(),
+    })
+    throw error
+  }
 }
 
 /**
