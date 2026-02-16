@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Timestamp } from '@google-cloud/firestore'
 
-export function mapTimestampToDate<T>(entity: T): T {
+export function mapTimestampToDate<T extends Record<string, any>>(
+  entity: T
+): T {
   const newObj = Object.keys(entity).reduce((acc, key) => {
     const value = (entity as any)[key]
     const mappedValue = mapTimestampValue(value)

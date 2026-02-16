@@ -32,15 +32,10 @@ const useStyles = makeStyles<Theme, Props>((theme) => ({
 }));
 
 const iconMap = {
-  // eslint-disable-next-line react/display-name
   loading: () => <HourglassEmptyIcon />,
-  // eslint-disable-next-line react/display-name
   info: () => <InfoIcon />,
-  // eslint-disable-next-line react/display-name
   warning: () => <WarningIcon />,
-  // eslint-disable-next-line react/display-name
   success: () => <CheckCircleOutlineIcon />,
-  // eslint-disable-next-line react/display-name
   error: () => <ErrorIcon />,
 };
 

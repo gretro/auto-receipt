@@ -1,0 +1,44 @@
+info:
+  name: Patch donation
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{domain}}/api/donations/:id"
+  headers:
+    - name: Content-Type
+      value: application/json
+  params:
+    - name: id
+      value: 303549e5-dba6-4bc4-b407-6d704bbbaf83
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "donation": {
+          "fiscalYear": 2026,
+          "donor": {
+            "firstName": "Renée",
+            "lastName": "Dupont",
+            "email": "renee.dupont@nowhere.org",
+            "address": {
+              "line1": "22 rue Dupont",
+              "line2": null,
+              "city": "Dupontville",
+              "state": "QC",
+              "postalCode": "H0H 0H0",
+              "country": "Canada"
+            }
+          }
+        },
+        "generateReceipt": true
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

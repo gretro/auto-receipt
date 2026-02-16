@@ -3,7 +3,7 @@
     "logLevel": "info",
     "console": true,
     "gcloud": false,
-    "file": true
+    "file": false
   },
   "firestore": {
     "host": "localhost",
@@ -16,6 +16,8 @@
       "apiEndpoint": "http://localhost:1866",
       "projectId": "autoreceipt"
     },
+    "createSubscriptions": false,
+    "pushEndpointBase": "",
     "topics": {
       "pdf": "pdf-generation",
       "bulkImport": "bulk-import",
@@ -25,23 +27,22 @@
       "pdf": {
         "topic": "pdf-generation",
         "name": "pdf-gen",
+        "endpoint": "/pubsub/pdf",
         "retryOnFail": false
       },
       "bulkImport": {
         "topic": "bulk-import",
         "name": "bulk-import",
+        "endpoint": "/pubsub/bulk-import",
         "retryOnFail": false
       },
       "email": {
         "topic": "send-email",
         "name": "send-email",
+        "endpoint": "/pubsub/email",
         "retryOnFail": false
       }
     }
-  },
-  "api": {
-    "apiToken": "VGhpcyBpcyBteSBBUEkgdG9rZW4uIElzIGl0IGF3ZXNvbWU=",
-    "showError": true
   },
   "paypal": {
     "validateIpn": true,
@@ -65,7 +66,16 @@
       }
     },
     "email": {
-      "provider": "fake"
+      "provider": "smtp",
+      "smtp": {
+        "host": "localhost",
+        "port": 6025,
+        "secure": false,
+        "authUsername": "user",
+        "authPassword": "pass",
+        "from": "noreply@example.com",
+        "replyTo": "noreply@example.com"
+      }
     },
     "authentication": {
       "provider": "no-auth",

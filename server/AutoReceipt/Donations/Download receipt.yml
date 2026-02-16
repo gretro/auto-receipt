@@ -1,0 +1,22 @@
+info:
+  name: Download receipt
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{domain}}/api/donations/:donationId/documents/:documentId"
+  params:
+    - name: documentId
+      value: LEMGA2026-SVK001
+      type: path
+    - name: donationId
+      value: 303549e5-dba6-4bc4-b407-6d704bbbaf83
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -25,7 +25,7 @@ interface Props {
   canSendByEmail: boolean;
 }
 
-const useStyles = makeStyles<Theme, Props>((theme) => ({
+const useStyles = makeStyles<Theme, Props>(() => ({
   noContentContainer: {
     textAlign: 'center',
   },
@@ -51,7 +51,7 @@ export const ReceiptsInformation: React.FC<Props> = (props) => {
     }
 
     const sortedDocuments = [...props.documents].sort(
-      (left, right) => (left.created.getTime() - right.created.getTime()) * -1,
+      (left, right) => (new Date(left.created).getTime() - new Date(right.created).getTime()) * -1,
     );
     return sortedDocuments[0];
   }, [props.documents]);

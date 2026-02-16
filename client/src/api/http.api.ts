@@ -1,4 +1,4 @@
-import firebase from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import { getAppConfig } from '../app-config';
 import { HttpRequestError } from '../errors/HttpRequestError';
 
@@ -9,9 +9,9 @@ export interface HttpRequestOptions {
 
 export async function makeHttpRequest(requestOptions: HttpRequestOptions, body?: unknown): Promise<Response> {
   const url = `${getAppConfig().apiUrl}${requestOptions.urlPath}`;
-  const idToken = await firebase.auth().currentUser?.getIdToken();
+  const idToken = await getAuth().currentUser?.getIdToken();
 
-  const headers = {
+  const headers: Record<string, string> = {
     Authorization: `Bearer ${idToken}`,
     Accept: 'application/json',
   };

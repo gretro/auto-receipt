@@ -1,5 +1,5 @@
 import { Box, CircularProgress, makeStyles, Typography } from '@material-ui/core';
-import firebase from 'firebase/app';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import React, { useContext, useEffect, useState } from 'react';
 import { authContext } from '../../context/auth.context';
 import { AppShell } from '../app-shell/app-shell';
@@ -22,7 +22,7 @@ export const ShellPicker: React.FC = () => {
   const styles = useStyles();
 
   useEffect(() => {
-    return firebase.auth().onAuthStateChanged((user) => {
+    return onAuthStateChanged(getAuth(), (user) => {
       setAuthInit(true);
 
       if (user) {

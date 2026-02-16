@@ -1,5 +1,5 @@
-import mjml2html = require('mjml')
 import config from 'config'
+import mjml2html from 'mjml'
 import { v4 as uuidV4 } from 'uuid'
 import { donationsRepository } from '../datastore/donations-repository'
 import { EntityNotFoundError } from '../errors/EntityNotFoundError'
@@ -148,9 +148,8 @@ async function getEmailContent(
   const mjml = buildMjml(template, donation)
   const html = buildHtml(mjml)
 
-  const correspondenceConfig = config.get<CorrespondenceConfig>(
-    'correspondence'
-  )
+  const correspondenceConfig =
+    config.get<CorrespondenceConfig>('correspondence')
   const subject = correspondenceConfig[type].subject || 'Merci / Thank you'
 
   return {

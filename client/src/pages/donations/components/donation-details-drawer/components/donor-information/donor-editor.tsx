@@ -28,7 +28,7 @@ const useStyles = makeStyles<Theme, Props>((theme) => ({
   },
 }));
 
-function getAddressSchema(value: Address): Yup.SchemaOf<any> {
+function getAddressSchema(value: Address): Yup.Schema<any> {
   const required = value && Object.values(value).some(Boolean);
 
   if (required) {

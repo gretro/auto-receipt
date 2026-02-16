@@ -1,8 +1,11 @@
 import path from 'path'
 
-const packageJsonPath = path.resolve(__dirname, '..', '..', 'package.json')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const pkg = require(packageJsonPath)
+// Dynamic require so package.json is not pulled into the TS build output (avoids lib/src and copying package.json)
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const pkg = require(path.resolve(__dirname, '..', '..', 'package.json')) as {
+  name: string
+  version: string
+}
 
 export interface AppInfo {
   appName: string

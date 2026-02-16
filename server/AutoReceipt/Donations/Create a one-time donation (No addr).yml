@@ -1,0 +1,37 @@
+info:
+  name: Create a one-time donation (No addr)
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{domain}}/api/donations"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "donationType": "one-time",
+        "emailReceipt": true,
+        "currency": "CAD",
+        "amount": 150,
+        "receiptAmount": 125,
+        "paymentDate": "2026-01-25T15:28:37Z",
+        "source": "cheque",
+        "reason": "Awesome campaign 2026",
+        "donor": {
+          "firstName": "René",
+          "lastName": "Carignan",
+          "email": null,
+          "address": null
+        }
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

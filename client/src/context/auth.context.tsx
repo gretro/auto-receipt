@@ -1,10 +1,10 @@
-import firebase from 'firebase/app';
+import { User } from 'firebase/auth';
 import React, { createContext, Dispatch, Reducer, useReducer } from 'react';
 
 export interface AuthenticatedUser {
   fullName: string;
   email: string;
-  firebaseUser: firebase.User;
+  firebaseUser: User;
 }
 
 export const authContext = createContext<{ state: AuthenticatedUser | null; dispatch: Dispatch<AuthAction> } | null>(

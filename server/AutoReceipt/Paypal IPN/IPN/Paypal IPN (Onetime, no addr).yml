@@ -1,0 +1,88 @@
+info:
+  name: Paypal IPN (Onetime, no addr)
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{domain}}/api/paypal/ipn"
+  body:
+    type: form-urlencoded
+    data:
+      - name: mc_gross
+        value: "45.00"
+      - name: protection_eligibility
+        value: Eligible
+      - name: payer_id
+        value: 53HPM676R3AAN
+      - name: payment_date
+        value: 18:01:07 Dec 30, 2021 PST
+      - name: payment_status
+        value: Completed
+      - name: charset
+        value: UTF-8
+      - name: first_name
+        value: Eugène
+      - name: mc_fee
+        value: "1.61"
+      - name: notify_version
+        value: "3.9"
+      - name: custom
+        value: ""
+      - name: payer_status
+        value: unverified
+      - name: business
+        value: info-facilitator@charity.org
+      - name: quantity
+        value: "1"
+      - name: verify_sign
+        value: AgoAQ2ZHoIPwwLEUPPpJuDLuDAXOAbp8Xo-O4g0YsKAQarSaVF7FTRVf
+      - name: payer_email
+        value: alhsdlkajsdas@donor.org
+      - name: txn_id
+        value: 70Y5887330010544E
+      - name: payment_type
+        value: instant
+      - name: last_name
+        value: Tremblay
+      - name: receiver_email
+        value: info-facilitator@charity.org
+      - name: payment_fee
+        value: ""
+      - name: shipping_discount
+        value: "0.00"
+      - name: receiver_id
+        value: 9D4WHYF9CR2Z2
+      - name: insurance_amount
+        value: "0.00"
+      - name: txn_type
+        value: web_accept
+      - name: item_name
+        value: ""
+      - name: discount
+        value: "0.00"
+      - name: mc_currency
+        value: CAD
+      - name: item_number
+        value: ""
+      - name: residence_country
+        value: CA
+      - name: test_ipn
+        value: "1"
+      - name: receipt_id
+        value: 4403-2913-2578-7455
+      - name: shipping_method
+        value: Default
+      - name: transaction_subject
+        value: ""
+      - name: payment_gross
+        value: ""
+      - name: ipn_track_id
+        value: 9b77780c92187
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

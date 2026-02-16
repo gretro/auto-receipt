@@ -19,9 +19,8 @@ async function patchDonation(
 
   const mergedDonation = _.merge(donation, patchDonation)
 
-  const updatedDonation = await donationsRepository.updateDonation(
-    mergedDonation
-  )
+  const updatedDonation =
+    await donationsRepository.updateDonation(mergedDonation)
 
   if (generateReceipt && updatedDonation.type !== 'recurrent') {
     logger.info('Will emit the receipt with new donation information.')

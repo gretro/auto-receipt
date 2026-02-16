@@ -1,16 +1,9 @@
-import { Message, PubSub, Topic } from '@google-cloud/pubsub'
+import { Duration, PubSub, Topic } from '@google-cloud/pubsub'
 import { ClientConfig } from '@google-cloud/pubsub/build/src/pubsub'
 import config from 'config'
-import { AppSubNotFoundError } from '../errors/AppSubNotFoundError'
 import { InvalidConfigurationError } from '../errors/InvalidConfigurationError'
 import { TopicNotFoundError } from '../errors/TopicNotFoundError'
 import { logger } from '../utils/logging'
-import { writeMessageAsJson } from '../utils/pubsub'
-import {
-  PubSubContext,
-  PubSubHandler,
-  PubSubMessage,
-} from '../utils/pubsub-function'
 import { PubSubSubscription } from './models'
 
 export interface PubSubTopics {
@@ -25,14 +18,8 @@ interface AppSubscriptions {
   email: PubSubSubscription | null
 }
 
-export type AppSubHandlers = {
-  [K in keyof AppSubscriptions]?: PubSubHandler
-}
-
 let pubsubClient: PubSub
 let topics: PubSubTopics
-let appSubs: AppSubscriptions
-let subscribed = false
 
 function getClient(): PubSub {
   if (!pubsubClient) {
@@ -60,25 +47,6 @@ function getTopicName(topicKey: keyof PubSubTopics): string {
   return topicName
 }
 
-function getAppSub(subKey: keyof AppSubscriptions): PubSubSubscription {
-  if (!appSubs) {
-    appSubs = config.get<AppSubscriptions>('pubsub.subscriptions')
-  }
-
-  const subInfo = appSubs[subKey]
-  if (!subInfo) {
-    throw new AppSubNotFoundError(subKey)
-  }
-
-  if (!subInfo.name || !subInfo.topic) {
-    throw new InvalidConfigurationError(
-      `Invalid subscription information for subscription ${subKey}`
-    )
-  }
-
-  return subInfo
-}
-
 async function getTopicByKey(topicKey: keyof PubSubTopics): Promise<Topic> {
   const topicName = getTopicName(topicKey)
 
@@ -103,83 +71,66 @@ export async function publishMessage(
 ): Promise<void> {
   const topic = await getTopicByKey(topicKey)
 
-  const msg = writeMessageAsJson(message)
-  await topic.publish(msg)
+  await topic.publishMessage({
+    json: message,
+  })
 }
 
-export async function subscribe(
-  handlers: AppSubHandlers
-): Promise<() => Promise<void>> {
-  if (subscribed) {
-    throw new Error('Already subscribed')
+/**
+ * Creates push subscriptions for all configured topics.
+ * Only runs when `pubsub.createSubscriptions` is true in config.
+ * Idempotent: skips subscriptions that already exist.
+ */
+export async function createPushSubscriptions(): Promise<void> {
+  const shouldCreate = config.get<boolean>('pubsub.createSubscriptions')
+  if (!shouldCreate) {
+    logger.info(
+      'Skipping PubSub push subscription creation (disabled in config)'
+    )
+    return
   }
 
-  subscribed = true
+  const pushEndpointBase = config.get<string>('pubsub.pushEndpointBase')
+  if (!pushEndpointBase) {
+    throw new InvalidConfigurationError(
+      'pubsub.pushEndpointBase must be set when pubsub.createSubscriptions is true'
+    )
+  }
 
-  const subscriptionPromises = Object.keys(handlers)
-    .filter((handleyKey) => (handlers as any)[handleyKey])
-    .map(async (handlerkey) => {
-      const appSubInfo = getAppSub(handlerkey as any)
-      const topic = await getTopicByName(appSubInfo.topic)
+  const subscriptions = config.get<
+    Record<keyof AppSubscriptions, PubSubSubscription>
+  >('pubsub.subscriptions')
 
-      const handler = (handlers as Record<string, PubSubHandler>)[handlerkey]
+  for (const appSubInfo of Object.values(subscriptions)) {
+    if (!appSubInfo) {
+      continue
+    }
 
-      const subscription = topic.subscription(appSubInfo.name)
-      const [subExists] = await subscription.exists()
-      if (!subExists) {
-        await subscription.create({
-          flowControl: { maxMessages: 5, allowExcessMessages: false },
-        })
-      }
+    const topic = await getTopicByName(appSubInfo.topic)
 
-      subscription.on('message', (message: Message) => {
-        if (!appSubInfo.retryOnFail) {
-          message.ack()
-        }
+    const subscription = topic.subscription(appSubInfo.name)
+    const [subExists] = await subscription.exists()
 
-        const ctx: PubSubContext = {
-          eventId: message.id,
-          eventType: 'publish',
-          resource: '???',
-          timestamp: message.publishTime.toISOString(),
-        }
+    if (subExists) {
+      logger.info(
+        `Push subscription [${appSubInfo.name}] already exists, skipping`
+      )
+      continue
+    }
 
-        const data: PubSubMessage = {
-          attributes: message.attributes,
-          data: message.data.toString('base64'),
-        }
+    const pushEndpoint = `${pushEndpointBase}${appSubInfo.endpoint}`
 
-        Promise.resolve()
-          .then(() => handler(data, ctx))
-          .then(() => {
-            if (appSubInfo.retryOnFail) {
-              // No need to retry, we succeeded
-              message.ack()
-            }
-          })
-          .catch((err) => {
-            logger.error(
-              `Error executing subscription [${appSubInfo.name}] handler`,
-              err
-            )
-
-            if (appSubInfo.retryOnFail) {
-              message.nack()
-            }
-          })
-      })
-
-      return subscription
+    await subscription.create({
+      pushConfig: { pushEndpoint },
+      ackDeadlineSeconds: 60 * 5, // 5 minutes (to allow for PDF generation),
+      retryPolicy: {
+        maximumBackoff: Duration.from({ seconds: 10 }),
+      },
     })
 
-  const allSubs = await Promise.all(subscriptionPromises)
-  return async (): Promise<void> => {
-    const unsubPromises = allSubs.map(async (sub) => {
-      await sub.close()
-      sub.removeAllListeners()
-      await sub.delete()
+    logger.info(`Created push subscription [${appSubInfo.name}]`, {
+      topic: appSubInfo.topic,
+      pushEndpoint,
     })
-
-    await Promise.all(unsubPromises)
   }
 }

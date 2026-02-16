@@ -210,3 +210,6 @@ lib/
 temp/
 temp-docs/
 logs/
+
+# Puppeteer
+chrome/

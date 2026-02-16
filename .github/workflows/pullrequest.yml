@@ -9,28 +9,28 @@ jobs:
   build-server:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Node 16.x
-        uses: actions/setup-node@v4
+      - name: Setup Node 24
+        uses: actions/setup-node@v6
         with:
-          node-version: "16"
+          node-version: "24"
       - name: Git Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install
         working-directory: ./server
         run: npm install
       - name: Build
         working-directory: ./server
-        run: npm run build:prd
+        run: npm run build
   build-client:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Node 16.x
-        uses: actions/setup-node@v4
+      - name: Setup Node 24
+        uses: actions/setup-node@v6
         with:
-          node-version: "16"
+          node-version: "24"
       - name: Git Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install
         working-directory: ./client

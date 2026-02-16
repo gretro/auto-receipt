@@ -1,0 +1,100 @@
+info:
+  name: Paypal IPN (Recurring, no addr)
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{domain}}/api/paypal/ipn"
+  body:
+    type: form-urlencoded
+    data:
+      - name: mc_gross
+        value: "20.00"
+      - name: outstanding_balance
+        value: "0.00"
+      - name: period_type
+        value: Regular
+      - name: next_payment_date
+        value: 02:00:00 Jan 30, 2022 PST
+      - name: protection_eligibility
+        value: Eligible
+      - name: payment_cycle
+        value: Monthly
+      - name: tax
+        value: "0.00"
+      - name: payer_id
+        value: HDMKJGLRDZZ2N
+      - name: payment_date
+        value: 14:17:01 Dec 30, 2021 PST
+      - name: payment_status
+        value: Completed
+      - name: product_name
+        value: ""
+      - name: charset
+        value: UTF-8
+      - name: recurring_payment_id
+        value: I-UBC10MU85VDP
+      - name: first_name
+        value: Ginny
+      - name: mc_fee
+        value: "0.88"
+      - name: notify_version
+        value: "3.9"
+      - name: amount_per_cycle
+        value: "20.00"
+      - name: payer_status
+        value: unverified
+      - name: currency_code
+        value: CAD
+      - name: business
+        value: info-facilitator@charity.org
+      - name: verify_sign
+        value: AtAEOFrsA6-xwZKdI0lzuCDQBHJFA2n7wDf9NAvi1h4Cq5EWxdLXM6bI
+      - name: payer_email
+        value: donor4@outlook.com
+      - name: initial_payment_amount
+        value: "0.00"
+      - name: profile_status
+        value: Active
+      - name: amount
+        value: "20.00"
+      - name: txn_id
+        value: 2WU19251JU0372310
+      - name: payment_type
+        value: instant
+      - name: last_name
+        value: Weasley
+      - name: receiver_email
+        value: info@charity.org
+      - name: payment_fee
+        value: ""
+      - name: receiver_id
+        value: 9D4WHYF9CR2Z2
+      - name: txn_type
+        value: recurring_payment
+      - name: mc_currency
+        value: CAD
+      - name: residence_country
+        value: CA
+      - name: test_ipn
+        value: "1"
+      - name: transaction_subject
+        value: ""
+      - name: payment_gross
+        value: ""
+      - name: shipping
+        value: "0.00"
+      - name: product_type
+        value: "1"
+      - name: time_created
+        value: 14:12:05 Dec 30, 2019 PST
+      - name: ipn_track_id
+        value: 9d01c1d095526
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

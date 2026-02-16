@@ -1,0 +1,29 @@
+info:
+  name: Send Correspondence
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{domain}}/api/tasks/send-correspondences"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "toSend": [
+          {
+            "donationId": "e874df07-c682-405a-9437-c69986a86aaf",
+            "correspondenceType": "thank-you"
+          }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

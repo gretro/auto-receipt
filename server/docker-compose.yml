@@ -1,11 +1,77 @@
-version: '3.7'
-
 services:
+  api:
+    build: .
+    command: ['npm', 'run', 'serve:api']
+    ports:
+      - '3001:3001'
+    volumes:
+      - temp-docs:/app/temp-docs
+    environment:
+      - NODE_ENV=development
+      - FIRESTORE_HOST=firestore
+      - FIRESTORE_PORT=8080
+      - PUBSUB_API_ENDPOINT=http://pubsub:8080
+      - SMTP_HOST=smtp
+      - SMTP_PORT=25
+    depends_on:
+      - firestore
+      - pubsub
+      - smtp
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./src
+          target: /app/src
+        - action: sync+restart
+          path: ./config
+          target: /app/config
+        - action: rebuild
+          path: ./package.json
+
+  worker:
+    build: .
+    command: ['npm', 'run', 'serve:worker']
+    ports:
+      - '3002:3002'
+    volumes:
+      - temp-docs:/app/temp-docs
+    environment:
+      - NODE_ENV=development
+      - FIRESTORE_HOST=firestore
+      - FIRESTORE_PORT=8080
+      - PUBSUB_API_ENDPOINT=http://pubsub:8080
+      - SMTP_HOST=smtp
+      - SMTP_PORT=25
+      - CREATE_PUBSUB_SUBSCRIPTIONS=true
+      - PUBSUB_PUSH_ENDPOINT_BASE=http://worker:3002
+    depends_on:
+      - firestore
+      - pubsub
+      - smtp
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./src
+          target: /app/src
+        - action: sync+restart
+          path: ./config
+          target: /app/config
+        - action: sync+restart
+          path: ./templates
+          target: /app/templates
+        - action: sync+restart
+          path: ./translations
+          target: /app/translations
+        - action: rebuild
+          path: ./package.json
+
   firestore:
     build: ./emulators
     command: ['firestore', 'start', '--host-port=0.0.0.0:8080']
     ports:
       - '1865:8080'
+    volumes:
+      - firestore-data:/root/.config/gcloud/emulators/firestore
 
   pubsub:
     build: ./emulators
@@ -13,3 +79,15 @@ services:
       ['pubsub', 'start', '--project=autoreceipt', '--host-port=0.0.0.0:8080']
     ports:
       - '1866:8080'
+
+  smtp:
+    image: rnwood/smtp4dev:3.12.0-ci20260208134
+    ports:
+      - 6025:25
+      - 6080:80
+    volumes:
+      - "/smtp4dev"
+
+volumes:
+  temp-docs:
+  firestore-data:

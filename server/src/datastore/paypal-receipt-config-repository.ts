@@ -1,10 +1,10 @@
+import { InvalidEntityError } from '../errors/InvalidEntityError'
 import {
   PaypalReceiptConfig,
   paypalReceiptConfigSchema,
 } from '../models/PaypalReceiptConfig'
-import { getPaypalReceiptConfigCollection } from './store'
 import { Document } from './models'
-import { InvalidEntityError } from '../errors/InvalidEntityError'
+import { getPaypalReceiptConfigCollection } from './store'
 
 async function findPaypalReceiptConfigByItemId(
   itemId: string
@@ -24,9 +24,8 @@ async function findPaypalReceiptConfigByItemId(
 async function upsertPaypalReceiptConfigForItemId(
   paypalReceiptConfig: PaypalReceiptConfig
 ): Promise<PaypalReceiptConfig> {
-  const validationResult = paypalReceiptConfigSchema.validate(
-    paypalReceiptConfig
-  )
+  const validationResult =
+    paypalReceiptConfigSchema.validate(paypalReceiptConfig)
   if (validationResult.error) {
     throw new InvalidEntityError('PaypalReceiptConfig', validationResult)
   }
@@ -51,7 +50,7 @@ async function deletePaypalReceiptConfigByItemId(
   const docRef = db.doc(itemId)
 
   await docRef.delete({
-    exists: true,
+    exists: false,
   })
 }
 

@@ -74,12 +74,13 @@ async function handleRecurringDonation(
   const externalId = parameters.externalId || ''
   const paymentDate = getPaymentDate(parameters.paymentDate)
 
-  const donation = await donationsRepository.findDonationByExternalIdAndFiscalYear(
-    externalId,
-    parameters.overrideFiscalYear
-      ? parameters.overrideFiscalYear
-      : paymentDate.getFullYear()
-  )
+  const donation =
+    await donationsRepository.findDonationByExternalIdAndFiscalYear(
+      externalId,
+      parameters.overrideFiscalYear
+        ? parameters.overrideFiscalYear
+        : paymentDate.getFullYear()
+    )
 
   if (donation) {
     logger.info(
