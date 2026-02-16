@@ -11,6 +11,14 @@
     "pushEndpointBase": "PUBSUB_PUSH_ENDPOINT_BASE"
   },
   "providers": {
+    "file": {
+      "gcloud": {
+        "transalationsBucket": "GCS_TRANSLATIONS_BUCKET",
+        "templatesBucket": "GCS_TEMPLATES_BUCKET",
+        "documentsBucket": "GCS_DOCUMENTS_BUCKET",
+        "tempBucket": "GCS_TEMP_BUCKET"
+      }
+    },
     "email": {
       "smtp": {
         "host": "SMTP_HOST",
@@ -37,6 +45,9 @@
     "enabled": "CORR_ENABLED",
     "no-mailing-addr": {
       "subject": "CORR_NO_MAILING_ADDR_SUBJECT"
+    },
+    "reminder-mailing-addr": {
+      "subject": "CORR_REMINDER_MAILING_ADDR_SUBJECT"
     },
     "thank-you": {
       "subject": "CORR_THANK_YOU_SUBJECT"

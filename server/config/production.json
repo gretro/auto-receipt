@@ -1,0 +1,73 @@
+{
+  "logging": {
+    "console": false,
+    "gcloud": true,
+    "file": false
+  },
+  "firestore": null,
+  "pubsub": {
+    "client": null,
+    "subscriptions": {}
+  },
+  "paypal": {
+    "minFiscalYear": 2020,
+    "validateIpn": true,
+    "ipnUrl": "https://ipnpb.paypal.com/cgi-bin/webscr"
+  },
+  "chromium": {
+    "maxInstances": 10
+  },
+  "providers": {
+    "file": {
+      "provider": "gcloud-storage",
+      "gcloud": {
+        "keyPath": null,
+        "projectId": null,
+        "translationsBucket": "PROVIDED_BY_ENV_VAR",
+        "templatesBucket": "PROVIDED_BY_ENV_VAR",
+        "documentsBucket": "PROVIDED_BY_ENV_VAR",
+        "tempBucket": "PROVIDED_BY_ENV_VAR",
+        "createBuckets": false
+      }
+    },
+    "authentication": {
+      "provider": "jwt",
+      "unauthorizedStatusCode": 404,
+      "jwt": {
+        "jwksUrl": "PROVIDED_BY_ENV_VAR",
+        "audience": "PROVIDED_BY_ENV_VAR",
+        "issuer": "PROVIDED_BY_ENV_VAR"
+      }
+    },
+    "email": {
+      "provider": "smtp",
+      "smtp": {
+        "host": "PROVIDED_BY_ENV_VAR",
+        "port": 0,
+        "secure": true,
+        "authUsername": "PROVIDED_BY_ENV_VAR",
+        "authPassword": "PROVIDED_BY_ENV_VAR",
+        "from": "PROVIDED_BY_ENV_VAR",
+        "replyTo": "PROVIDED_BY_ENV_VAR"
+      }
+    }
+  },
+  "cors": {
+    "enabled": true,
+    "allowedOrigins": [
+      "PROVIDED_BY_ENV_VAR"
+    ]
+  },
+  "correspondence": {
+    "enabled": true,
+    "no-mailing-addr": {
+      "subject": "PROVIDED_BY_ENV_VAR"
+    },
+    "reminder-mailing-addr": {
+      "subject": "PROVIDED_BY_ENV_VAR"
+    },
+    "thank-you": {
+      "subject": "PROVIDED_BY_ENV_VAR"
+    }
+  }
+}
