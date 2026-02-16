@@ -7,14 +7,25 @@
     "client": {
       "apiEndpoint": "PUBSUB_API_ENDPOINT"
     },
-    "createSubscriptions": "CREATE_PUBSUB_SUBSCRIPTIONS",
+    "createSubscriptions": {
+      "__name": "CREATE_PUBSUB_SUBSCRIPTIONS",
+      "__format": "boolean"
+    },
     "pushEndpointBase": "PUBSUB_PUSH_ENDPOINT_BASE"
   },
   "providers": {
+    "file": {
+      "gcloud": {
+        "transalationsBucket": "GCS_TRANSLATIONS_BUCKET",
+        "templatesBucket": "GCS_TEMPLATES_BUCKET",
+        "documentsBucket": "GCS_DOCUMENTS_BUCKET",
+        "tempBucket": "GCS_TEMP_BUCKET"
+      }
+    },
     "email": {
       "smtp": {
         "host": "SMTP_HOST",
-        "port": "SMTP_PORT",
+        "port": { "__name": "SMTP_PORT", "__format": "number" },
         "authUsername": "SMTP_USERNAME",
         "authPassword": "SMTP_PASSWORD",
         "from": "EMAIL_FROM",
@@ -30,13 +41,22 @@
     }
   },
   "cors": {
-    "enabled": "CORS_ENABLED",
-    "allowedOrigins": "CORS_ALLOWED_ORIGINS"
+    "enabled": {
+      "__name": "CORS_ENABLED",
+      "__format": "boolean"
+    },
+    "allowedOrigins": {
+      "__name": "CORS_ALLOWED_ORIGINS",
+      "__format": "json"
+    }
   },
   "correspondence": {
     "enabled": "CORR_ENABLED",
     "no-mailing-addr": {
       "subject": "CORR_NO_MAILING_ADDR_SUBJECT"
+    },
+    "reminder-mailing-addr": {
+      "subject": "CORR_REMINDER_MAILING_ADDR_SUBJECT"
     },
     "thank-you": {
       "subject": "CORR_THANK_YOU_SUBJECT"

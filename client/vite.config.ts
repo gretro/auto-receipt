@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
+        dir: 'build',
         manualChunks: (id) => (id.includes('node_modules') ? 'vendor' : undefined),
       },
     },

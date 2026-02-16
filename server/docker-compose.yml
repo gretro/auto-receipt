@@ -30,6 +30,7 @@ services:
 
   worker:
     build: .
+    platform: linux/amd64
     command: ['npm', 'run', 'serve:worker']
     ports:
       - '3002:3002'
