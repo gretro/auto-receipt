@@ -13,6 +13,19 @@ config:
         username: ""
         password: ""
       bypassProxy: ""
+
+request:
+  scripts:
+    - type: before-request
+      code: |-
+        // 1. Fetch the environment variable
+        const token = bru.getEnvVar("BEARER_TOKEN");
+
+        // 2. Check if the token exists and is not empty
+        if (token) {
+          // 3. Set the Authorization header
+          req.setHeader("Authorization", `Bearer ${token}`);
+        }
 bundled: false
 extensions:
   ignore:
