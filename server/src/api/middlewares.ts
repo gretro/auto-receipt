@@ -16,6 +16,7 @@ interface CorsConfig {
 }
 
 const corsConfig = config.get<CorsConfig>('cors')
+logger.info('CORS Config', { corsConfig })
 
 export const corsMiddleware = cors({
   origin: (requestOrigin, callback) => {
