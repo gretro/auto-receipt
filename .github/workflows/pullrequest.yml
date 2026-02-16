@@ -21,7 +21,7 @@ jobs:
         run: npm install
       - name: Build
         working-directory: ./server
-        run: npm run build:prd
+        run: npm run build
   build-client:
     runs-on: ubuntu-latest
     steps:
