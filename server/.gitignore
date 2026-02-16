@@ -213,3 +213,8 @@ logs/
 
 # Puppeteer
 chrome/
+
+# Bruno
+AutoReceipt/environments/*
+!AutoReceipt/environments/local.yml
+

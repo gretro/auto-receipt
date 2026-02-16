@@ -1,10 +1,18 @@
-import * as gcloudLog from '@google-cloud/logging-winston'
 import config from 'config'
 import winston from 'winston'
 import { consoleFormat } from 'winston-console-format'
 import { LoggingConfig } from '../models/LoggingConfig'
 
 const loggingConfig = config.get<LoggingConfig>('logging')
+
+const WINSTON_TO_CLOUD_SEVERITY: Record<string, string> = {
+  error: 'ERROR',
+  warn: 'WARNING',
+  info: 'INFO',
+  verbose: 'DEBUG',
+  debug: 'DEBUG',
+  silly: 'DEBUG',
+}
 
 const transports = []
 if (loggingConfig.console) {
@@ -29,7 +37,19 @@ if (loggingConfig.console) {
   )
 }
 if (loggingConfig.gcloud) {
-  transports.push(new gcloudLog.LoggingWinston())
+  transports.push(
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format((info) => {
+          info.severity = WINSTON_TO_CLOUD_SEVERITY[info.level] ?? 'DEFAULT'
+          delete (info as Record<string, unknown>).level
+          return info
+        })(),
+        winston.format.json()
+      ),
+    })
+  )
 }
 
 if (loggingConfig.file) {
