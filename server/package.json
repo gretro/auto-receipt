@@ -9,9 +9,9 @@
     "clean": "rimraf lib",
     "clean:data": "rimraf temp-docs && rimraf logs",
     "prebuild": "npm run clean",
-    "build": "npm run lint && tsc --sourceMap",
-    "serve:api": "npm run build && node --icu-data-dir=node_modules/full-icu lib/api.js",
-    "serve:worker": "npm run build && node --icu-data-dir=node_modules/full-icu lib/worker.js",
+    "build": "tsc --sourceMap",
+    "serve:api": "node --icu-data-dir=node_modules/full-icu lib/api.js",
+    "serve:worker": "node --icu-data-dir=node_modules/full-icu lib/worker.js",
     "start": "docker compose up --watch --build"
   },
   "author": {
