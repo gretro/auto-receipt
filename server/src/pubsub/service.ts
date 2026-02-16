@@ -28,6 +28,7 @@ function getClient(): PubSub {
       pubsubConfig = config.get<ClientConfig>('pubsub.client')
     }
 
+    logger.info('Creating PubSub client', { pubsubConfig })
     pubsubClient = new PubSub(pubsubConfig || undefined)
   }
 
@@ -69,6 +70,7 @@ export async function publishMessage(
   message: unknown,
   topicKey: keyof PubSubTopics
 ): Promise<void> {
+  logger.info('Publishing message', { topicKey, message })
   const topic = await getTopicByKey(topicKey)
 
   try {
