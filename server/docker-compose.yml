@@ -43,7 +43,6 @@ services:
       - PUBSUB_API_ENDPOINT=http://pubsub:8080
       - SMTP_HOST=smtp
       - SMTP_PORT=25
-      - CREATE_PUBSUB_SUBSCRIPTIONS=true
       - PUBSUB_PUSH_ENDPOINT_BASE=http://worker:3002
     depends_on:
       - firestore

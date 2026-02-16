@@ -16,7 +16,8 @@
       "apiEndpoint": "http://localhost:1866",
       "projectId": "autoreceipt"
     },
-    "createSubscriptions": false,
+    "createSubscriptions": true,
+    "createTopics": true,
     "pushEndpointBase": "",
     "topics": {
       "pdf": "pdf-generation",
