@@ -7,10 +7,6 @@
     "client": {
       "apiEndpoint": "PUBSUB_API_ENDPOINT"
     },
-    "createSubscriptions": {
-      "__name": "CREATE_PUBSUB_SUBSCRIPTIONS",
-      "__format": "boolean"
-    },
     "pushEndpointBase": "PUBSUB_PUSH_ENDPOINT_BASE"
   },
   "providers": {

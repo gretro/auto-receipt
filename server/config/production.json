@@ -7,6 +7,8 @@
   "firestore": null,
   "pubsub": {
     "client": null,
+    "createSubscriptions": false,
+    "createTopics": false,
     "subscriptions": {}
   },
   "paypal": {
@@ -54,9 +56,7 @@
   },
   "cors": {
     "enabled": true,
-    "allowedOrigins": [
-      "PROVIDED_BY_ENV_VAR"
-    ]
+    "allowedOrigins": ["PROVIDED_BY_ENV_VAR"]
   },
   "correspondence": {
     "enabled": true,

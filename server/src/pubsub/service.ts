@@ -58,9 +58,15 @@ async function getTopicByName(topicName: string): Promise<Topic> {
   const client = getClient()
   const topic = client.topic(topicName)
 
-  const [topicExists] = await topic.exists()
-  if (!topicExists) {
-    await topic.create()
+  const shouldCreateTopic = config.get<boolean>('pubsub.createTopics')
+
+  if (shouldCreateTopic) {
+    const [topicExists] = await topic.exists()
+    if (!topicExists) {
+      logger.info(`Creating topic ${topicName}`)
+      await topic.create()
+      logger.info(`Created topic ${topicName}`)
+    }
   }
 
   return topic
@@ -70,7 +76,7 @@ export async function publishMessage(
   message: unknown,
   topicKey: keyof PubSubTopics
 ): Promise<void> {
-  logger.info('Publishing message', { topicKey, message })
+  logger.info('Publishing message', { topicKey })
   const topic = await getTopicByKey(topicKey)
 
   try {
