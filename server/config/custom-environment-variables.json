@@ -12,7 +12,7 @@
   "providers": {
     "file": {
       "gcloud": {
-        "transalationsBucket": "GCS_TRANSLATIONS_BUCKET",
+        "translationsBucket": "GCS_TRANSLATIONS_BUCKET",
         "templatesBucket": "GCS_TEMPLATES_BUCKET",
         "documentsBucket": "GCS_DOCUMENTS_BUCKET",
         "tempBucket": "GCS_TEMP_BUCKET"
