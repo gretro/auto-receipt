@@ -1,8 +1,12 @@
 # Auto Receipt
 
-Auto Receipt is a Serverless application in charge of generating receipts for donations received from various source. Currently, it supports:
+An app that generates donation receipts from multiple sources: manual entry and PayPal (via IPN). The server handles receipt creation and integrations; the client is an admin dashboard for managing donations and viewing receipts. It is designed to run on **Google Cloud Platform (GCP)** and depends on Firestore, Pub/Sub, and Cloud Storage (GCS).
 
-- Manual entry
-- PayPal through PayPal IPN
+**Repository layout**
 
-This project is split between the server and the client. Further instructions for each part can be found in their respective folder.
+| Directory | Role |
+|-----------|------|
+| [`client/`](client/) | Admin UI (Vite, TypeScript, Material UI). Setup and scripts → see [client/README.md](client/README.md). |
+| [`server/`](server/) | Backend API and receipt logic. Local run and API docs → see [server/README.md](server/README.md). |
+
+To run the full stack locally, start the server first (and its dependencies), then the client. Details for each are in their READMEs.
