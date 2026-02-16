@@ -5,11 +5,6 @@ import { registerDonationsRoutes } from './api/donations'
 import { errorHandlerMiddleware } from './api/middlewares'
 import { registerPaypalRoutes } from './api/paypal'
 import { registerTasksRoutes } from './api/tasks'
-import { bulkImport } from './functions/pubsub/bulk-import'
-import { email } from './functions/pubsub/email'
-import { pdf } from './functions/pubsub/pdf-receipt'
-import { subscribe } from './pubsub/service'
-import { pdfService } from './services/pdf-service'
 import { logger } from './utils/logging'
 
 const app = express()
@@ -25,16 +20,8 @@ registerPaypalRoutes(app)
 app.use(errorHandlerMiddleware)
 
 async function main(): Promise<void> {
-  await pdfService.initialize()
-
   const server = app.listen(3001, () => {
-    logger.info('Listening on port 3001')
-  })
-
-  await subscribe({
-    pdf,
-    bulkImport,
-    email,
+    logger.info('API listening on port 3001')
   })
 
   async function shutdown(signal: string): Promise<void> {
@@ -44,7 +31,6 @@ async function main(): Promise<void> {
       logger.info('HTTP server closed')
     })
 
-    await pdfService.dispose()
     logger.info('Shutdown complete')
     process.exit(0)
   }
@@ -54,7 +40,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => {
-  logger.error('Error while running server', err)
-  pdfService.dispose()
+  logger.error('Error while running API', err)
   process.exit(1)
 })

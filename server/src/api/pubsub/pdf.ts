@@ -1,3 +1,5 @@
+import { RequestHandler } from 'express'
+import Joi from 'joi'
 import { HandlebarsError } from '../../errors/HandlebarsError'
 import { GeneratePdfCommand } from '../../models/commands/GeneratePdfCommand'
 import { SendEmailCommand } from '../../models/commands/SendEmailCommand'
@@ -14,17 +16,23 @@ import {
   Translations,
 } from '../../utils/handlebars'
 import { logger } from '../../utils/logging'
-import { readJsonMessage } from '../../utils/pubsub'
-import { PubSubHandler } from '../../utils/pubsub-function'
+import { extractPubSubMessage } from './validation'
 
-/**
- * Generates and saves a PDF based on a PubSubMessage
- * @param message PubSubMessage triggering the PDF generation
- * @todo Implement a soft retry
- * @todo Wrap the PubSubHandlers to allow for error handling and logging
- */
-export const pdf: PubSubHandler = async (message) => {
-  const command = readJsonMessage<GeneratePdfCommand>(message)
+const generatePdfSchema = Joi.object<GeneratePdfCommand>({
+  donationId: Joi.string().uuid().required(),
+  queueEmailTransmission: Joi.boolean().required(),
+})
+
+export const pdfPubsubHandler: RequestHandler = async (req, res) => {
+  logger.info('Received PubSub push for PDF generation')
+  const message = extractPubSubMessage(generatePdfSchema, req.body)
+
+  await generatePdf(message.data)
+
+  res.sendStatus(200)
+}
+
+async function generatePdf(command: GeneratePdfCommand): Promise<void> {
   logger.info('PDF Generation command received', { command })
 
   const fileProvider = await getFileProvider()
@@ -48,6 +56,8 @@ export const pdf: PubSubHandler = async (message) => {
     }
     await publishMessage(sendEmailCommand, 'email')
   }
+
+  logger.info('PDF generation completed', { command })
 }
 
 interface ReceiptContent {

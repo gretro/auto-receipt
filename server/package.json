@@ -2,7 +2,7 @@
   "name": "auto-receipt-server",
   "version": "1.2.0",
   "description": "",
-  "main": "lib/index.js",
+  "main": "lib/api.js",
   "scripts": {
     "puppeteer:install": "npx @puppeteer/browsers install chrome",
     "lint": "eslint src/**/*.ts",
@@ -12,7 +12,8 @@
     "build": "tsc --sourceMap",
     "prebuild:prd": "npm run clean",
     "build:prd": "npm run lint && tsc",
-    "serve": "npm run build && node --icu-data-dir=node_modules/full-icu lib/index.js",
+    "serve:api": "npm run build && node --icu-data-dir=node_modules/full-icu lib/api.js",
+    "serve:worker": "npm run build && node --icu-data-dir=node_modules/full-icu lib/worker.js",
     "start": "docker compose up --watch --build"
   },
   "author": {

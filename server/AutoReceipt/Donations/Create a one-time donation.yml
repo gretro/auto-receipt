@@ -24,7 +24,7 @@ http:
         "donor": {
           "firstName": "René",
           "lastName": "Carignan",
-          "email": "gabriel.lemire@gmail.com",
+          "email": "rene.carignan@email.com",
           "address": {
             "line1": "55 rue de la Vigne",
             "line2": null,

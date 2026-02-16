@@ -6,7 +6,9 @@
   "pubsub": {
     "client": {
       "apiEndpoint": "PUBSUB_API_ENDPOINT"
-    }
+    },
+    "createSubscriptions": "CREATE_PUBSUB_SUBSCRIPTIONS",
+    "pushEndpointBase": "PUBSUB_PUSH_ENDPOINT_BASE"
   },
   "providers": {
     "email": {

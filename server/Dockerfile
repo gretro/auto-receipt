@@ -34,6 +34,4 @@ COPY translations/ ./translations/
 
 RUN npm run build && npm run puppeteer:install
 
-EXPOSE 3001
-
-CMD ["npm", "run", "serve"]
+EXPOSE 3001 3002
