@@ -25,7 +25,6 @@
   "license": "MIT",
   "dependencies": {
     "@google-cloud/firestore": "^8.2.0",
-    "@google-cloud/logging-winston": "^6.0.1",
     "@google-cloud/pubsub": "^5.2.2",
     "@google-cloud/storage": "^7.19.0",
     "archiver": "^7.0.1",
